@@ -2,7 +2,7 @@
 require_once __DIR__. "../assets/sentenciasSQL/grupos.php";
 $grupos =new Grupos();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar'])) {
-    $idEliminar = intval($_POST['idE']);
+    $idEliminar = intval($_POST['idGrupo']);
     if ($grupos->eliminarGrupo($idEliminar)) {
         echo "<script>alert('Evento eliminado correctamente'); window.location='gruposCreados.php';</script>";
     } else {
@@ -96,13 +96,14 @@ $listaGrupos = $grupos->leerGrupos();
                         <form method="POST" style="display:inline;" 
                               onsubmit="return confirm('¿Estás seguro de eliminar este Grupo?');">
                             <input type="hidden" name="idGrupo" value="<?= $grupos['idGrupo']; ?>">
-                            <button type="submit" name="eliminar">🗑️</button>
+                            <button type="submit" name="eliminar">eliminar</button>
                         </form>
                     </div>
 
                     <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p><strong>Descripcion:</strong> <?= htmlspecialchars($grupos['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p><strong>Tutor:</strong> <?= htmlspecialchars($grupos['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <a class="btn" href="materias.php">Info</a>
                     
                 </div>
             <?php endforeach; ?>

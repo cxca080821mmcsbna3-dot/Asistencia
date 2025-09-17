@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grupos</title>
+    <title>MEnu</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
-    <center><h1>Lista de asistencia</h1></center>
-    <div class="container"></div>
-    
+    <header>
+        <h2>Seleciona tu opcion</h2>
+    </header>
+<main>
+<a href="crearGrupo.php" class="boton">Crear Grupo</a>
+<br>
+<a href="gruposCreados.php" class="boton">Ver grupos creados</a>
+</main>
 </body>
 </html>
