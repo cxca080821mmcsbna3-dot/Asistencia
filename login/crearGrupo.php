@@ -1,13 +1,6 @@
 <?php
-session_start();
 
-// Bloquear acceso si no hay sesión activa
-if (!isset($_SESSION['idAdmin'])) {
-    header("Location: ../index.php");
-    exit();
-}
-
-include_once __DIR__ . ("../assets/sql/grupos.php");
+include_once __DIR__ . ("../assets/sentenciasSQL/grupos.php");
 
 if (isset($_POST['crear'])) {
     $idGrupo        = random_int(10000000, 99999999);
@@ -21,7 +14,7 @@ if (isset($_POST['crear'])) {
     $crear = $crear_grupos->crearGrupo($idGrupo, $nombre_grupo, $descripcion, $tutor);
 
     if ($crear === true) {
-        echo "<script>alert('Grupo creado exitosamente'); window.location='menuGrupos.php';</script>";
+        echo "<script>alert('Grupo creado exitosamente'); window.location='crearGrupo.php';</script>";
         exit();
     } elseif ($crear === 'duplicado') {
         echo "<script>alert('Grupo ya existente. Intenta de nuevo.');</script>";
@@ -49,11 +42,9 @@ input.invalid, textarea.invalid {
 }
 </style>
 <body>
-     <button class="regresar" onclick="window.history.back()">   
-            <span>Volver</span>
-        </button>
+
     <h2>Agregar Grupo</h2>
-   <form id="formGrupo" action="crearGrupos.php" method="POST" enctype="multipart/form-data">
+   <form id="formGrupo" action="crearGrupo.php" method="POST" enctype="multipart/form-data">
     <label>Nombre del Grupo:</label>
     <input type="text" id="nombre_grupo" name="nombre_grupo" required>
 
