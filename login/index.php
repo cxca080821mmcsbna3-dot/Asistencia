@@ -14,7 +14,7 @@ if (isset($_POST['iniciar'])&& !empty($_POST['usuario']) && !empty($_POST['contr
             echo "sesion iniciada";
             $_SESSION['idAdmin'] = $adminData['idAdmin'];
             $_SESSION['usuario'] = $adminData['usuario'];
-            header("Location: menu.php"); 
+            header("Location: menuGrupos.php"); 
             exit();
         } elseif($adminData === false) {
             $error = "Usuario o contraseña incorrectos.";
