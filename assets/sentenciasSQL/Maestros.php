@@ -1,24 +1,18 @@
 <?php
 
-class Usuarios{
+class Maestros{
 
-    public function darAlta($idUsuario, $nombre, $apellidos, $lada, $telefono, $correo, $medioE, $origen, $pais){
+    public function darAlta($idMaestro, $maestro, $contrasena){
         include 'Conexion.php';
-        $stmt = $pdo->prepare("INSERT INTO registros (idR, nombre, apellidos, lada, telefono, correo, medioE, origen, pais)
-             VALUES(:idUsuario, :nombre, :apellidos, :lada, :telefono, :correo, :medioE, :origen, :pais)"
+        $stmt = $pdo->prepare("INSERT INTO maestro (idMaestro, maestro, contrasena)
+             VALUES(:idMaestro, :maestro, :contrasena)"
         );
 
         try {
             $alta = $stmt->execute([
-                ':idUsuario' => $idUsuario,
-                ':nombre'    => $nombre,
-                ':apellidos' => $apellidos,
-                ':lada'      => $lada,
-                ':telefono'  => $telefono,
-                ':correo'    => $correo,
-                ':medioE'    => $medioE,
-                ':origen'    => $origen,
-                ':pais'      => $pais
+                ':idMaestro' => $idMaestro,
+                ':maestro'    => $maestro,
+                ':contrasena' => $contrasena
             ]);
             return true;
         } catch (PDOException $e) {
@@ -63,12 +57,6 @@ class Usuarios{
             ':pais'      => $pais,
             ':idR'       => $idR
         ]);
-    }
-    public function eliminarEvento($idR,$idE) {
-        include "Conexion.php";
-        $stmt = $pdo->prepare("DELETE FROM inscripciones WHERE idR = :idR AND idE = :idE;");
-        $eliminar=$stmt->execute([':idR' => $idR, ':idE' => $idE]);
-        return $eliminar;
     }
     public function asistencia($idR, $idE) {
         try {
