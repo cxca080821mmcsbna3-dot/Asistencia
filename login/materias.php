@@ -4,7 +4,7 @@ class Materia {
         include __DIR__ . '/assets/sentenciasSQL/Conexion.php';
 
         if (isset($pdo)) {
-            $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion) 
+            $stmt = $pdo->prepare("INSERT INTO materia (nombre, descripcion) 
                                    VALUES(:nombre, :descripcion)");
 
             $stmt->bindParam(':nombre', $nombre);
