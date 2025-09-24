@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MEnu</title>
+    <title>MENU</title>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
@@ -15,6 +15,8 @@
 <a href="gruposCreados.php" class="boton">Ver grupos creados</a>
 <br>
 <a href="materias.php">Lista de Materias</a>
+<br>
+<a href="docentes.php">Agregar docentes</a>
 </main>
 </body>
 </html>
