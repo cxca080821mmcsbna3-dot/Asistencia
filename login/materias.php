@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Materias</title>
 </head>
 <body>
-    <form action="materia.php" method="POST">
+    <form action="materias.php" method="POST">
         <label for="nombre">Nombre de la materia:</label>
         <input type="text" name="nombre" id="nombre" required>
         
