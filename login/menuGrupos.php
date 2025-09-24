@@ -13,6 +13,8 @@
 <a href="crearGrupo.php" class="boton">Crear Grupo</a>
 <br>
 <a href="gruposCreados.php" class="boton">Ver grupos creados</a>
+<br>
+<a href="materias.php">Lista de Materias</a>
 </main>
 </body>
 </html>
