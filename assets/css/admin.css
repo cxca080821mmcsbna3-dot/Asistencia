@@ -1,0 +1,33 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgb(0, 0, 0);
+    width: 450px;
+    height: 300px;
+    color: cadetblue;
+    color: cornflowerblue;
+    
+}
+.btn{
+    left: 50%;
+    top: 50%;
+    color: rgb(0, 0, 0);
+    border: transparent;
+    background-color: burlywood;
+    transform: translate(80%, -50%);
+}
+.TEXTO{
+    color: rgb(168, 212, 212);
+    transform: translate( 10%, -10%);
+    margin: 2%;
+
+}
+.tex{
+    transform: translate(-50%, 30%);
+
+}
