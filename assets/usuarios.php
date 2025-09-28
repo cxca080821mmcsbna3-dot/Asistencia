@@ -56,7 +56,7 @@ if (isset($_POST['crear'])) {
 
     } elseif ($tipo === 'administrador') {
         $usuario = $_POST['usuario'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $password = password_hash($_POST['password'],);
 
         // Verificar si usuario ya existe
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM administrador WHERE usuario = ?");
