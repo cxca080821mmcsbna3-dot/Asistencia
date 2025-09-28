@@ -4,7 +4,7 @@ class Materia {
         include __DIR__ . '/assets/sentenciasSQL/Conexion.php';
 
         if (isset($pdo)) {
-            $stmt = $pdo->prepare("INSERT INTO materia (nombre, descripcion) 
+            $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion) 
                                    VALUES(:nombre, :descripcion)");
 
             $stmt->bindParam(':nombre', $nombre);
@@ -40,12 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <form action="materias.php" method="POST">
-        <label for="nombre">Nombre de la materia:</label>
-        <input type="text" name="nombre" id="nombre" required>
+        <h1>Insertar Materias</h1>
+        <label for="nombre">Nombre de la materia:</label><br>
+        <input type="text" name="nombre" id="nombre" required><br><br>
         
-        <label for="descripcion">Descripción:</label>
-        <input type="text" name="descripcion" id="descripcion" required>
-        
+        <label for="descripcion">Descripción:</label><br>
+        <input type="text" name="descripcion" id="descripcion" required><br><br>
+    
         <input type="submit" value="Enviar">
     </form>
 </body>
