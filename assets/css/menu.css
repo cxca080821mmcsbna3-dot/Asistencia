@@ -1,0 +1,30 @@
+.menu {
+    max-width: 450px;
+    margin: 30px auto;
+    padding: 15px 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.menu a.boton {
+    display: inline-block;
+    text-decoration: none;
+    color: #3a7bd5;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 6px;
+    margin: 8px 12px;
+    border: 1.5px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(58, 123, 213, 0.1);
+}
+
+.menu a.boton:hover {
+    background-color: #e6f0ff;
+    border-color: #3a7bd5;
+    box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
+    color: #1e3a8a;
+}
