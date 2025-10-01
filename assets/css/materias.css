@@ -5,15 +5,19 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.materias {
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+}
+
+.materias, .consultar {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     border: 1px solid #6495ED;
     width: 460px;
     padding: 20px 30px;
@@ -21,15 +25,15 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     color: #4169E1;
-    font-family: Arial, sans-serif;
     gap: 15px;
+    overflow-x: auto;
 }
 
 form {
     width: 100%;
 }
 
-h1 {
+h1, h2 {
     color: #4169E1;
     text-align: center;
     margin-bottom: 20px;
@@ -51,12 +55,6 @@ input[type="text"] {
     margin-bottom: 15px;
 }
 
-input[type="text"]:focus {
-    border-color: #6495ED;
-    outline: none;
-    box-shadow: 0 0 5px rgba(100, 149, 237, 0.5);
-}
-
 input[type="submit"],
 .btn {
     align-self: flex-end;
@@ -73,4 +71,26 @@ input[type="submit"],
 input[type="submit"]:hover,
 .btn:hover {
     background-color: #deb887;
+}
+
+.consultar table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+.consultar th, .consultar td {
+    border: 1px solid #6495ED;
+    padding: 8px 12px;
+    text-align: left;
+    color: #4169E1;
+    overflow-wrap: break-word;
+}
+
+.consultar tbody tr:hover {
+    background-color: #c6dafc;
+    cursor: default;
 }
