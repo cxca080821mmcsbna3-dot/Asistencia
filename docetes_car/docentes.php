@@ -42,7 +42,7 @@ $listaDocentes = $docente->obtenerTodos();
         <input type="text" name="telefono" placeholder="Teléfono"><br>
         <input type="text" name="domicilio" placeholder="Domicilio"><br>
         <input type="email" name="correo" placeholder="Correo"><br>
-        <input type="submit" value="Guardar">
+        <input type="submit" id=guardar value="Guardar">
     </form>
 
     <h2>Lista de Docentes</h2>
@@ -64,8 +64,14 @@ $listaDocentes = $docente->obtenerTodos();
                     <td><?= htmlspecialchars($profe['domicilio']) ?></td>
                     <td><?= htmlspecialchars($profe['correo']) ?></td>
                     <td>
-                        <a href="editarDocente.php?id=<?= $profe['id_profesor'] ?>">Editar</a> |
-                        <a href="eliminarDocente.php?id=<?= $profe['id_profesor'] ?>" onclick="return confirm('¿Estás seguro de eliminar este docente?')">Eliminar</a>
+                        <div class="acciones">
+                        <div >
+                        <a href="editarDocente.php?id=<?= $profe['id_profesor'] ?>" class="editar">Editar</a> 
+                         </div>
+                         <div>
+                        <a href="eliminarDocente.php?id=<?= $profe['id_profesor'] ?>"  class="eliminar"onclick="return confirm('¿Estás seguro de eliminar este docente?')">Eliminar</a>
+                        </div>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
