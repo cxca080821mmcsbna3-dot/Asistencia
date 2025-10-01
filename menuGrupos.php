@@ -12,7 +12,7 @@
 
 <nav class="menu">
   <a href="gruposCreados.php" class="boton">Grupos</a>
-  <a href="materias.php" class="boton">Materias</a>
+  <a href="agregar_materia.php" class="boton">Materias</a>
   <a href="usuarios.php" class="boton">Usuarios</a>
   <a href="assets/sentenciasSQL/logout.php" class="boton">Cerrar sesión</a>  <!-- Aquí va el botón -->
 </nav>

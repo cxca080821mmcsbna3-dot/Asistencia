@@ -1,14 +1,15 @@
 <?php 
 class Materia {
-    function Ingresar($nombre, $descripcion){
+    function Ingresar($nombre, $descripcion, $idGrupo){
         include __DIR__ . '/assets/sentenciasSQL/Conexion.php';
 
         if (isset($pdo)) {
-            $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion) 
-                                   VALUES(:nombre, :descripcion)");
+            $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) 
+                                   VALUES(:nombre, :descripcion, :idGrupo)");
 
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':descripcion', $descripcion);
+            $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
 
             if($stmt->execute()) {
                 echo "Materia ingresada correctamente.";
@@ -20,12 +21,13 @@ class Materia {
         }
     }
 
-    function Consultar(){
+    function Consultar($idGrupo){
         include __DIR__ . '/assets/sentenciasSQL/Conexion.php';
         $lista = [];
         if (isset($pdo)) {
-            $stmt = $pdo->query("SELECT id_materia, nombre, descripcion FROM materias");
-            if($stmt){
+            $stmt = $pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
+            $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
+            if($stmt->execute()){
                 $lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
@@ -33,17 +35,32 @@ class Materia {
     }
 }
 
+// Obtener conexión y grupos
+include __DIR__ . '/assets/sentenciasSQL/Conexion.php';
+$grupos = [];
+if (isset($pdo)) {
+    $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");
+    if ($stmt) {
+        $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
 $materia = new Materia();
 
+// Procesar formulario de inserción
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['nombre']) && isset($_POST['descripcion'])) {
-        $materia->Ingresar($_POST['nombre'], $_POST['descripcion']);
+    if (isset($_POST['nombre'], $_POST['descripcion'], $_POST['idGrupo'])) {
+        $materia->Ingresar($_POST['nombre'], $_POST['descripcion'], $_POST['idGrupo']);
     } else {
         echo "Faltan datos.";
     }
 }
 
-$listaMaterias = $materia->Consultar();
+// Consultar materias por grupo si hay filtro
+$listaMaterias = [];
+if (isset($_GET['filtro_grupo'])) {
+    $listaMaterias = $materia->Consultar($_GET['filtro_grupo']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -55,22 +72,27 @@ $listaMaterias = $materia->Consultar();
     <title>Materias</title>
 </head>
 <body>
-    <div class="container">
-        <div class="materias">
-            <form action="materias.php" method="POST">
-                <h1>Agregar Materia</h1>
-                <label for="nombre">Nombre de la materia:</label>
-                <input type="text" name="nombre" id="nombre" required>
-                
-                <label for="descripcion">Descripción:</label>
-                <input type="text" name="descripcion" id="descripcion" required>
-                
-                <input type="submit" value="Enviar">
-            </form>
-        </div>
+    <center>
+    <br><br><br><br><br>
 
+        <!-- FILTRO DE CONSULTA POR GRUPO -->
         <div class="consultar">
             <h2>Listado de Materias</h2>
+            
+            <form method="GET" action="materias.php">
+                <label for="filtro_grupo">Filtrar por Grupo:</label>
+                <select name="filtro_grupo" id="filtro_grupo" required>
+                    <option value="">Seleccione un grupo</option>
+                    <?php foreach ($grupos as $grupo): ?>
+                        <option value="<?= htmlspecialchars($grupo['idGrupo']) ?>"
+                            <?= (isset($_GET['filtro_grupo']) && $_GET['filtro_grupo'] == $grupo['idGrupo']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($grupo['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="submit" value="Filtrar">
+            </form>
+
             <table>
                 <thead>
                     <tr>
@@ -89,11 +111,12 @@ $listaMaterias = $materia->Consultar();
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="3">No hay materias registradas.</td></tr>
+                        <tr><td colspan="3">No hay materias registradas para este grupo.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </body>
+</center>
 </html>
