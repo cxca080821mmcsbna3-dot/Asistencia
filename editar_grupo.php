@@ -53,50 +53,15 @@ if (isset($_POST['actualizar'])) {
 <head>
     <meta charset="UTF-8" />
     <title>Editar Grupo</title>
-    <style>
-        input.valid, textarea.valid {
-            border: 2px solid green;
-            background: #e8f5e9;
-        }
-
-        input.invalid, textarea.invalid {
-            border: 2px solid red;
-            background: #ffebee;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        button.regresar {
-            margin-bottom: 20px;
-            padding: 8px 15px;
-            cursor: pointer;
-        }
-
-        button[type="submit"] {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/editar.css">
 </head>
 <body>
+
+<div class="menu">
     <button class="regresar" onclick="window.history.back()">Volver</button>
-    <h2>Editar Grupo</h2>
 
     <?php if ($mensaje): ?>
-        <p style="color:<?= (strpos($mensaje, 'correctamente') !== false) ? 'green' : 'red'; ?>;">
+        <p class="message <?= (strpos($mensaje, 'correctamente') !== false) ? 'success' : 'error'; ?>">
             <?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?>
         </p>
     <?php endif; ?>
@@ -118,5 +83,7 @@ if (isset($_POST['actualizar'])) {
     <?php else: ?>
         <p>Grupo no encontrado.</p>
     <?php endif; ?>
+</div>
+
 </body>
 </html>
