@@ -1,107 +1,121 @@
-
+/* === Estilos base === */
 body {
-    background-color: #f9fafb;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #e3f2fd; /* Azul claro de fondo */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #0d47a1; /* Azul más oscuro para texto */
 }
 
+/* === Contenedor principal === */
 .menu {
-    max-width: 450px;
-    margin: 30px auto;
-    padding: 15px 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.menu a.boton, button.regresar, button[type="submit"] {
-    display: inline-block;
-    text-decoration: none;
-    color: #3a7bd5;
-    font-weight: 600;
-    padding: 10px 18px;
-    border-radius: 6px;
-    margin: 8px 12px;
-    border: 1.5px solid transparent;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(58, 123, 213, 0.1);
-    background: none;
-    cursor: pointer;
-}
-
-.menu a.boton:hover, button.regresar:hover, button[type="submit"]:hover {
-    background-color: #e6f0ff;
-    border-color: #3a7bd5;
-    box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
-    color: #1e3a8a;
-}
-
-header {
+    max-width: 550px;
+    margin: 50px auto;
+    padding: 35px;
+    background-color: #ffffff; /* Blanco para el formulario */
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #90caf9; /* Borde azul claro */
 }
 
-header h2 {
-    margin: 0;
-    font-weight: 600;
-    color: #333;
-}
-
-.logout-button {
-    background-color: #4a90e2;
+/* === Botón Volver === */
+.regresar {
+    align-self: flex-start;
+    background-color: #64b5f6; /* Azul claro */
     color: white;
+    padding: 10px 20px;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 6px;
     font-weight: bold;
-    text-decoration: none;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.logout-button:hover {
-    background-color: #357ABD;
+.regresar:hover {
+    background-color: #42a5f5; /* Azul más fuerte al pasar el mouse */
+}
+
+/* === Formulario === */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 label {
-    display: block;
-    margin-top: 15px;
     font-weight: bold;
-    text-align: left;
-    color: #444;
+    color: #1565c0;
 }
 
-input[type="text"], textarea {
+input[type="text"],
+textarea {
     width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    border: 1.5px solid #ccc;
+    padding: 10px 12px;
+    border: 1px solid #b3e5fc;
     border-radius: 6px;
-    transition: border-color 0.3s ease;
+    font-size: 1em;
+    box-sizing: border-box;
+    background-color: #f1faff; /* Azul muy claro */
+    transition: border-color 0.3s;
 }
 
-input[type="text"]:focus, textarea:focus {
-    border-color: #3a7bd5;
+input[type="text"]:focus,
+textarea:focus {
     outline: none;
+    border-color: #64b5f6;
 }
 
-p.message {
-    margin-top: 20px;
-    font-weight: 600;
+/* === Botón de enviar === */
+button[type="submit"] {
+    align-self: flex-start;
+    padding: 10px 24px;
+    background-color: #2196f3; /* Azul vivo */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-p.message.success {
-    color: green;
+button[type="submit"]:hover {
+    background-color: #1976d2;
 }
 
-p.message.error {
-    color: red;
+/* === Mensajes de éxito y error === */
+.message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.message.success {
+    background-color: #d0f0c0;
+    color: #2e7d32;
+    border: 1px solid #81c784;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+    .menu {
+        width: 90%;
+        padding: 20px;
+    }
+
+    button.regresar,
+    button[type="submit"] {
+        width: 100%;
+        text-align: center;
+    }
 }

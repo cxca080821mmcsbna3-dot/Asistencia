@@ -53,10 +53,101 @@ if (isset($_POST['actualizar'])) {
 <head>
     <meta charset="UTF-8" />
     <title>Editar Grupo</title>
-    <link rel="stylesheet" href="../assets/css/editar.css">
+        <style>
+            body {
+                background: #e3f2fd;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .menu {
+                background: #fff;
+                max-width: 500px;
+                margin: 40px auto;
+                border-radius: 12px;
+                box-shadow: 0 4px 24px rgba(33, 150, 243, 0.12);
+                padding: 32px 28px 24px 28px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .regresar {
+                background: #2196f3;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 18px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-bottom: 18px;
+                transition: background 0.2s;
+                align-self: flex-start;
+            }
+            .regresar:hover {
+                background: #1976d2;
+            }
+            form#formulario_grupo {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            label {
+                color: #1976d2;
+                font-weight: 500;
+                margin-bottom: 6px;
+            }
+            input[type="text"], textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #90caf9;
+                border-radius: 6px;
+                background: #f5faff;
+                font-size: 15px;
+                box-sizing: border-box;
+                transition: border 0.2s;
+            }
+            input[type="text"]:focus, textarea:focus {
+                border-color: #2196f3;
+                outline: none;
+            }
+            button[type="submit"] {
+                background: #2196f3;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 24px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 8px;
+                transition: background 0.2s;
+                align-self: flex-end;
+            }
+            button[type="submit"]:hover {
+                background: #1976d2;
+            }
+            .message {
+                margin: 12px 0 0 0;
+                padding: 10px;
+                border-radius: 6px;
+                font-size: 15px;
+                width: 100%;
+                text-align: center;
+            }
+            .message.success {
+                background: #bbdefb;
+                color: #1976d2;
+                border: 1px solid #90caf9;
+            }
+            .message.error {
+                background: #ffcdd2;
+                color: #c62828;
+                border: 1px solid #ef9a9a;
+            }
+        </style>
 </head>
-<body>
 
+<body>
 <div class="menu">
     <button class="regresar" onclick="window.history.back()">Volver</button>
 
@@ -67,18 +158,23 @@ if (isset($_POST['actualizar'])) {
     <?php endif; ?>
 
     <?php if ($grupo): ?>
-        <form id="formGrupo" action="" method="POST" novalidate>
-            <label for="nombre_grupo">Nombre del Grupo:</label>
-            <input type="text" id="nombre_grupo" name="nombre_grupo" maxlength="100"
-                   value="<?= htmlspecialchars($grupo['nombre'], ENT_QUOTES, 'UTF-8'); ?>" required>
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="4" maxlength="500"><?= htmlspecialchars($grupo['descripcion'], ENT_QUOTES, 'UTF-8'); ?></textarea>
-
-            <label for="tutor">Tutor:</label>
-            <textarea id="tutor" name="tutor" rows="2" maxlength="200"><?= htmlspecialchars($grupo['tutor'], ENT_QUOTES, 'UTF-8'); ?></textarea>
-
-            <button type="submit" name="actualizar">Actualizar Grupo</button>
+        <form id="formulario_grupo" action="" method="POST" novalidate>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label for="nombre_grupo">Nombre del Grupo:</label>
+                    <input type="text" id="nombre_grupo" name="nombre_grupo" maxlength="100"
+                           value="<?= htmlspecialchars($grupo['nombre'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                </div>
+                <div>
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4" maxlength="500"><?= htmlspecialchars($grupo['descripcion'], ENT_QUOTES, 'UTF-8'); ?></textarea>
+                </div>
+                <div>
+                    <label for="tutor">Tutor:</label>
+                    <textarea id="tutor" name="tutor" rows="2" maxlength="200"><?= htmlspecialchars($grupo['tutor'], ENT_QUOTES, 'UTF-8'); ?></textarea>
+                </div>
+                <button type="submit" name="actualizar">Actualizar Grupo</button>
+            </div>
         </form>
     <?php else: ?>
         <p>Grupo no encontrado.</p>
