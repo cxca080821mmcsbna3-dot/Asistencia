@@ -83,14 +83,16 @@ $listaGrupos = $grupos->leerGrupos();
 <body>
     <header>
     <h1>Lista de Grupos</h1>
-    <a href="crearGrupo.php"><button>+</button></a>
+    <a href="crearGrupo.php"><button>crear</button></a>
+
     </header>
 
     <div class="container">
         <?php if (!empty($listaGrupos)): ?>
             <?php foreach ($listaGrupos as $grupos): ?>
                 <div class="card">
-                    <div class="headerCardEventos">
+                    <div class="headerCardGrupos">
+                         <a href="editar_grupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>editar</button></a>
                         
                         <!-- Botón eliminar con confirmación -->
                         <form method="POST" style="display:inline;" 
