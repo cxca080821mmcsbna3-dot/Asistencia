@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>MENU</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/menu.css">
 </head>
 <body>
     <header>
         <h2>Seleciona tu opcion</h2>
     </header>
-<main>
-<a href="crearGrupo.php" class="boton">Crear Grupo</a>
-<br>
-<a href="gruposCreados.php" class="boton">Ver grupos creados</a>
-<br>
-<a href="materias.php">Lista de Materias</a>
-<br>
-<a href="docentes.php">Agregar docentes</a>
-</main>
+
+<nav class="menu">
+<a href="gruposCreados.php" class="boton">Grupos</a>
+<a href="materias.php" class="boton">Materias</a>
+<a href="usuarios.php" class="boton">Usuarios</a>
+</nav>
 </body>
 </html>
