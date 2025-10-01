@@ -26,7 +26,7 @@ body {
 h1, h2 {
     text-align: center;
     color: #4169E1;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 /* ======== Formulario ======== */
@@ -71,7 +71,12 @@ a.button-link {
     text-decoration: none;
     text-align: center;
 }
-
+#guardar{
+    width: 20%;
+}
+#actualizar{
+    width: 20%;
+}
 input[type="submit"]:hover,
 button:hover,
 a.button-link:hover {
