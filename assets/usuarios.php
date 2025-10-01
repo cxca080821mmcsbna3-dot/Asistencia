@@ -56,9 +56,8 @@ if (isset($_POST['crear'])) {
 
     } elseif ($tipo === 'administrador') {
         $usuario = $_POST['usuario'];
-        $password = password_hash($_POST['password'],);
+        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-        // Verificar si usuario ya existe
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM administrador WHERE usuario = ?");
         $stmt->execute([$usuario]);
         if ($stmt->fetchColumn() > 0) {
@@ -79,15 +78,14 @@ $tipo = $_POST['tipo_usuario'] ?? '';
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="stylesheet" href="assets/css/usuarios.css">
     <meta charset="UTF-8">
     <title>Crear Usuario</title>
 </head>
 <body>
-
+<div class="usuarios">
 <h2>Crear Usuario</h2>
-
 <form action="" method="POST">
-
     <label>Tipo de Usuario:</label><br>
     <select name="tipo_usuario" onchange="this.form.submit()" required>
         <option value="">Selecciona un tipo</option>
@@ -132,9 +130,7 @@ $tipo = $_POST['tipo_usuario'] ?? '';
         <input type="password" name="password" required><br><br>
 
     <?php else: ?>
-
         <p>Por favor, selecciona un tipo de usuario para mostrar los campos correspondientes.</p>
-
     <?php endif; ?>
 
     <?php if ($tipo != ''): ?>
@@ -142,6 +138,6 @@ $tipo = $_POST['tipo_usuario'] ?? '';
     <?php endif; ?>
 
 </form>
-
+</div>
 </body>
 </html>
