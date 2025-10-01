@@ -28,3 +28,31 @@
     box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
     color: #1e3a8a;
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+header h2 {
+    margin: 0;
+}
+
+.logout-button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #357ABD;
+}
