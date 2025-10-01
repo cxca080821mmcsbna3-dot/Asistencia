@@ -44,8 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Editar Docente</title>
+    <link rel="stylesheet" href="../assets/css/docentes.css">
 </head>
 <body>
+    <div class="container">
     <h2>Editar Docente</h2>
     <form method="post">
         <label for="nombre">Nombre:</label><br>
@@ -63,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="correo">Correo:</label><br>
         <input type="email" name="correo" id="correo" value="<?= htmlspecialchars($profe['correo']) ?>"><br><br>
 
-        <input type="submit" value="Actualizar">
+        <input type="submit" id=actualizar value="Actualizar">
         <a href="docentes.php"><button type="button">Cancelar</button></a>
     </form>
+    </div>
 </body>
 </html>
