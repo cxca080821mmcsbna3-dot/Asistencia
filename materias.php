@@ -34,20 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="stylesheet" href="assets/css/materias.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Materias</title>
 </head>
 <body>
+    <div class="materias">
     <form action="materias.php" method="POST">
-        <h1>Insertar Materias</h1>
+        <h1></h1>
         <label for="nombre">Nombre de la materia:</label><br>
         <input type="text" name="nombre" id="nombre" required><br><br>
         
         <label for="descripcion">Descripción:</label><br>
         <input type="text" name="descripcion" id="descripcion" required><br><br>
-    
         <input type="submit" value="Enviar">
     </form>
+    <div
 </body>
 </html>
