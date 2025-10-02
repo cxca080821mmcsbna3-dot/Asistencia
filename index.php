@@ -36,7 +36,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         $_SESSION['rol'] = 'alumno';
         $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
         $_SESSION['nombre'] = $alumnoData['nombre'];
-        header("Location: menuGrupos.php");
+        header("Location: alumno/menu_alumno.php");
         exit();
     }
 
