@@ -1,0 +1,173 @@
+/* =================== Global =================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #b0b0b0, #d0d0d0);
+    /* Gris más oscuro */
+    color: #f0f0f0;
+    margin: 0;
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    color: #0097a7;
+    /* Azul Aqua oscuro */
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+/* =================== Tabla =================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #2c2c2c;
+    /* Fondo gris oscuro */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+thead {
+    background: #0097a7;
+    /* Azul Aqua oscuro */
+    color: white;
+    font-weight: bold;
+}
+
+th,
+td {
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+th {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Filas */
+tbody tr:nth-child(even) {
+    background: #424242;
+    /* Gris intermedio */
+}
+
+tbody tr:hover {
+    background: #b71c1c;
+    /* Rojo intenso */
+    color: white;
+    transition: background 0.3s ease;
+}
+
+/* =================== Estados =================== */
+.estado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    gap: 6px;
+}
+
+
+.presente {
+    background: #0097a7;
+    color: white;
+}
+
+.presente::before {
+    content: '✔️';
+}
+
+.ausente {
+    background: #b71c1c;
+    color: white;
+}
+
+.ausente::before {
+    content: '❌';
+}
+
+.tarde {
+    background: #616161;
+    color: white;
+}
+
+.tarde::before {
+    content: '⏰';
+}
+
+tbody td[colspan="6"] {
+    font-style: italic;
+    color: #ccc;
+    padding: 20px;
+}
+
+
+.back-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #0097a7;
+    /* Azul Aqua oscuro */
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.back-arrow:hover {
+    background-color: #007c91;
+    /* Más oscuro al pasar el mouse */
+    transform: translateX(-3px);
+}
+
+/*Modo oscuro*/
+
+body.dark-mode {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode table {
+    background: #1e1e1e;
+}
+
+body.dark-mode thead {
+    background: #0097a7;
+    /* se puede dejar igual si quieres contraste */
+    color: white;
+}
+
+body.dark-mode tbody tr:nth-child(even) {
+    background: #2c2c2c;
+}
+
+body.dark-mode tbody tr:hover {
+    background: #b71c1c;
+    color: white;
+}
+
+body.dark-mode .estado.presente {
+    background: #007c91;
+}
+
+body.dark-mode .estado.ausente {
+    background: #b71c1c;
+}
+
+body.dark-mode .estado.tarde {
+    background: #616161;
+}
+
+body.dark-mode .back-arrow {
+    background-color: #007c91;
+}
+
+body.dark-mode .back-arrow:hover {
+    background-color: #005f70;
+}

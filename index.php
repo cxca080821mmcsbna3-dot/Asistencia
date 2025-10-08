@@ -16,7 +16,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         $_SESSION['rol'] = 'admin';
         $_SESSION['idAdmin'] = $adminData['idAdmin'];
         $_SESSION['usuario'] = $adminData['usuario'];
-        header("Location: menuGrupos.php");
+        header("Location: administrador/menuGrupos.php");
         exit();
     }
 
@@ -26,7 +26,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         $_SESSION['rol'] = 'profesor';
         $_SESSION['idProfesor'] = $profesorData['id_profesor'];
         $_SESSION['nombre'] = $profesorData['nombre'];
-        header("Location: menuGrupos.php");
+        header("Location: Docentes/menuDocente.php");
         exit();
     }
 
