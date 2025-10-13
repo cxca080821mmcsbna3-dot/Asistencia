@@ -1,9 +1,8 @@
 <?php
-// Conexion.php (dentro del mismo archivo para simplicidad)
 $host = 'localhost';
 $db   = 'asistencia';
-$user = 'root';     // Cambia aquí
-$pass = '';  // Cambia aquí
+$user = 'root';
+$pass = ''; 
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

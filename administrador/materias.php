@@ -1,7 +1,7 @@
 <?php 
 class Materia {
     function Ingresar($nombre, $descripcion, $idGrupo){
-        include_once(__DIR__ . '../assets/sentenciasSQL/Conexion.php');
+        include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
 
         if (isset($pdo)) {
             $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) 
@@ -22,7 +22,7 @@ class Materia {
     }
 
     function Consultar($idGrupo){
-        include_once(__DIR__ . '../assets/sentenciasSQL/Conexion.php');
+        include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
         $lista = [];
         if (isset($pdo)) {
             $stmt = $pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
@@ -36,7 +36,7 @@ class Materia {
 }
 
 // Obtener conexión y grupos
-include_once(__DIR__ . '../assets/sentenciasSQL/Conexion.php');
+include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
 $grupos = [];
 if (isset($pdo)) {
     $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");
