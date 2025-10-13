@@ -7,7 +7,6 @@ class Admin {
             ':usuario' => $usuario,
             ':contrasena' => $contrasena
         ]);
-         echo("<script>alert('si llega a estlo');</script>");
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
         return $admin ? $admin : false;
     }
