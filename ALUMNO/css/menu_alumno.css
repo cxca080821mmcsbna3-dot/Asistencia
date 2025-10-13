@@ -47,11 +47,17 @@ header {
   backdrop-filter: blur(8px);
 }
 
-.logo {
+label img{
+  height: 60px;
+  margin: 0%;
+}
+
+.cecytem {
   font-size: 1.8em;
   font-weight: bold;
   color: #fff;
   letter-spacing: 2px;
+  margin: 0%;
 }
 
 .navbar a {

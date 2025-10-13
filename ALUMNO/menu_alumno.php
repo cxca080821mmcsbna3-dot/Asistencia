@@ -25,7 +25,7 @@ $nombreAlumno = $_SESSION['nombre'];
     </video>
 
     <header>
-      <div class="logo">CECYTEM</div>
+      <label class="cecytem"><img src="img/CECYTEM.PNG" alt="Incorrecto">  CECYTEM</label>
       <nav class="navbar">
         <a href="asistencia.php">Asistencia</a>
         <a href="Perfil.php">Perfil</a>
@@ -57,7 +57,7 @@ $nombreAlumno = $_SESSION['nombre'];
   </div>
 </div>
 
-<!-- SCRIPT: Solo en el menú -->
+<!-- SCRIPT: Modo oscuro -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("modoOscuro");
