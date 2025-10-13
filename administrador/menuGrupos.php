@@ -14,6 +14,7 @@
   <a href="gruposCreados.php" class="boton">Grupos</a>
   <a href="agregar_materia.php" class="boton">Materias</a>
   <a href="usuarios.php" class="boton">Usuarios</a>
+  <a href="auditoria.php" class="boton">Historial</a>
   <a href="../assets/sentenciasSQL/logout.php" class="boton">Cerrar sesión</a>  <!-- Aquí va el botón -->
 </nav>
 </body>
