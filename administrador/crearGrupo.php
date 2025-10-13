@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . ("../assets/sentenciasSQL/grupos.php");
+include_once __DIR__ . ("<div class="">../assets/sentenciasSQL/grupos.php");
 
 if (isset($_POST['crear'])) {
     $idGrupo        = random_int(10000000, 99999999);

@@ -110,3 +110,15 @@ input[type="text"]{
     border-radius: 9999px;
     padding: 10px 20px;
 }
+input[type="text"],
+input[type="password"] {
+    display: block;
+    margin: 0 auto;
+    background-color: rgba(182, 162, 148, 0.5);
+    border-color: #3b2f2f;
+    border-radius: 9999px;
+    padding: 10px 20px;
+    color: #806b56;
+    font-size: 1em;
+    text-align: center;
+}

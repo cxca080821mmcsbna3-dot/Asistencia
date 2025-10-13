@@ -2,9 +2,37 @@
 session_start();
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
 
-// Consultar materias
-$sql = "SELECT * FROM materias";
-$stmt = $pdo->query($sql);
+// Verificar que haya sesión de profesor
+if (!isset($_SESSION['idProfesor'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$idProfesor = $_SESSION['idProfesor'];
+
+// Si el grupo viene por GET (ej. de gruposD.php)
+if (!isset($_GET['idGrupo'])) {
+    echo "No se especificó un grupo.";
+    exit();
+}
+
+$idGrupo = intval($_GET['idGrupo']);
+
+// Consultar materias del profesor en este grupo
+$sql = "
+    SELECT m.*
+    FROM materias m
+    INNER JOIN grupo_materia gm 
+        ON m.id_materia = gm.id_materia
+    WHERE gm.id_profesor = :idProfesor
+      AND gm.id_grupo = :idGrupo
+    ORDER BY m.nombre ASC
+";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    ':idProfesor' => $idProfesor,
+    ':idGrupo' => $idGrupo
+]);
 $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -25,14 +53,14 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <ul class="materias-lista">
         <?php foreach ($materias as $materia): ?>
           <li>
-            <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>" class="btn">
+            <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>" class="btn">
               <?= htmlspecialchars($materia['nombre']) ?>
             </a>
           </li>
         <?php endforeach; ?>
       </ul>
     <?php else: ?>
-      <p>No hay materias registradas.</p>
+      <p>No hay materias registradas para este grupo y profesor.</p>
     <?php endif; ?>
   </div>
 </body>
