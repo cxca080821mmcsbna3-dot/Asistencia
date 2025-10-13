@@ -1,6 +1,8 @@
 <?php
-include_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
-require_once __DIR__ . "/assets/sentenciasSQL/grupos.php";
+
+include_once(__DIR__ . '/../assets/sentenciasSQL/conexion.php');
+require_once(__DIR__ . '/../assets/sentenciasSQL/grupos.php');
+
 
 $gruposObj = new Grupos();
 $listaGrupos = $gruposObj->leerGrupos();
@@ -76,7 +78,7 @@ $tipo = $_POST['tipo_usuario'] ?? '';
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="stylesheet" href="assets/css/usuarios.css">
+    <link rel="stylesheet" href="css/usuarios.css">
     <meta charset="UTF-8">
     <title>Crear Usuario</title>
 </head>
