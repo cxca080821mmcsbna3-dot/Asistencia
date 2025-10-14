@@ -32,10 +32,10 @@ $listaGrupos = $grupos->leerGruposPorProfesor($idProfesor);
         <?php if (!empty($listaGrupos)): ?>
             <?php foreach ($listaGrupos as $grupo): ?>
                 <div class="card">
-                    <h2><?= htmlspecialchars($grupo['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <center><h2><?= htmlspecialchars($grupo['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2></center>
                     <p><strong>Descripción:</strong> <?= htmlspecialchars($grupo['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p><strong>Tutor:</strong> <?= htmlspecialchars($grupo['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
-                    <a class="btn" href="menuMateriasD.php?idGrupo=<?= $grupo['idGrupo']; ?>">Información del grupo</a>
+                    <center><a class="btn" href="menuMateriasD.php?idGrupo=<?= $grupo['idGrupo']; ?>">Información del grupo</a></center>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

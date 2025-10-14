@@ -1,0 +1,83 @@
+/* General */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0e8dc; /* beige claro */
+  color: #5c4033;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #8b4513;
+  text-shadow: 1px 1px #f5deb3;
+}
+
+/* Contenedor de materias */
+.materias-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Tarjeta individual */
+.card {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #d8c2a8;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Título de materia */
+.card h2 {
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #4b3621;
+}
+
+/* Botón */
+.btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 16px;
+  background-color: #deb887;
+  color: #3b2f2f;
+  border: 1px solid #a0522d;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #d2b48c;
+}
+
+/* Mensaje si no hay materias */
+.no-materias {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #806b56;
+}

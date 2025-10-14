@@ -41,7 +41,7 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
   <meta charset="UTF-8">
   <title>Seleccionar Materia</title>
-  <link rel="stylesheet" href="assets/css/materias.css">
+  <link rel="stylesheet" href="assets/css/materiasD.css">
 </head>
 <body>
   <header>
@@ -50,15 +50,17 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   <div class="container">
     <?php if (!empty($materias)): ?>
-      <ul class="materias-lista">
-        <?php foreach ($materias as $materia): ?>
-          <li>
-            <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>" class="btn">
-              <?= htmlspecialchars($materia['nombre']) ?>
-            </a>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+      <div class="materias-grid">
+  <?php foreach ($materias as $materia): ?>
+    <div class="card">
+      <h2><?= htmlspecialchars($materia['nombre']) ?></h2>
+      <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>" class="btn">
+        Tomar asistencia
+      </a>
+    </div>
+  <?php endforeach; ?>
+</div>
+
     <?php else: ?>
       <p>No hay materias registradas para este grupo y profesor.</p>
     <?php endif; ?>

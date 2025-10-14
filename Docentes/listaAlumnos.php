@@ -123,10 +123,14 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
 }
 
 // ---------- Consultar alumnos del grupo de esta materia ----------
-$sqlAl = "SELECT * FROM alumno WHERE id_grupo = :id_grupo ORDER BY apellidos, nombre";
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, numero_lista
+          FROM alumno
+          WHERE id_grupo = :id_grupo
+          ORDER BY numero_lista ASC";
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
+
 
 // ---------- Consultar asistencias del mes ----------
 $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
@@ -157,14 +161,14 @@ html, body {
   background-color: #f0e8dc; /* fondo suave, sin imagen */
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 7px;
 }
 
 /* --- Contenedor principal --- */
 .wrapper {
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
-  padding: 2rem;
+  padding: 0.7rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   max-width: 100%;
   width: 100%;
@@ -241,7 +245,7 @@ input[type="number"]:focus {
 
 /* --- Botón de exportar --- */
 .export-btn {
-  background: #2d89ef;
+  background: #deb887;
   color: #fff;
   padding: 8px 12px;
   border-radius: 6px;
@@ -250,7 +254,7 @@ input[type="number"]:focus {
 }
 
 .export-btn:hover {
-  background-color: #1e6fc4;
+  background-color: #3b2f2f;
 }
 
 /* --- Tabla de asistencia --- */
@@ -341,7 +345,7 @@ th {
         </form>
 
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-            <a class="export-btn" href="?id_materia=<?= $id_materia ?>&mes=<?= $mes ?>&anio=<?= $anio ?>&export=excel">📥 Descargar Excel</a>
+            <a class="export-btn" href="?id_materia=<?= $id_materia ?>&mes=<?= $mes ?>&anio=<?= $anio ?>&export=excel">Descargar Excel</a>
         </div>
     </div>
 
@@ -358,26 +362,27 @@ th {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($alumnos as $i => $al): ?>
-                <tr>
-                    <td><?= $i+1 ?></td>
-                    <td><?= htmlspecialchars($al['matricula']) ?></td>
-                    <td class="alumno-col"><?= htmlspecialchars($al['apellidos'] . ' ' . $al['nombre']) ?></td>
-                    <?php for ($d = 1; $d <= $diasMes; $d++): 
-                        $marcada = isset($inasistencias[$al['id_alumno']][$d]);
-                    ?>
-                        <td>
-                            <button
-                              class="btn-cuadro <?= $marcada ? 'tachado' : '' ?>"
-                              data-id-alumno="<?= $al['id_alumno'] ?>"
-                              data-dia="<?= $d ?>"
-                              title="<?= $marcada ? 'Quitar inasistencia' : 'Marcar inasistencia' ?>">
-                            </button>
-                        </td>
-                    <?php endfor; ?>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+  <?php foreach ($alumnos as $al): ?>
+    <tr>
+      <td class="numero"><?= htmlspecialchars($al['numero_lista']) ?></td>
+      <td><?= htmlspecialchars($al['matricula']) ?></td>
+      <td class="nombre"><?= htmlspecialchars($al['apellidos'] . ' ' . $al['nombre']) ?></td>
+      <?php for ($d = 1; $d <= $diasMes; $d++): 
+          $marcada = isset($inasistencias[$al['id_alumno']][$d]);
+      ?>
+        <td>
+          <button
+            class="btn-cuadro <?= $marcada ? 'tachado' : '' ?>"
+            data-id-alumno="<?= $al['id_alumno'] ?>"
+            data-dia="<?= $d ?>"
+            title="<?= $marcada ? 'Quitar inasistencia' : 'Marcar inasistencia' ?>">
+          </button>
+        </td>
+      <?php endfor; ?>
+    </tr>
+  <?php endforeach; ?>
+</tbody>
+
     </table>
     </div>
 </div>
