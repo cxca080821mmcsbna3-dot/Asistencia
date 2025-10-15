@@ -1,11 +1,7 @@
-<?php 
+<?php
 class Materia {
-    function Ingresar($nombre, $descripcion, $idGrupo){
-<<<<<<< HEAD
+    function Ingresar($nombre, $descripcion, $idGrupo) {
         include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
-=======
-        include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
->>>>>>> 10fc8289561c0a92c146f8a4d1f0daa3c4e09848
 
         if (isset($pdo)) {
             $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) 
@@ -15,7 +11,7 @@ class Materia {
             $stmt->bindParam(':descripcion', $descripcion);
             $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
 
-            if($stmt->execute()) {
+            if ($stmt->execute()) {
                 echo "Materia ingresada correctamente.";
             } else {
                 echo "Error al ingresar la materia.";
@@ -25,17 +21,13 @@ class Materia {
         }
     }
 
-    function Consultar($idGrupo){
-<<<<<<< HEAD
+    function Consultar($idGrupo) {
         include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
-=======
-        include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
->>>>>>> 10fc8289561c0a92c146f8a4d1f0daa3c4e09848
         $lista = [];
         if (isset($pdo)) {
             $stmt = $pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
             $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
-            if($stmt->execute()){
+            if ($stmt->execute()) {
                 $lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
@@ -44,11 +36,8 @@ class Materia {
 }
 
 // Obtener conexión y grupos
-<<<<<<< HEAD
 include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
-=======
-include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
->>>>>>> 10fc8289561c0a92c146f8a4d1f0daa3c4e09848
+
 $grupos = [];
 if (isset($pdo)) {
     $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");
@@ -85,7 +74,7 @@ if (isset($_GET['filtro_grupo'])) {
 </head>
 <body>
     <center>
-    <br><br><br><br><br>
+        <br><br><br><br><br>
 
         <!-- FILTRO DE CONSULTA POR GRUPO -->
         <div class="consultar">
@@ -128,7 +117,6 @@ if (isset($_GET['filtro_grupo'])) {
                 </tbody>
             </table>
         </div>
-    </div>
+    </center>
 </body>
-</center>
 </html>
