@@ -33,6 +33,8 @@ $registros = $stmt->fetchAll();
     <title>Registros de Auditoría</title>
 </head>
 <body>
+        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
     <table>
         <caption>Registros de Auditoría</caption>
         <thead>

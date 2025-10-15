@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!-- Caja con estilos desde el CSS externo -->
+     <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
 <div class="materias">
     <form action="materias.php" method="POST">
         <h1>Agregar Materia</h1>

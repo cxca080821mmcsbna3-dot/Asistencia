@@ -84,7 +84,7 @@ $listaGrupos = $grupos->leerGrupos();
 <body>
     <header>
     <h1>Lista de Grupos</h1>
-    <a href="crearGrupo.php"><button>crear</button></a>
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
     </header>
 

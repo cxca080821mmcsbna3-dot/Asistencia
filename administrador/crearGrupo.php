@@ -1,10 +1,6 @@
 <?php
 
-<<<<<<< HEAD
 include_once(__DIR__ . '/../assets/sentenciasSQL/grupos.php');
-=======
-include_once __DIR__ . ("<div class="">../assets/sentenciasSQL/grupos.php");
->>>>>>> 10fc8289561c0a92c146f8a4d1f0daa3c4e09848
 
 if (isset($_POST['crear'])) {
     $idGrupo        = random_int(10000000, 99999999);
@@ -46,6 +42,8 @@ input.invalid, textarea.invalid {
 }
 </style>
 <body>
+        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
 
     <h2>Agregar Grupo</h2>
    <form id="formGrupo" action="crearGrupo.php" method="POST" enctype="multipart/form-data">

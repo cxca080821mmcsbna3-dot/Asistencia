@@ -39,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Registrar Maestros</title>
 </head>
 <body>
+        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
     <form action="MaestroNuevo.php" method="POST">
         <label for="maestro">Nombre del maestro:</label>
         <input type="text" name="maestro" id="maestro" required>

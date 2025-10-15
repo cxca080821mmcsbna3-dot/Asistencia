@@ -148,8 +148,9 @@ if (isset($_POST['actualizar'])) {
 </head>
 
 <body>
+
 <div class="menu">
-    <button class="regresar" onclick="window.history.back()">Volver</button>
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
     <?php if ($mensaje): ?>
         <p class="message <?= (strpos($mensaje, 'correctamente') !== false) ? 'success' : 'error'; ?>">

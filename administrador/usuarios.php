@@ -141,6 +141,8 @@ if ($editarID && $tipo) {
 </head>
 <body>
 <div class="usuarios">
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
     <h2><?= $editarID ? 'Editar Usuario' : 'Crear Usuario' ?></h2>
 
     <?php if (!empty($mensaje)): ?>

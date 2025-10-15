@@ -41,6 +41,7 @@ input.invalid, textarea.invalid {
 }
 </style>
 <body>
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
     <h2>Agregar Materia</h2>
    <form id="formGrupo" action="crearGrupo.php" method="POST" enctype="multipart/form-data">
