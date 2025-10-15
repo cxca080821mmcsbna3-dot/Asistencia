@@ -28,6 +28,7 @@ class Profesor {
 }
 
 class Alumno {
+    // --- MÉTODO ORIGINAL ---
     public function buscarPorNombreYCorreo($nombreCompleto, $correo) {
         global $pdo;
         $stmt = $pdo->prepare("
@@ -36,6 +37,18 @@ class Alumno {
             AND correo = ?
         ");
         $stmt->execute([$nombreCompleto, $correo]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // --- NUEVO MÉTODO para login con matrícula y CURP ---
+    public function buscarPorMatriculaYCurp($matricula, $curp) {
+        global $pdo;
+        $stmt = $pdo->prepare("
+            SELECT * FROM alumno 
+            WHERE matricula = ? 
+            AND curp = ?
+        ");
+        $stmt->execute([$matricula, $curp]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

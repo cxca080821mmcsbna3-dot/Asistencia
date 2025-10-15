@@ -1,57 +1,68 @@
 <?php
 session_start();
-require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
-require_once __DIR__ . "/assets/sentenciasSQL/claseUsuarios.php";
+require_once __DIR__ . "../assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "../assets/sentenciasSQL/claseUsuarios.php";
 
 $error = "";
 
-if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['contrasena'])) {
+if (isset($_POST['iniciar'])) {
+
     $usuario = trim($_POST['usuario']);
     $contrasena = trim($_POST['contrasena']);
 
-    // ==== ADMIN ====
-    $admin = new Admin();
-    $adminData = $admin->leerAdmin($usuario, $contrasena);
-    if ($adminData) {
-        $_SESSION['rol'] = 'admin';
-        $_SESSION['idAdmin'] = $adminData['idAdmin'];
-        $_SESSION['usuario'] = $adminData['usuario'];
-        header("Location: administrador/menuGrupos.php");
-        exit();
-    }
-
-    if (!preg_match('/^[A-Z0-9]{18}@soycecytem\.mx$/i', $contrasena)) {
-        $error = "Correo no válido. Debe ingresar con correo Institucional";
+    if (empty($usuario) || empty($contrasena)) {
+        $error = "⚠️ Todos los campos son obligatorios.";
     } else {
-        // ==== PROFESOR ====
-        $profesor = new Profesor();
-        $profesorData = $profesor->buscarPorNombreYCorreo($usuario, $contrasena);
-        if ($profesorData) {
-            $_SESSION['rol'] = 'profesor';
-            $_SESSION['idProfesor'] = $profesorData['id_profesor'];
-            $_SESSION['nombre'] = $profesorData['nombre'];
-            header("Location: Docentes/menuDocente.php");
-            exit();
+
+        // ========= ADMIN =========
+        if (preg_match('/^[A-Za-z0-9._%+-]+@soycecytem\.mx$/i', $usuario)) {
+            $admin = new Admin();
+            $adminData = $admin->leerAdmin($usuario, $contrasena);
+
+            if ($adminData) {
+                $_SESSION['rol'] = 'admin';
+                $_SESSION['idAdmin'] = $adminData['idAdmin'];
+                $_SESSION['usuario'] = $adminData['usuario'];
+                header("Location: administrador/menuGrupos.php");
+                exit();
+            }
         }
 
-        // ==== ALUMNO ====
-        $alumno = new Alumno();
-        $alumnoData = $alumno->buscarPorNombreYCorreo($usuario, $contrasena);
-        if ($alumnoData) {
-            $_SESSION['rol'] = 'alumno';
-            $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
-            $_SESSION['nombre'] = $alumnoData['nombre'];
-            header("Location: alumno/menu_alumno.php");
-            exit();
+        // ========= PROFESOR =========
+        if (preg_match('/^[A-Za-z0-9._%+-]+@soycecytem\.mx$/i', $usuario)) {
+            $profesor = new Profesor();
+            $profesorData = $profesor->buscarPorCorreo($usuario); // Nuevo método que busca solo por correo
+
+            if ($profesorData && password_verify($contrasena, $profesorData['password'])) {
+                $_SESSION['rol'] = 'profesor';
+                $_SESSION['idProfesor'] = $profesorData['id_profesor'];
+                $_SESSION['nombre'] = $profesorData['nombre'];
+                header("Location: Docentes/menuDocente.php");
+                exit();
+            }
         }
 
-        $error = "Credenciales incorrectas.";
+        // ========= ALUMNO =========
+        if (preg_match('/^[A-Za-z0-9]+$/i', $usuario)) { // matrícula = solo letras y números
+            $alumno = new Alumno();
+            $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
+
+            if ($alumnoData) {
+                $_SESSION['rol'] = 'alumno';
+                $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
+                $_SESSION['nombre'] = $alumnoData['nombre'];
+                $_SESSION['matricula'] = $alumnoData['matricula'];
+                header("Location: alumno/menu_alumno.php");
+                exit();
+            }
+        }
+
+        // Si no coincide con ninguno
+        $error = "❌ Credenciales incorrectas o usuario no registrado.";
     }
-} elseif (isset($_POST['iniciar'])) {
-    $error = "Todos los campos son obligatorios.";
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
