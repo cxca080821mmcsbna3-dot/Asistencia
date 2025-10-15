@@ -3,13 +3,13 @@ session_start();
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
 require_once __DIR__ . "/assets/sentenciasSQL/claseUsuarios.php";
 
-
 $error = "";
 
 if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['contrasena'])) {
     $usuario = trim($_POST['usuario']);
     $contrasena = trim($_POST['contrasena']);
 
+    // ==== ADMIN ====
     $admin = new Admin();
     $adminData = $admin->leerAdmin($usuario, $contrasena);
     if ($adminData) {
@@ -20,6 +20,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         exit();
     }
 
+    // ==== PROFESOR ====
     $profesor = new Profesor();
     $profesorData = $profesor->buscarPorNombreYCorreo($usuario, $contrasena);
     if ($profesorData) {
@@ -30,6 +31,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         exit();
     }
 
+    // ==== ALUMNO ====
     $alumno = new Alumno();
     $alumnoData = $alumno->buscarPorNombreYCorreo($usuario, $contrasena);
     if ($alumnoData) {
@@ -57,6 +59,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
     <div class="wrapper">
         <form action="" method="post">
             <h1>Login</h1>
+
             <?php if (!empty($error)): ?>
                 <p style="color:cornflowerblue; text-align:center;"><?= htmlspecialchars($error) ?></p>
             <?php endif; ?>
@@ -65,12 +68,17 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
                 <label for="usuario" class="tex">Nombre completo o usuario:</label><br>
                 <input type="text" name="usuario" id="usuario" class="TEXTO" required>
             </div>
+
             <br>
+
             <div class="input-box">
                 <label for="contrasena" class="tex">Contraseña (correo para alumno/profesor):</label><br>
-                <input type="text" name="contrasena" id="contrasena" class="TEXTO" required>
+                <!-- 🔒 Campo de contraseña con mismo estilo -->
+                <input type="password" name="contrasena" id="contrasena" class="TEXTO" required>
             </div>
+
             <br>
+
             <div class="button-group">
                 <button type="submit" name="iniciar" class="btn">Iniciar sesión</button>
             </div>

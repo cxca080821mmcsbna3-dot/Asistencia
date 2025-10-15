@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 include_once(__DIR__ . '/../assets/sentenciasSQL/grupos.php');
+=======
+require_once __DIR__. "../../assets/sentenciasSQL/grupos.php";
+>>>>>>> 10fc8289561c0a92c146f8a4d1f0daa3c4e09848
 $grupos =new Grupos();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar'])) {
     $idEliminar = intval($_POST['idGrupo']);

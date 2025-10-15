@@ -23,8 +23,8 @@ header h1 {
   text-shadow: 1px 1px #f5deb3;
 }
 
-/* Contenedor de tarjetas */
-.container {
+/* Contenedor de materias */
+.materias-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -38,7 +38,8 @@ header h1 {
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 300px;
+  width: 250px;
+  text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -47,18 +48,12 @@ header h1 {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Título de grupo */
+/* Título de materia */
 .card h2 {
   font-size: 1.4rem;
   margin-top: 0;
   margin-bottom: 10px;
   color: #4b3621;
-}
-
-/* Párrafos dentro de la tarjeta */
-.card p {
-  margin: 6px 0;
-  font-size: 0.95rem;
 }
 
 /* Botón */
@@ -80,8 +75,8 @@ header h1 {
   background-color: #d2b48c;
 }
 
-/* Mensaje si no hay grupos */
-.container p {
+/* Mensaje si no hay materias */
+.no-materias {
   text-align: center;
   font-size: 1.1rem;
   color: #806b56;

@@ -24,6 +24,8 @@ class Grupos {
         }
     }
 
+
+
     public function leerGrupos() {
         include "Conexion.php";
         $stmt = $pdo->prepare("SELECT * FROM grupo ORDER BY nombre ASC");
@@ -31,6 +33,21 @@ class Grupos {
         $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $grupos;
     }
+
+    public function leerGruposPorProfesor($idProfesor) {
+    include "Conexion.php";
+    $stmt = $pdo->prepare("
+        SELECT DISTINCT g.*
+        FROM grupo g
+        INNER JOIN grupo_materia gm ON g.idGrupo = gm.id_grupo
+        WHERE gm.id_profesor = :idProfesor
+        ORDER BY g.nombre ASC
+    ");
+    $stmt->execute([':idProfesor' => $idProfesor]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
     public function inscribirUsuario($idGrupo, $idUsuario) {
         include "Conexion.php";
