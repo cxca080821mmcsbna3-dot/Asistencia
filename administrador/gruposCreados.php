@@ -24,6 +24,7 @@ $listaGrupos = $grupos->leerGrupos();
     <header>
     <h1>Lista de Grupos</h1>
     <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="crearGrupo.php" class="back-arrow">Crear Grupo +</a>
 
     </header>
 

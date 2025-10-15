@@ -41,7 +41,7 @@ if (isset($_POST['crear'])) {
         $domicilio = $_POST['domicilio'];
         $correo = $_POST['correo'];
 
-        if (isset($_POST['id_profesor'])) {
+        if (isset($_POST['id_profesor']) && $_POST['id_profesor'] != '') {
             $stmt = $pdo->prepare("UPDATE profesor SET nombre=?, apellidos=?, telefono=?, domicilio=?, correo=? WHERE id_profesor=?");
             $stmt->execute([$nombre, $apellidos, $telefono, $domicilio, $correo, $_POST['id_profesor']]);
             $mensaje = "Profesor actualizado correctamente.";
@@ -51,34 +51,35 @@ if (isset($_POST['crear'])) {
             if ($stmt->fetchColumn() > 0) {
                 $mensaje = "Error: El correo o teléfono ya está registrado para un profesor.";
             } else {
-                $sql = "INSERT INTO profesor (nombre, apellidos, telefono, domicilio, correo) VALUES (?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO profesor (nombre, apellidos, telefono, domicilio, correo, password) VALUES (?, ?, ?, ?, ?, '')";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$nombre, $apellidos, $telefono, $domicilio, $correo]);
                 $mensaje = "Profesor creado correctamente.";
             }
         }
 
-    } elseif ($tipo === 'alumno') {
+        } elseif ($tipo === 'alumno') {
+        $matricula = $_POST['matricula'];
         $nombre = $_POST['nombre'];
         $apellidos = $_POST['apellidos'];
-        $correo = $_POST['correo'];
         $telefono = $_POST['telefono'];
-        $domicilio = $_POST['domicilio'];
-        $id_grupo = $_POST['id_grupo'];
 
-        if (isset($_POST['id_alumno'])) {
-            $stmt = $pdo->prepare("UPDATE alumno SET nombre=?, apellidos=?, correo=?, telefono=?, domicilio=?, id_grupo=? WHERE id_alumno=?");
-            $stmt->execute([$nombre, $apellidos, $correo, $telefono, $domicilio, $id_grupo, $_POST['id_alumno']]);
+        if (isset($_POST['id_alumno']) && $_POST['id_alumno'] != '') {
+            // Actualizar alumno (sin grupo)
+            $stmt = $pdo->prepare("UPDATE alumno SET matricula=?, nombre=?, apellidos=?, telefono=? WHERE id_alumno=?");
+            $stmt->execute([$matricula, $nombre, $apellidos, $telefono, $_POST['id_alumno']]);
             $mensaje = "Alumno actualizado correctamente.";
         } else {
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM alumno WHERE correo = ? OR telefono = ?");
-            $stmt->execute([$correo, $telefono]);
+            // Verificar si la matrícula ya existe
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM alumno WHERE matricula = ?");
+            $stmt->execute([$matricula]);
             if ($stmt->fetchColumn() > 0) {
-                $mensaje = "Error: El correo o teléfono ya está registrado para un alumno.";
+                $mensaje = "Error: La matrícula ya está registrada.";
             } else {
-                $sql = "INSERT INTO alumno (nombre, apellidos, correo, telefono, domicilio, id_grupo) VALUES (?, ?, ?, ?, ?, ?)";
+                // Crear nuevo alumno (sin grupo asignado)
+                $sql = "INSERT INTO alumno (matricula, nombre, apellidos, telefono) VALUES (?, ?, ?, ?)";
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([$nombre, $apellidos, $correo, $telefono, $domicilio, $id_grupo]);
+                $stmt->execute([$matricula, $nombre, $apellidos, $telefono]);
                 $mensaje = "Alumno creado correctamente.";
             }
         }
@@ -86,7 +87,7 @@ if (isset($_POST['crear'])) {
     } elseif ($tipo === 'administrador') {
         $usuario = $_POST['usuario'];
 
-        if (isset($_POST['id_admin'])) {
+        if (isset($_POST['id_admin']) && $_POST['id_admin'] != '') {
             if (!empty($_POST['password'])) {
                 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("UPDATE administrador SET usuario=?, password=? WHERE id_admin=?");
@@ -129,7 +130,6 @@ if ($editarID && $tipo) {
     $stmt->execute([$editarID]);
     $datosEditar = $stmt->fetch(PDO::FETCH_ASSOC);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -160,62 +160,54 @@ if ($editarID && $tipo) {
             <option value="administrador" <?= ($tipo == 'administrador') ? 'selected' : '' ?>>Administrador</option>
         </select><br><br>
 
-        <?php if ($tipo == 'profesor' || $tipo == 'alumno'): ?>
+        <?php if ($tipo == 'profesor'): ?>
             <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required><br><br>
             <input type="text" name="apellidos" placeholder="Apellidos" value="<?= $datosEditar['apellidos'] ?? '' ?>" required><br><br>
-            <input type="email" name="correo" placeholder="Correo" value="<?= $datosEditar['correo'] ?? '' ?>" required><br><br>
             <input type="text" name="telefono" placeholder="Teléfono" value="<?= $datosEditar['telefono'] ?? '' ?>" required><br><br>
             <input type="text" name="domicilio" placeholder="Domicilio" value="<?= $datosEditar['domicilio'] ?? '' ?>" required><br><br>
+            <input type="email" name="correo" placeholder="Correo" value="<?= $datosEditar['correo'] ?? '' ?>" required><br><br>
+            <input type="hidden" name="id_profesor" value="<?= $datosEditar['id_profesor'] ?? '' ?>">
 
-            <?php if ($tipo == 'alumno'): ?>
-                <label>Grupo:</label><br>
-                <select name="id_grupo" required>
-                    <option value="">Selecciona un grupo</option>
-                    <?php foreach ($listaGrupos as $grupo): ?>
-                        <option value="<?= $grupo['idGrupo'] ?>" <?= (isset($datosEditar['id_grupo']) && $datosEditar['id_grupo'] == $grupo['idGrupo']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($grupo['nombre']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select><br><br>
-                <input type="hidden" name="id_alumno" value="<?= $datosEditar['id_alumno'] ?? '' ?>">
-            <?php else: ?>
-                <input type="hidden" name="id_profesor" value="<?= $datosEditar['id_profesor'] ?? '' ?>">
-            <?php endif; ?>
+        <?php elseif ($tipo == 'alumno'): ?>
+            <input type="number" name="matricula" placeholder="Matrícula" value="<?= $datosEditar['matricula'] ?? '' ?>" required><br><br>
+            <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required><br><br>
+            <input type="text" name="apellidos" placeholder="Apellidos" value="<?= $datosEditar['apellidos'] ?? '' ?>" required><br><br>
+            <input type="text" name="telefono" placeholder="Teléfono" value="<?= $datosEditar['telefono'] ?? '' ?>" required><br><br>
+            <input type="hidden" name="id_alumno" value="<?= $datosEditar['id_alumno'] ?? '' ?>">
 
         <?php elseif ($tipo == 'administrador'): ?>
             <input type="text" name="usuario" placeholder="Usuario" value="<?= $datosEditar['usuario'] ?? '' ?>" required><br><br>
             <input type="password" name="password" placeholder="<?= $editarID ? 'Nueva Contraseña (opcional)' : 'Contraseña' ?>" <?= $editarID ? '' : 'required' ?>><br><br>
             <input type="hidden" name="id_admin" value="<?= $datosEditar['id_admin'] ?? '' ?>">
-
         <?php endif; ?>
 
         <?php if ($tipo != ''): ?>
             <button type="submit" name="crear"><?= $editarID ? 'Actualizar' : 'Crear' ?></button>
         <?php endif; ?>
     </form>
-        </div>
-    <hr><h3>Listado de <?= ucfirst($tipo) ?>s</h3>
+</div>
 
-    <?php
-    if ($tipo) {
-        switch ($tipo) {
-            case 'profesor':
-                $stmt = $pdo->query("SELECT * FROM profesor");
-                $usuarios = $stmt->fetchAll();
-                break;
-            case 'alumno':
-                $stmt = $pdo->query("SELECT * FROM alumno");
-                $usuarios = $stmt->fetchAll();
-                break;
-            case 'administrador':
-                $stmt = $pdo->query("SELECT * FROM administrador");
-                $usuarios = $stmt->fetchAll();
-                break;
-        }
+<hr><h3>Listado de <?= ucfirst($tipo) ?>s</h3>
 
+<?php
+if ($tipo) {
+    switch ($tipo) {
+        case 'profesor':
+            $stmt = $pdo->query("SELECT * FROM profesor");
+            break;
+        case 'alumno':
+            $stmt = $pdo->query("SELECT * FROM alumno");
+            break;
+        case 'administrador':
+            $stmt = $pdo->query("SELECT * FROM administrador");
+            break;
+    }
+    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($usuarios) {
         echo '<table border="1" cellpadding="5" cellspacing="0">';
         echo '<tr>';
-        foreach ($usuarios[0] as $campo => $_) {
+        foreach (array_keys($usuarios[0]) as $campo) {
             echo "<th>" . htmlspecialchars($campo) . "</th>";
         }
         echo '<th>Acciones</th></tr>';
@@ -225,15 +217,18 @@ if ($editarID && $tipo) {
             foreach ($usuario as $valor) {
                 echo "<td>" . htmlspecialchars($valor) . "</td>";
             }
-            $idCampo = array_keys($usuario)[0];}
+            $idCampo = array_keys($usuario)[0];
             echo "<td>
                 <a href='?editar=" . $usuario[$idCampo] . "&tipo=$tipo'>Editar</a> |
                 <a href='?eliminar=" . $usuario[$idCampo] . "&tipo=$tipo' onclick='return confirm(\"¿Seguro que deseas eliminar este usuario?\")'>Eliminar</a>
             </td>";
             echo '</tr>';
         }
-
         echo '</table>';
-    ?>
+    } else {
+        echo "<p>No hay registros de este tipo.</p>";
+    }
+}
+?>
 </body>
 </html>
