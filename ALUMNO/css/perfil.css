@@ -1,112 +1,98 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #d0e1e8, #a3b8c4);
-    color: #1a1a1a;
-    margin: 0;
-    padding: 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff4e0; /* Fondo más suave */
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.back-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background-color: #0b3d91;
-    color: #f0f4f8;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    transition: background 0.3s ease, transform 0.2s ease;
+.wrapper {
+  background: #fff8f0;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 900px;
 }
 
-.back-arrow:hover {
-    background-color: #0a336f;
-    transform: translateX(-4px);
+h1 {
+  color: #d2691e; /* Marrón-naranja */
+  text-align: center;
+  margin-bottom: 5px;
 }
 
-.perfil-tarjeta {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #f0f4f8;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+.small {
+  text-align: center;
+  color: #a0522d;
+  margin-bottom: 1rem;
 }
 
-.perfil-header {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    background: #0b3d91;
-    color: #f0f4f8;
+form {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.perfil-imagen img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 20px;
-    border: 3px solid #f0f4f8;
+select, input[type="number"] {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #e07b39;
+  border-radius: 6px;
+  background-color: rgba(255, 245, 230, 0.95);
+  font-size: 1rem;
 }
 
-.perfil-nombre h2 {
-    margin: 0 0 5px 0;
+button {
+  padding: 0.6rem 1rem;
+  background-color: #ff9933;
+  border: 1px solid #e07b39;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
 }
 
-.perfil-body {
-    padding: 20px;
+button:hover {
+  background-color: #ffb266;
 }
 
-.perfil-seccion {
-    margin-bottom: 20px;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: center;
+  background: #fffaf0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.perfil-seccion h3 {
-    margin-bottom: 10px;
-    color: #0b3d91;
-    border-bottom: 2px solid #7ea6d8;
-    padding-bottom: 4px;
+th, td {
+  border: 1px solid #f4a460;
+  padding: 6px;
 }
 
-.perfil-seccion p {
-    margin: 5px 0;
+th {
+  background-color: #ffb366;
+  color: #5c2e0a;
 }
 
-/*Modo oscuro*/
-
-body.dark-mode {
-    background: #121212;
-    /* fondo general oscuro */
-    color: #e0e0e0;
+td.asistencia {
+  font-weight: bold;
+  color: #fff;
 }
 
-body.dark-mode .perfil-tarjeta {
-    background: #1e1e1e;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+td.asistencia.presente {
+  background-color: #ff8c00; /* Naranja intenso */
 }
 
-body.dark-mode .perfil-header {
-    background: #222;
-    color: #f0f4f8;
+td.asistencia.ausente {
+  background-color: #ff704d; /* Naranja rojizo */
 }
 
-body.dark-mode .perfil-seccion h3 {
-    color: #80bfff;
-    border-bottom-color: #555;
-}
-
-body.dark-mode .perfil-body p {
-    color: #ccc;
-}
-
-body.dark-mode .back-arrow {
-    background-color: #333;
-    color: #f0f4f8;
-}
-
-body.dark-mode .back-arrow:hover {
-    background-color: #555;
+td.asistencia.vacio {
+  background-color: #ffe5cc; /* Suave */
+  color: #a0522d;
 }
