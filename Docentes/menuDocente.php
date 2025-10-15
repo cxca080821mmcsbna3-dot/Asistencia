@@ -1,19 +1,11 @@
 <?php
 session_start();
 
-// Si no ha iniciado sesión, redirigir al login
-if (!isset($_SESSION['idProfesor'])) {
+if (!isset($_SESSION['id_profesor']) || $_SESSION['rol'] !== 'profesor') {
     header("Location: ../index.php");
-    exit();
+    exit;
 }
 
-require_once __DIR__ . "../assets/sentenciasSQL/gruposD.php";
-
-$grupos = new Grupos();
-$idProfesor = $_SESSION['idProfesor'];
-
-// ✅ Solo los grupos que el profesor tiene asignados
-$listaGrupos = $grupos->leerGruposPorProfesor($idProfesor);
 ?>
 
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff4e0; /* Fondo más suave */
+  background-color: #f0e8dc;
   margin: 0;
   padding: 20px;
   display: flex;
@@ -8,91 +8,64 @@ body {
 }
 
 .wrapper {
-  background: #fff8f0;
+  background: #fff;
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   width: 100%;
-  max-width: 900px;
+  max-width: 600px;
 }
 
-h1 {
-  color: #d2691e; /* Marrón-naranja */
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-.small {
-  text-align: center;
+.back-arrow {
+  display: inline-block;
+  margin-bottom: 15px;
   color: #a0522d;
-  margin-bottom: 1rem;
-}
-
-form {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-select, input[type="number"] {
-  padding: 0.5rem 0.8rem;
-  border: 1px solid #e07b39;
-  border-radius: 6px;
-  background-color: rgba(255, 245, 230, 0.95);
-  font-size: 1rem;
-}
-
-button {
-  padding: 0.6rem 1rem;
-  background-color: #ff9933;
-  border: 1px solid #e07b39;
-  border-radius: 6px;
-  cursor: pointer;
+  text-decoration: none;
   font-weight: bold;
-  color: #fff;
 }
 
-button:hover {
-  background-color: #ffb266;
+.back-arrow:hover {
+  color: #deb887;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+.perfil-tarjeta {
   text-align: center;
-  background: #fffaf0;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  background-color: #fffaf0;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
-th, td {
-  border: 1px solid #f4a460;
-  padding: 6px;
+.perfil-imagen img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #deb887;
+  margin-bottom: 15px;
 }
 
-th {
-  background-color: #ffb366;
-  color: #5c2e0a;
+.perfil-nombre h2 {
+  color: #8b4513;
+  margin: 5px 0;
 }
 
-td.asistencia {
-  font-weight: bold;
-  color: #fff;
+.perfil-nombre p {
+  color: #4b3621;
+  margin: 0 0 15px 0;
 }
 
-td.asistencia.presente {
-  background-color: #ff8c00; /* Naranja intenso */
+.perfil-body {
+  background-color: #fff5e6;
+  padding: 15px;
+  border-radius: 12px;
 }
 
-td.asistencia.ausente {
-  background-color: #ff704d; /* Naranja rojizo */
-}
-
-td.asistencia.vacio {
-  background-color: #ffe5cc; /* Suave */
+.perfil-seccion h3 {
   color: #a0522d;
+  margin-bottom: 10px;
+}
+
+.perfil-seccion p {
+  color: #5c4033;
+  margin: 5px 0;
 }

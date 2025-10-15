@@ -1,12 +1,12 @@
 <?php
 class Admin {
-    public function leerAdmin($usuario, $password) {
+    // Leer administrador por correo + contraseña
+    public function leerAdmin($correo, $password) {
         global $pdo;
-        $stmt = $pdo->prepare("SELECT * FROM administrador WHERE usuario = ?");
-        $stmt->execute([$usuario]);
+        $stmt = $pdo->prepare("SELECT * FROM administrador WHERE correo = ?");
+        $stmt->execute([$correo]);
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Verificamos la contraseña hasheada con password_verify
         if ($admin && password_verify($password, $admin['password'])) {
             return $admin;
         }
@@ -15,39 +15,21 @@ class Admin {
 }
 
 class Profesor {
-    public function buscarPorNombreYCorreo($nombreCompleto, $correo) {
+    // Buscar profesor por correo
+    public function buscarPorCorreo($correo) {
         global $pdo;
-        $stmt = $pdo->prepare("
-            SELECT * FROM profesor 
-            WHERE LOWER(CONCAT(nombre, ' ', apellidos)) = LOWER(?) 
-            AND correo = ?
-        ");
-        $stmt->execute([$nombreCompleto, $correo]);
+        $stmt = $pdo->prepare("SELECT * FROM profesor WHERE correo = ?");
+        $stmt->execute([$correo]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 
-class Alumno {
-    // --- MÉTODO ORIGINAL ---
-    public function buscarPorNombreYCorreo($nombreCompleto, $correo) {
-        global $pdo;
-        $stmt = $pdo->prepare("
-            SELECT * FROM alumno 
-            WHERE LOWER(CONCAT(nombre, ' ', apellidos)) = LOWER(?) 
-            AND correo = ?
-        ");
-        $stmt->execute([$nombreCompleto, $correo]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
 
-    // --- NUEVO MÉTODO para login con matrícula y CURP ---
+class Alumno {
+    // Buscar alumno por matrícula y CURP
     public function buscarPorMatriculaYCurp($matricula, $curp) {
         global $pdo;
-        $stmt = $pdo->prepare("
-            SELECT * FROM alumno 
-            WHERE matricula = ? 
-            AND curp = ?
-        ");
+        $stmt = $pdo->prepare("SELECT * FROM alumno WHERE matricula = ? AND curp = ?");
         $stmt->execute([$matricula, $curp]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

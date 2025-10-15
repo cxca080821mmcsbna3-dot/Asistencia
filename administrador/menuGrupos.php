@@ -1,13 +1,14 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['usuario']) || $_SESSION['rol'] !== 'admin') {
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../index.php");
     exit;
 }
 
-$nombreAdmin = $_SESSION['usuario'];
+$nombreAdmin = $_SESSION['nombre'];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

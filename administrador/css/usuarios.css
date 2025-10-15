@@ -1,108 +1,131 @@
 body {
-    font-family: sans-serif;
-    background-color: #f0f4f8;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0e8dc;
+  display: flex;
+  justify-content: center;
+  padding: 7px;
 }
 
-.usuarios {
-    max-width: 450px;
-    margin: 80px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.wrapper {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  width: 100%;
+  overflow-x: auto;
 }
 
-h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+h1 {
+  font-size: 1.6rem;
+  color: #8b4513;
+  text-shadow: 1px 1px #f5deb3;
+  margin-bottom: 0.5rem;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-weight: bold;
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
 }
 
-input,
-select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-    box-sizing: border-box;
+.controls form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-button,
-input[type="submit"] {
-    padding: 10px 15px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
+.controls label {
+  font-weight: bold;
+  color: #4b3621;
+  margin-right: 0.3rem;
 }
 
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+select,
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"] {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #c2a88c;
+  border-radius: 6px;
+  background-color: rgba(255, 250, 240, 0.95);
+  font-size: 1rem;
+  font-family: 'Georgia', serif;
+  color: #5c4033;
+  min-width: 180px;
 }
 
-.tabla-usuarios {
-    max-width: 90%;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
+select:focus,
+input:focus {
+  border-color: #8b4513;
+  box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+  outline: none;
 }
 
-.tabla-usuarios table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 auto;
-    text-align: center;
+.controls button {
+  padding: 0.6rem 1rem;
+  background-color: #deb887;
+  color: #3b2f2f;
+  border: 1px solid #a0522d;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
 }
 
-.tabla-usuarios th,
-.tabla-usuarios td {
-    padding: 10px;
-    border: 1px solid #ccc;
+.controls button:hover {
+  background-color: #d2b48c;
 }
 
-.tabla-usuarios th {
-    background-color: #4a90e2;
-    color: white;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-top: 1rem;
 }
 
-.tabla-usuarios tr:nth-child(even) {
-    background-color: #f2f2f2;
+th, td {
+  border: 1px solid #cfcfcf;
+  padding: 8px;
+  text-align: center;
 }
 
-.back-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background-color: #0097a7;
-    /* Azul Aqua oscuro */
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background 0.3s ease, transform 0.2s ease;
+th {
+  background-color: #f5deb3;
+  color: #5c4033;
+  font-weight: bold;
 }
 
-.back-arrow:hover {
-    background-color: #007c91;
-    /* Más oscuro al pasar el mouse */
-    transform: translateX(-3px);
+.alumno-col {
+  text-align: left;
+  padding-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controls form {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 5px;
+  }
 }

@@ -1,60 +1,50 @@
 <?php
 session_start();
-require_once __DIR__ . "../assets/sentenciasSQL/conexion.php";
-require_once __DIR__ . "../assets/sentenciasSQL/claseUsuarios.php";
+require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "/assets/sentenciasSQL/claseUsuarios.php";
 
 $error = "";
 
 if (isset($_POST['iniciar'])) {
-
-    $usuario = trim($_POST['usuario']);
-    $contrasena = trim($_POST['contrasena']);
+    $usuario = trim($_POST['usuario']); // Puede ser correo o matrícula
+    $contrasena = trim($_POST['contrasena']); // Contraseña o CURP
 
     if (empty($usuario) || empty($contrasena)) {
         $error = "⚠️ Todos los campos son obligatorios.";
     } else {
 
-        // ========= ADMIN =========
-        if (preg_match('/^[A-Za-z0-9._%+-]+@soycecytem\.mx$/i', $usuario)) {
-            $admin = new Admin();
-            $adminData = $admin->leerAdmin($usuario, $contrasena);
-
-            if ($adminData) {
-                $_SESSION['rol'] = 'admin';
-                $_SESSION['idAdmin'] = $adminData['idAdmin'];
-                $_SESSION['usuario'] = $adminData['usuario'];
-                header("Location: administrador/menuGrupos.php");
-                exit();
-            }
+        // ======= ADMIN =======
+        $admin = new Admin();
+        $adminData = $admin->leerAdmin($usuario, $contrasena);
+        if ($adminData) {
+            $_SESSION['rol'] = 'admin';
+            $_SESSION['idAdmin'] = $adminData['id_admin'];
+            $_SESSION['nombre'] = $adminData['nombre'];
+            header("Location: administrador/menuGrupos.php");
+            exit();
         }
 
-        // ========= PROFESOR =========
-        if (preg_match('/^[A-Za-z0-9._%+-]+@soycecytem\.mx$/i', $usuario)) {
-            $profesor = new Profesor();
-            $profesorData = $profesor->buscarPorCorreo($usuario); // Nuevo método que busca solo por correo
-
-            if ($profesorData && password_verify($contrasena, $profesorData['password'])) {
-                $_SESSION['rol'] = 'profesor';
-                $_SESSION['idProfesor'] = $profesorData['id_profesor'];
-                $_SESSION['nombre'] = $profesorData['nombre'];
-                header("Location: Docentes/menuDocente.php");
-                exit();
-            }
+        // ======= PROFESOR =======
+        $profesor = new Profesor();
+        $profesorData = $profesor->buscarPorCorreo($usuario);
+        if ($profesorData && password_verify($contrasena, $profesorData['password'])) {
+            $_SESSION['rol'] = 'profesor';
+            $_SESSION['id_profesor'] = $profesorData['id_profesor'];
+            $_SESSION['correo'] = $profesorData['correo'];
+            header("Location: Docentes/menuDocente.php");
+            exit();
         }
 
-        // ========= ALUMNO =========
-        if (preg_match('/^[A-Za-z0-9]+$/i', $usuario)) { // matrícula = solo letras y números
-            $alumno = new Alumno();
-            $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
-
-            if ($alumnoData) {
-                $_SESSION['rol'] = 'alumno';
-                $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
-                $_SESSION['nombre'] = $alumnoData['nombre'];
-                $_SESSION['matricula'] = $alumnoData['matricula'];
-                header("Location: alumno/menu_alumno.php");
-                exit();
-            }
+        // ======= ALUMNO =======
+        $alumno = new Alumno();
+        $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
+        if ($alumnoData) {
+            $_SESSION['rol'] = 'alumno';
+            $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
+            $_SESSION['nombre'] = $alumnoData['nombre'];
+            $_SESSION['matricula'] = $alumnoData['matricula'];
+            header("Location: alumno/menu_alumno.php");
+            exit();
         }
 
         // Si no coincide con ninguno
@@ -62,7 +52,6 @@ if (isset($_POST['iniciar'])) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -81,12 +70,12 @@ if (isset($_POST['iniciar'])) {
             <?php endif; ?>
 
             <div class="input-box">
-                <label for="usuario" class="tex">Nombre completo o usuario:</label><br>
+                <label for="usuario" class="tex">Correo o Matrícula:</label><br>
                 <input type="text" name="usuario" id="usuario" class="TEXTO" required>
             </div>
             <br>
             <div class="input-box">
-                <label for="contrasena" class="tex">Contraseña (correo para alumno/profesor):</label><br>
+                <label for="contrasena" class="tex">Contraseña o CURP:</label><br>
                 <input type="password" name="contrasena" id="contrasena" class="TEXTO" required>
             </div>
             <br>
@@ -95,6 +84,5 @@ if (isset($_POST['iniciar'])) {
             </div>
         </form>
     </div>
-
 </body>
 </html>
