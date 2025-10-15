@@ -14,7 +14,7 @@ $nombreAdmin = $_SESSION['usuario'];
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Alumno</title>
-  <link rel="stylesheet" href="css/menu.css?v=1.0">
+  <link rel="stylesheet" href="css/menu.css?v=123">
 </head>
 <body>
 
@@ -26,7 +26,7 @@ $nombreAdmin = $_SESSION['usuario'];
 
     <header>
       <label class="cecytem"><img src="img/CECYTEM.PNG" alt="Incorrecto">  CECYTEM</label>
-      <nav class="menu">
+        <nav class="navbar">
         <a href="gruposCreados.php" class="boton">Grupos</a>
         <a href="agregar_materia.php" class="boton">Materias</a>
         <a href="usuarios.php" class="boton">Usuarios</a>
