@@ -20,32 +20,37 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         exit();
     }
 
-    // ==== PROFESOR ====
-    $profesor = new Profesor();
-    $profesorData = $profesor->buscarPorNombreYCorreo($usuario, $contrasena);
-    if ($profesorData) {
-        $_SESSION['rol'] = 'profesor';
-        $_SESSION['idProfesor'] = $profesorData['id_profesor'];
-        $_SESSION['nombre'] = $profesorData['nombre'];
-        header("Location: Docentes/menuDocente.php");
-        exit();
-    }
+    if (!preg_match('/^[A-Z0-9]{18}@soycecytem\.mx$/i', $contrasena)) {
+        $error = "Correo no válido. Debe ingresar con correo Institucional";
+    } else {
+        // ==== PROFESOR ====
+        $profesor = new Profesor();
+        $profesorData = $profesor->buscarPorNombreYCorreo($usuario, $contrasena);
+        if ($profesorData) {
+            $_SESSION['rol'] = 'profesor';
+            $_SESSION['idProfesor'] = $profesorData['id_profesor'];
+            $_SESSION['nombre'] = $profesorData['nombre'];
+            header("Location: Docentes/menuDocente.php");
+            exit();
+        }
 
-    // ==== ALUMNO ====
-    $alumno = new Alumno();
-    $alumnoData = $alumno->buscarPorNombreYCorreo($usuario, $contrasena);
-    if ($alumnoData) {
-        $_SESSION['rol'] = 'alumno';
-        $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
-        $_SESSION['nombre'] = $alumnoData['nombre'];
-        header("Location: alumno/menu_alumno.php");
-        exit();
-    }
+        // ==== ALUMNO ====
+        $alumno = new Alumno();
+        $alumnoData = $alumno->buscarPorNombreYCorreo($usuario, $contrasena);
+        if ($alumnoData) {
+            $_SESSION['rol'] = 'alumno';
+            $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
+            $_SESSION['nombre'] = $alumnoData['nombre'];
+            header("Location: alumno/menu_alumno.php");
+            exit();
+        }
 
-    $error = "Credenciales incorrectas.";
+        $error = "Credenciales incorrectas.";
+    }
 } elseif (isset($_POST['iniciar'])) {
     $error = "Todos los campos son obligatorios.";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -79,5 +84,6 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
             </div>
         </form>
     </div>
+
 </body>
 </html>
