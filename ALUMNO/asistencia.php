@@ -31,7 +31,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Asistencias</title>
-    <link rel="stylesheet" href="css/asistencia.css">
+    <link rel="stylesheet" href="css/asistencia.css?v=2.1">
 </head>
 <body>
 

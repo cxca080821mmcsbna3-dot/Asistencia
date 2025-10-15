@@ -135,7 +135,7 @@ if ($editarID && $tipo) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="stylesheet" href="css/usuarios.css?v=123">
+    <link rel="stylesheet" href="css/usuarios.css?v=2.1">
     <meta charset="UTF-8">
     <title>Usuarios</title>
 </head>

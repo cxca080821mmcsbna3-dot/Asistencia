@@ -14,7 +14,7 @@ $nombreAdmin = $_SESSION['usuario'];
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Alumno</title>
-  <link rel="stylesheet" href="css/menu.css?v=123">
+  <link rel="stylesheet" href="css/menu.css?v=2.1">
 </head>
 <body>
 

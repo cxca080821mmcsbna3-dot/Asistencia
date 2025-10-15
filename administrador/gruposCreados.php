@@ -13,73 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar'])) {
 $listaGrupos = $grupos->leerGrupos();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Grupos</title>
-    <link rel="stylesheet" href="../assets/css/grupos.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f4f6f9;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: scale(1.02);
-        }
-        .card h2 {
-            margin: 0 0 10px;
-            color: #333;
-        }
-        .card p {
-            margin: 5px 0;
-            color: #555;
-        }
-        .btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
-        .panel-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 12px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-        .panel-link:hover {
-            background: #1e7e34;
-        }
-    </style>
+    <link rel="stylesheet" href="css/grupos.css?v=2.1">
 </head>
 <body>
     <header>

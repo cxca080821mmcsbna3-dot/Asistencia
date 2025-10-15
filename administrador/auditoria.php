@@ -28,7 +28,7 @@ $registros = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="stylesheet" href="css/auditoria.css">
+    <link rel="stylesheet" href="css/auditoria.css?v=2.1">
     <meta charset="UTF-8" />
     <title>Registros de Auditoría</title>
 </head>
