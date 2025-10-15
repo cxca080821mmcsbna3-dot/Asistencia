@@ -9,7 +9,7 @@
 <center>
     <br><br><br><br><br><br><br>
 <?php 
-include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
+include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
 
 $grupos = [];
 if (isset($pdo)) {
@@ -21,7 +21,7 @@ if (isset($pdo)) {
 
 class Materia {
     function Ingresar($nombre, $descripcion, $idGrupo){
-        include_once(__DIR__ . '../assets/sentenciasSQL/Conexion.php');
+        include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
 
         if (isset($pdo)) {
             $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) 

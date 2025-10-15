@@ -1,9 +1,19 @@
 <?php
-require_once __DIR__. "../assets/sentenciasSQL/gruposD.php";
-$grupos =new Grupos();
+session_start();
 
-$listaGrupos = $grupos->leerGrupos();
+// Si no ha iniciado sesión, redirigir al login
+if (!isset($_SESSION['idProfesor'])) {
+    header("Location: ../index.php");
+    exit();
+}
 
+require_once __DIR__ . "../assets/sentenciasSQL/gruposD.php";
+
+$grupos = new Grupos();
+$idProfesor = $_SESSION['idProfesor'];
+
+// ✅ Solo los grupos que el profesor tiene asignados
+$listaGrupos = $grupos->leerGruposPorProfesor($idProfesor);
 ?>
 
 <!DOCTYPE html>
@@ -11,29 +21,25 @@ $listaGrupos = $grupos->leerGrupos();
 <head>
     <meta charset="UTF-8">
     <title>Grupos</title>
-    <link rel="stylesheet" href="./assets/css/gruposD.css">
-    
+    <link rel="stylesheet" href="assets/css/gruposD.css">
 </head>
 <body>
     <header>
-    <h1>Lista de Grupos</h1>
-    
+        <h1>Lista de mis grupos</h1>
     </header>
 
     <div class="container">
         <?php if (!empty($listaGrupos)): ?>
-            <?php foreach ($listaGrupos as $grupos): ?>
+            <?php foreach ($listaGrupos as $grupo): ?>
                 <div class="card">
-
-                    <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
-                    <p><strong>Descripcion:</strong> <?= htmlspecialchars($grupos['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
-                    <p><strong>Tutor:</strong> <?= htmlspecialchars($grupos['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
-                    <a class="btn" href="menuMateriasD.php">Informacion del grupo</a>
-                    
+                    <center><h2><?= htmlspecialchars($grupo['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2></center>
+                    <p><strong>Descripción:</strong> <?= htmlspecialchars($grupo['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <p><strong>Tutor:</strong> <?= htmlspecialchars($grupo['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <center><a class="btn" href="menuMateriasD.php?idGrupo=<?= $grupo['idGrupo']; ?>">Información del grupo</a></center>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p>No hay grupos registrados.</p>
+            <p>No tienes grupos asignados.</p>
         <?php endif; ?>
     </div>
 </body>

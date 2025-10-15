@@ -33,6 +33,10 @@ body, html {
   z-index: 1;
 }
 
+h1{
+  text-align: center;
+}
+
 .wrapper h2 {
   text-align: center;
   font-size: 1.6rem;
@@ -42,11 +46,12 @@ body, html {
 }
 
 .tex {
-    text-align: center;
+  text-align: center;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
+
 
 .tex label {
   font-weight: bold;
@@ -109,4 +114,16 @@ input[type="text"]{
     border-color: #3b2f2f;
     border-radius: 9999px;
     padding: 10px 20px;
+}
+input[type="text"],
+input[type="password"] {
+    display: block;
+    margin: 0 auto;
+    background-color: rgba(182, 162, 148, 0.5);
+    border-color: #3b2f2f;
+    border-radius: 9999px;
+    padding: 10px 20px;
+    color: #806b56;
+    font-size: 1em;
+    text-align: center;
 }

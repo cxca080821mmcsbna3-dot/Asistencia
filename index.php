@@ -3,13 +3,13 @@ session_start();
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
 require_once __DIR__ . "/assets/sentenciasSQL/claseUsuarios.php";
 
-
 $error = "";
 
 if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['contrasena'])) {
     $usuario = trim($_POST['usuario']);
     $contrasena = trim($_POST['contrasena']);
 
+    // ==== ADMIN ====
     $admin = new Admin();
     $adminData = $admin->leerAdmin($usuario, $contrasena);
     if ($adminData) {
@@ -20,6 +20,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         exit();
     }
 
+    // ==== PROFESOR ====
     $profesor = new Profesor();
     $profesorData = $profesor->buscarPorNombreYCorreo($usuario, $contrasena);
     if ($profesorData) {
@@ -30,6 +31,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
         exit();
     }
 
+    // ==== ALUMNO ====
     $alumno = new Alumno();
     $alumnoData = $alumno->buscarPorNombreYCorreo($usuario, $contrasena);
     if ($alumnoData) {
@@ -51,12 +53,13 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=123">
 </head>
 <body>
     <div class="wrapper">
         <form action="" method="post">
             <h1>Login</h1>
+
             <?php if (!empty($error)): ?>
                 <p style="color:cornflowerblue; text-align:center;"><?= htmlspecialchars($error) ?></p>
             <?php endif; ?>
@@ -68,7 +71,7 @@ if (isset($_POST['iniciar']) && !empty($_POST['usuario']) && !empty($_POST['cont
             <br>
             <div class="input-box">
                 <label for="contrasena" class="tex">Contraseña (correo para alumno/profesor):</label><br>
-                <input type="text" name="contrasena" id="contrasena" class="TEXTO" required>
+                <input type="password" name="contrasena" id="contrasena" class="TEXTO" required>
             </div>
             <br>
             <div class="button-group">
