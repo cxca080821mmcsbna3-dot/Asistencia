@@ -35,7 +35,7 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfil del Alumno</title>
-<link rel="stylesheet" href="css/perfil.css?v=1.2"> <!-- mismo estilo que asistencias -->
+<link rel="stylesheet" href="css/perfil.css?v=2.1"> <!-- mismo estilo que asistencias -->
 
 </head>
 <body>

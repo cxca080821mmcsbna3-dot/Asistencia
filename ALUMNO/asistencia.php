@@ -70,9 +70,11 @@ $diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sá
 <meta charset="UTF-8">
 <title>Asistencia de <?= htmlspecialchars($alumno['nombre']) ?></title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="css/asistencia.css?v=1.1">
+<link rel="stylesheet" href="css/asistencia.css?v=2.1">
 </head>
 <body>
+<a href="menu_alumno.php" class="back-arrow">&#8592; Regresar</a>
+
 <div class="wrapper">
   <h1>Asistencia: <?= htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellidos']) ?></h1>
   <p class="small"><strong>Matrícula:</strong> <?= htmlspecialchars($alumno['matricula']) ?></p>
@@ -126,5 +128,14 @@ $diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sá
     </tbody>
   </table>
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("modo") === "oscuro") {
+    document.body.classList.add("dark-mode");
+  }
+});
+</script>
 </body>
 </html>
