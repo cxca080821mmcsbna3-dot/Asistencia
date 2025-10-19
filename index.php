@@ -12,9 +12,8 @@ if (isset($_POST['iniciar'])) {
     if (empty($usuario) || empty($contrasena)) {
         $error = "⚠️ Todos los campos son obligatorios.";
     } else {
-
         // ======= ADMIN =======
-        $admin = new Admin();
+        $admin = new Admin($pdo);
         $adminData = $admin->leerAdmin($usuario, $contrasena);
         if ($adminData) {
             $_SESSION['rol'] = 'admin';
@@ -25,30 +24,31 @@ if (isset($_POST['iniciar'])) {
         }
 
         // ======= PROFESOR =======
-$profesor = new Profesor();
-$profesorData = $profesor->leerProfesor($usuario, $contrasena);
+        $profesor = new Profesor($pdo);
+        $profesorData = $profesor->leerProfesor($usuario, $contrasena);
+        if ($profesorData) {
+            $_SESSION['rol'] = 'profesor';
+            $_SESSION['idProfesor'] = $profesorData['id_profesor'];
+            $_SESSION['correo'] = $profesorData['correo'];
+            $_SESSION['nombre'] = $profesorData['nombre'];
+            header("Location: Docentes/menuDocente.php");
+            exit();
+        }
 
-if ($profesorData) {
-    $_SESSION['rol'] = 'profesor';
-    $_SESSION['idProfesor'] = $profesorData['id_profesor'];
-    $_SESSION['correo'] = $profesorData['correo'];
-    $_SESSION['nombre'] = $profesorData['nombre']; // opcional para mostrar en la interfaz
-    header("Location: Docentes/menuDocente.php");
-    exit();
-} 
         // ======= ALUMNO =======
-        $alumno = new Alumno();
+        $alumno = new Alumno($pdo);
         $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
         if ($alumnoData) {
             $_SESSION['rol'] = 'alumno';
             $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
             $_SESSION['nombre'] = $alumnoData['nombre'];
             $_SESSION['matricula'] = $alumnoData['matricula'];
+            $_SESSION['apellidos'] = $alumnoData['apellidos'];
             header("Location: alumno/menu_alumno.php");
             exit();
         }
 
-        // Si no coincide con ninguno
+        // Ninguno coincidió
         $error = "❌ Credenciales incorrectas o usuario no registrado.";
     }
 }

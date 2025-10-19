@@ -5,7 +5,7 @@ table {
 }
 
 thead {
-    background-color: #007BFF;
+    background-color: #da9f53;
     color: white;
 }
 
@@ -34,7 +34,7 @@ caption {
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background-color: #0097a7;
+    background-color: #e2bb4e;
     /* Azul Aqua oscuro */
     color: white;
     text-decoration: none;
@@ -44,7 +44,7 @@ caption {
 }
 
 .back-arrow:hover {
-    background-color: #007c91;
+    background-color: #773a01;
     /* Más oscuro al pasar el mouse */
     transform: translateX(-3px);
 }
