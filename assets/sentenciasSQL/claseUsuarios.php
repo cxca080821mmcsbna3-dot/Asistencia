@@ -15,15 +15,28 @@ class Admin {
 }
 
 class Profesor {
-    // Buscar profesor por correo
-    public function buscarPorCorreo($correo) {
+    // Leer profesor por correo + contraseña
+    public function leerProfesor($correo, $password) {
         global $pdo;
+
+        // Quitamos espacios por seguridad
+        $correo = trim($correo);
+        $password = trim($password);
+
+        // Buscamos al profesor por correo
         $stmt = $pdo->prepare("SELECT * FROM profesor WHERE correo = ?");
         $stmt->execute([$correo]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $profesor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Verificamos la contraseña usando password_verify
+        if ($profesor && isset($profesor['password']) && password_verify($password, $profesor['password'])) {
+            return $profesor; // Devuelve todos los datos del profesor
+        }
+
+        // Si no coincide o no existe
+        return false;
     }
 }
-
 
 class Alumno {
     // Buscar alumno por matrícula y CURP

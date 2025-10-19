@@ -1,11 +1,14 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['id_profesor']) || $_SESSION['rol'] !== 'profesor') {
+// Verifica que el usuario haya iniciado sesión como profesor
+if (!isset($_SESSION['correo']) || $_SESSION['rol'] !== 'profesor') {
     header("Location: ../index.php");
     exit;
 }
 
+// Guardamos el correo del profesor para usar en la página
+$correoProfesor = $_SESSION['correo'];
 ?>
 
 <!DOCTYPE html>

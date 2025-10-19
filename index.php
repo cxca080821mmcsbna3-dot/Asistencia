@@ -25,16 +25,17 @@ if (isset($_POST['iniciar'])) {
         }
 
         // ======= PROFESOR =======
-        $profesor = new Profesor();
-        $profesorData = $profesor->buscarPorCorreo($usuario);
-        if ($profesorData && password_verify($contrasena, $profesorData['password'])) {
-            $_SESSION['rol'] = 'profesor';
-            $_SESSION['id_profesor'] = $profesorData['id_profesor'];
-            $_SESSION['correo'] = $profesorData['correo'];
-            header("Location: Docentes/menuDocente.php");
-            exit();
-        }
+$profesor = new Profesor();
+$profesorData = $profesor->leerProfesor($usuario, $contrasena);
 
+if ($profesorData) {
+    $_SESSION['rol'] = 'profesor';
+    $_SESSION['idProfesor'] = $profesorData['id_profesor'];
+    $_SESSION['correo'] = $profesorData['correo'];
+    $_SESSION['nombre'] = $profesorData['nombre']; // opcional para mostrar en la interfaz
+    header("Location: Docentes/menuDocente.php");
+    exit();
+} 
         // ======= ALUMNO =======
         $alumno = new Alumno();
         $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);

@@ -54,18 +54,20 @@ if (isset($_POST['crear'])) {
             }
             $mensaje = "Profesor actualizado correctamente.";
         } else {
-            // Verificar si el correo ya existe
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM profesor WHERE correo = ?");
-            $stmt->execute([$correo]);
-            if ($stmt->fetchColumn() > 0) {
-                $mensaje = "Error: El correo ya está registrado para un profesor.";
-            } else {
-                $passHash = password_hash($password, PASSWORD_DEFAULT);
-                $sql = "INSERT INTO profesor (nombre, apellidos, telefono, domicilio, correo, password) VALUES (?, ?, ?, ?, ?, ?)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$nombre, $apellidos, $telefono, $domicilio, $correo, $passHash]);
-                $mensaje = "Profesor creado correctamente.";
-            }
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM profesor WHERE correo = ?");
+$stmt->execute([$correo]);
+
+if ($stmt->fetchColumn() > 0) {
+    $mensaje = "Error: El correo ya está registrado para un profesor.";
+} elseif (empty(trim($password))) {
+    $mensaje = "Error: Debes escribir una contraseña";
+} else {
+    $passHash = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO profesor (nombre, apellidos, telefono, domicilio, correo, password) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$nombre, $apellidos, $telefono, $domicilio, $correo, $passHash]);
+    $mensaje = "Profesor creado correctamente.";
+}
         }
 
     } elseif ($tipo === 'alumno') {
