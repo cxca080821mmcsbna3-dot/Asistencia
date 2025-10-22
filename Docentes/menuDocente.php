@@ -1,14 +1,19 @@
 <?php
 session_start();
-
-// Verifica que el usuario haya iniciado sesión como profesor
-if (!isset($_SESSION['correo']) || $_SESSION['rol'] !== 'profesor') {
+//No me cambien nada de aqui >:P
+// Si no ha iniciado sesión, redirigir al login
+if (!isset($_SESSION['idProfesor'])) {
     header("Location: ../index.php");
-    exit;
+    exit();
 }
 
-// Guardamos el correo del profesor para usar en la página
-$correoProfesor = $_SESSION['correo'];
+require_once __DIR__ . "../assets/sentenciasSQL/gruposD.php";
+
+$grupos = new Grupos();
+$idProfesor = $_SESSION['idProfesor'];
+
+// ✅ Solo los grupos que el profesor tiene asignados
+$listaGrupos = $grupos->leerGruposPorProfesor($idProfesor);
 ?>
 
 <!DOCTYPE html>
