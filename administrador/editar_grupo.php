@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . "/assets/sentenciasSQL/Conexion.php";
-require_once __DIR__ . "/assets/sentenciasSQL/grupos.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/Conexion.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/grupos.php";
 
 $gruposObj = new Grupos();
 $mensaje = "";

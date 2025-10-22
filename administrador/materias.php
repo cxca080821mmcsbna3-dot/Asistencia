@@ -1,12 +1,17 @@
 <?php
 class Materia {
-    function Ingresar($nombre, $descripcion, $idGrupo) {
-        include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
+    private $pdo;
 
-        if (isset($pdo)) {
-            $stmt = $pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) 
-                                   VALUES(:nombre, :descripcion, :idGrupo)");
+    public function __construct($pdo)
+    {
+        $this->pdo = $pdo;
+    }
 
+    public function Ingresar($nombre, $descripcion, $idGrupo)
+    {
+        $lista = [];
+        if ($this->pdo) {
+            $stmt = $this->pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) VALUES(:nombre, :descripcion, :idGrupo)");
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':descripcion', $descripcion);
             $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
@@ -21,11 +26,11 @@ class Materia {
         }
     }
 
-    function Consultar($idGrupo) {
-        include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
+    public function Consultar($idGrupo)
+    {
         $lista = [];
-        if (isset($pdo)) {
-            $stmt = $pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
+        if ($this->pdo) {
+            $stmt = $this->pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
             $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
             if ($stmt->execute()) {
                 $lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,18 +40,18 @@ class Materia {
     }
 }
 
-// Obtener conexión y grupos
+// Cargar conexión y obtener grupos
 include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
 
 $grupos = [];
-if (isset($pdo)) {
+if (isset($pdo) && $pdo) {
     $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");
     if ($stmt) {
         $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
-$materia = new Materia();
+$materia = new Materia(isset($pdo) ? $pdo : null);
 
 // Procesar formulario de inserción
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
