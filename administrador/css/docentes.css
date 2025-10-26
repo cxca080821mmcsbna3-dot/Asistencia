@@ -150,35 +150,14 @@ tbody tr:hover {
     background-color: #aaa;
 }
 
-/* ======== Responsive simple ======== */
-@media (max-width: 600px) {
-    .acciones {
-        flex-direction: column;
-    }
-
-    input[type="submit"],
-    button,
-    a.button-link {
-        width: 100%;
-    }
-}
-
 .back-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background-color: #0097a7;
-    /* Azul Aqua oscuro */
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #a0522d;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .back-arrow:hover {
-    background-color: #007c91;
-    /* Más oscuro al pasar el mouse */
-    transform: translateX(-3px);
+  color: #deb887;
 }

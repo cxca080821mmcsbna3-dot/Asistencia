@@ -1,50 +1,76 @@
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9f5ef;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
 }
 
-thead {
-    background-color: #da9f53;
-    color: white;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    word-break: break-word;
-}
-
-tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-tbody tr:hover {
-    background-color: #ddd;
+.wrapper {
+    width: 90%;
+    max-width: 900px;
+    background-color: #fffef9;
+    padding: 20px 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    margin-top: 40px;
 }
 
 caption {
     font-size: 1.5em;
-    margin: 10px 0;
+    margin: 12px 0;
     font-weight: bold;
+    color: #a67c52;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fffdfa;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    margin-top: 10px;
+}
+
+thead {
+    background-color: #f2d7b2;
+    color: #5c4033;
+}
+
+th,
+td {
+    border: 1px solid #e8d5b7;
+    padding: 10px 12px;
+    word-break: break-word;
+    color: #4b3621;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fdf7ef;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #fffdf8;
+}
+
+tbody tr:hover {
+    background-color: #f5e6cc;
+    transition: background-color 0.3s ease;
 }
 
 .back-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background-color: #e2bb4e;
-    /* Azul Aqua oscuro */
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #a0522d;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .back-arrow:hover {
-    background-color: #773a01;
-    /* Más oscuro al pasar el mouse */
-    transform: translateX(-3px);
+  color: #deb887;
 }
