@@ -50,10 +50,6 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
     <img src="img/calendario.jpeg" alt=""><br><br>
     <br><br>
 
-    <h2>Prueba COHEFICIENTE INTELECTUAL</h2><br>
-    <h4>¿que tan listo sientes que eres?</h4>
-    <a href="https://iq.mental-impulse.com/es/flow/iq_test_s1_es?utm_source=google&utm_medium=cpc&utm_campaign=Search_iq_test_s1_es_SP_countries_YO_170925&utm_term=test%20de%20inteligencia&utm_content=774570667865_b&utm_device=c&utm_adgroup=189263508127&ad_id=774570667865&media_source=google&gad_source=1&gad_campaignid=23032677787&gbraid=0AAAABArMyi-DFwi7By8ZxjSg-cESqmid0&gclid=EAIaIQobChMI19vD7e-TkAMVqy7UAR0pqgQmEAAYASAAEgIIV_D_BwE">
-      <img src="img/pruebaCI.png" alt="Incorrecto"></a>
   </div>
 </div>
 

@@ -1,6 +1,15 @@
 <?php
 require_once __DIR__ . "/../assets/sentenciasSQL/grupos.php";
 
+session_start();
+
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
 $grupos = new Grupos();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar'])) {
     $idEliminar = intval($_POST['idGrupo']);

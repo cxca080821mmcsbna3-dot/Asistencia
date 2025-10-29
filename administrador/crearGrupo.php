@@ -2,6 +2,15 @@
 
 include_once(__DIR__ . '/../assets/sentenciasSQL/grupos.php');
 
+session_start();
+
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
 if (isset($_POST['crear'])) {
     $idGrupo        = random_int(10000000, 99999999);
     $nombre_grupo  = htmlspecialchars(trim($_POST['nombre_grupo']), ENT_QUOTES, 'UTF-8');

@@ -11,6 +11,15 @@
 <?php 
 include_once(__DIR__ . '../../assets/sentenciasSQL/Conexion.php');
 
+session_start();
+
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
 $grupos = [];
 if (isset($pdo)) {
     $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");

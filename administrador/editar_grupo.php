@@ -3,6 +3,15 @@
 require_once __DIR__ . "/../assets/sentenciasSQL/Conexion.php";
 require_once __DIR__ . "/../assets/sentenciasSQL/grupos.php";
 
+session_start();
+
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
 $gruposObj = new Grupos();
 $mensaje = "";
 

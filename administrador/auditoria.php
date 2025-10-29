@@ -23,6 +23,15 @@ $stmt = $pdo->prepare("SELECT * FROM auditoria ORDER BY fecha DESC LIMIT 100");
 $stmt->execute();
 $registros = $stmt->fetchAll();
 
+session_start();
+
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
 ?>
 
 <!DOCTYPE html>
