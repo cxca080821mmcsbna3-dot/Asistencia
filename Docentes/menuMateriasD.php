@@ -44,9 +44,11 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="assets/css/materiasD.css">
 </head>
 <body>
+    <a href="menuDocente.php" class="back-arrow">&#8592; Regresar</a>
+
   <header>
     <h1>Selecciona una Materia</h1>
-  </header>
+  </header>s
 
   <div class="container">
     <?php if (!empty($materias)): ?>

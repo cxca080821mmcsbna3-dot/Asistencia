@@ -71,7 +71,11 @@ $listaMaterias = $materia->Consultar();
     <title>Materias</title>
 </head>
 <body>
+<<<<<<< HEAD
     <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+=======
+        <a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
+>>>>>>> 8a61fbd6d9612a82ed26f5277289ea5f9f75f5c8
 
     <center>
         <br><br><br><br><br>

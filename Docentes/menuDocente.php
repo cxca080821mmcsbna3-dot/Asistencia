@@ -24,6 +24,8 @@ $listaGrupos = $grupos->leerGruposPorProfesor($idProfesor);
     <link rel="stylesheet" href="assets/css/gruposD.css">
 </head>
 <body>
+    <a href="cerrar.php" class="back-arrow">&#8592; cerrar sesion</a>
+
     <header>
         <h1>Lista de mis grupos</h1>
     </header>
