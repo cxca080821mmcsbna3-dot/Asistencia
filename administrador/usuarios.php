@@ -185,16 +185,16 @@ if ($editarID && $tipo) {
             <input type="hidden" name="id_profesor" value="<?= $datosEditar['id_profesor'] ?? '' ?>">
 
         <?php elseif ($tipo == 'alumno'): ?>
-            <input type="number" name="matricula" placeholder="Matrícula" value="<?= $datosEditar['matricula'] ?? '' ?>" required>
-            <input type="text" name="curp" placeholder="CURP" value="<?= $datosEditar['curp'] ?? '' ?>" required>
-            <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required>
-            <input type="text" name="apellidos" placeholder="Apellidos" value="<?= $datosEditar['apellidos'] ?? '' ?>" required>
+            <input type="number" name="matricula" placeholder="Matrícula" value="<?= $datosEditar['matricula'] ?? '' ?>" required><br>
+            <input type="text" name="curp" placeholder="CURP" value="<?= $datosEditar['curp'] ?? '' ?>" required><br>
+            <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required><br>
+            <input type="text" name="apellidos" placeholder="Apellidos" value="<?= $datosEditar['apellidos'] ?? '' ?>" required><br>
             <input type="text" name="telefono" placeholder="Teléfono" value="<?= $datosEditar['telefono'] ?? '' ?>" required>
             <input type="hidden" name="id_alumno" value="<?= $datosEditar['id_alumno'] ?? '' ?>">
 
         <?php elseif ($tipo == 'administrador'): ?>
-            <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required>
-            <input type="email" name="correo" placeholder="Correo" value="<?= $datosEditar['correo'] ?? '' ?>" required>
+            <input type="text" name="nombre" placeholder="Nombre" value="<?= $datosEditar['nombre'] ?? '' ?>" required><br>
+            <input type="email" name="correo" placeholder="Correo" value="<?= $datosEditar['correo'] ?? '' ?>" required><br>
             <input type="password" name="password" placeholder="<?= $editarID ? 'Nueva Contraseña (opcional)' : 'Contraseña' ?>" <?= $editarID ? '' : 'required' ?>>
             <input type="hidden" name="id_admin" value="<?= $datosEditar['id_admin'] ?? '' ?>">
         <?php endif; ?>
