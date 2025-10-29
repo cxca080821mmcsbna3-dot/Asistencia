@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
@@ -9,40 +8,35 @@ if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
 
 $nombreAdmin = $_SESSION['nombre'];
 
+// Clase para manejar materias
 class Materia {
     private $pdo;
 
-    public function __construct($pdo)
-    {
+    public function __construct($pdo) {
         $this->pdo = $pdo;
     }
 
-    public function Ingresar($nombre, $descripcion, $idGrupo)
-    {
-        $lista = [];
+    public function Ingresar($nombre, $descripcion) {
         if ($this->pdo) {
-            $stmt = $this->pdo->prepare("INSERT INTO materias (nombre, descripcion, idGrupo) VALUES(:nombre, :descripcion, :idGrupo)");
+            $stmt = $this->pdo->prepare("INSERT INTO materias (nombre, descripcion) VALUES(:nombre, :descripcion)");
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':descripcion', $descripcion);
-            $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
 
             if ($stmt->execute()) {
-                echo "Materia ingresada correctamente.";
+                echo "<p>✅ Materia ingresada correctamente.</p>";
             } else {
-                echo "Error al ingresar la materia.";
+                echo "<p>❌ Error al ingresar la materia.</p>";
             }
         } else {
-            echo "Error de conexión a la base de datos.";
+            echo "<p>⚠️ Error de conexión a la base de datos.</p>";
         }
     }
 
-    public function Consultar($idGrupo)
-    {
+    public function Consultar() {
         $lista = [];
         if ($this->pdo) {
-            $stmt = $this->pdo->prepare("SELECT id_materia, nombre, descripcion FROM materias WHERE idGrupo = :idGrupo");
-            $stmt->bindParam(':idGrupo', $idGrupo, PDO::PARAM_INT);
-            if ($stmt->execute()) {
+            $stmt = $this->pdo->query("SELECT id_materia, nombre, descripcion FROM materias");
+            if ($stmt) {
                 $lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
@@ -50,33 +44,22 @@ class Materia {
     }
 }
 
-// Cargar conexión y obtener grupos
+// Cargar conexión
 include_once(__DIR__ . '/../assets/sentenciasSQL/Conexion.php');
-
-$grupos = [];
-if (isset($pdo) && $pdo) {
-    $stmt = $pdo->query("SELECT idGrupo, nombre FROM grupo");
-    if ($stmt) {
-        $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
 
 $materia = new Materia(isset($pdo) ? $pdo : null);
 
 // Procesar formulario de inserción
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['nombre'], $_POST['descripcion'], $_POST['idGrupo'])) {
-        $materia->Ingresar($_POST['nombre'], $_POST['descripcion'], $_POST['idGrupo']);
+    if (isset($_POST['nombre'], $_POST['descripcion'])) {
+        $materia->Ingresar($_POST['nombre'], $_POST['descripcion']);
     } else {
-        echo "Faltan datos.";
+        echo "<p>❌ Faltan datos.</p>";
     }
 }
 
-// Consultar materias por grupo si hay filtro
-$listaMaterias = [];
-if (isset($_GET['filtro_grupo'])) {
-    $listaMaterias = $materia->Consultar($_GET['filtro_grupo']);
-}
+// Consultar todas las materias
+$listaMaterias = $materia->Consultar();
 ?>
 
 <!DOCTYPE html>
@@ -88,28 +71,22 @@ if (isset($_GET['filtro_grupo'])) {
     <title>Materias</title>
 </head>
 <body>
-        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
     <center>
         <br><br><br><br><br>
 
-        <!-- FILTRO DE CONSULTA POR GRUPO -->
+        <div class="formulario">
+            <h2>Registrar Nueva Materia</h2>
+            <form method="POST" action="">
+                <input type="text" name="nombre" placeholder="Nombre de la materia" required><br><br>
+                <input type="text" name="descripcion" placeholder="Descripción" required><br><br>
+                <input type="submit" value="Registrar">
+            </form>
+        </div>
+
         <div class="consultar">
             <h2>Listado de Materias</h2>
-            
-            <form method="GET" action="materias.php">
-                <label for="filtro_grupo">Filtrar por Grupo:</label>
-                <select name="filtro_grupo" id="filtro_grupo" required>
-                    <option value="">Seleccione un grupo</option>
-                    <?php foreach ($grupos as $grupo): ?>
-                        <option value="<?= htmlspecialchars($grupo['idGrupo']) ?>"
-                            <?= (isset($_GET['filtro_grupo']) && $_GET['filtro_grupo'] == $grupo['idGrupo']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($grupo['nombre']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="submit" value="Filtrar">
-            </form>
 
             <table>
                 <thead>
@@ -129,7 +106,7 @@ if (isset($_GET['filtro_grupo'])) {
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="3">No hay materias registradas para este grupo.</td></tr>
+                        <tr><td colspan="3">No hay materias registradas.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

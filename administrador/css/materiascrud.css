@@ -1,0 +1,203 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0e8dc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #4b3621;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.materias,
+.consultar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #deb887;
+    width: 460px;
+    padding: 25px 30px;
+    background-color: #fffaf0;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    gap: 15px;
+    overflow-x: auto;
+}
+
+h1,
+h2 {
+    color: #8b4513;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #5c4033;
+}
+
+form {
+    width: 100%;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d2b48c;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #fff5e6;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    color: #4b3621;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #a0522d;
+    background-color: #fffaf0;
+}
+
+input[type="submit"],
+.btn {
+    align-self: flex-end;
+    padding: 8px 18px;
+    color: #fff;
+    background-color: #a0522d;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+input[type="submit"]:hover,
+.btn:hover {
+    background-color: #8b4513;
+    transform: translateY(-2px);
+}
+
+.consultar table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+    table-layout: fixed;
+    word-wrap: break-word;
+    background-color: #fff5e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.consultar th,
+.consultar td {
+    border: 1px solid #deb887;
+    padding: 10px 12px;
+    text-align: left;
+    color: #5c4033;
+}
+
+.consultar th {
+    background-color: #deb887;
+    color: #fffaf0;
+    font-weight: bold;
+}
+
+.consultar tbody tr:hover {
+    background-color: #f5deb3;
+    cursor: default;
+}
+
+.back-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    color: #a0522d;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.back-arrow:hover {
+    color: #deb887;
+    transform: translateX(-3px);
+}
+
+/* 🌙 Modo oscuro */
+body.dark-mode {
+    background-color: #2c2c2c;
+    color: #f0e8dc;
+}
+
+body.dark-mode .materias,
+body.dark-mode .consultar {
+    background-color: #4a4a4a;
+    border-color: #a67b5b;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode h1,
+body.dark-mode h2 {
+    color: #ffd39b;
+}
+
+body.dark-mode label {
+    color: #ffdead;
+}
+
+body.dark-mode input[type="text"] {
+    background-color: #555;
+    color: #f0e8dc;
+    border: 1px solid #deb887;
+}
+
+body.dark-mode input[type="text"]:focus {
+    background-color: #666;
+}
+
+body.dark-mode input[type="submit"],
+body.dark-mode .btn {
+    background-color: #6b4c2a;
+    color: #fff1d0;
+}
+
+body.dark-mode input[type="submit"]:hover,
+body.dark-mode .btn:hover {
+    background-color: #8b5a2b;
+}
+
+body.dark-mode .consultar table {
+    background-color: #3c3c3c;
+}
+
+body.dark-mode .consultar th,
+body.dark-mode .consultar td {
+    border-color: #a67b5b;
+    color: #f5deb3;
+}
+
+body.dark-mode .consultar th {
+    background-color: #6b4c2a;
+}
+
+body.dark-mode .consultar tbody tr:hover {
+    background-color: #5a3e2b;
+}
+
+body.dark-mode .back-arrow {
+    color: #deb887;
+}
+
+body.dark-mode .back-arrow:hover {
+    color: #fff1d0;
+}
