@@ -321,11 +321,25 @@ th {
     padding: 5px;
   }
 }
+
+.back-arrow {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #a0522d;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-arrow:hover {
+  color: #deb887;
+}
 </style>
 
 
 </head>
 <body>
+  <a href="menuDocente.php" class="back-arrow">&#8592; Regresar</a>
+
 <div class="wrapper">
     <h1>Asistencia: <?= htmlspecialchars($materia['nombre']) ?></h1>
     <p class="small"><strong>Grupo:</strong> <?= htmlspecialchars($materia['nombre_grupo']) ?></p>

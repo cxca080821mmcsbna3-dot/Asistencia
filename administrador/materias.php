@@ -88,7 +88,7 @@ if (isset($_GET['filtro_grupo'])) {
     <title>Materias</title>
 </head>
 <body>
-        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+        <a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
 
     <center>
         <br><br><br><br><br>
