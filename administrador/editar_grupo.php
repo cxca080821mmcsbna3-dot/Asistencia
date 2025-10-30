@@ -159,7 +159,7 @@ if (isset($_POST['actualizar'])) {
 <body>
 
 <div class="menu">
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
 
     <?php if ($mensaje): ?>
         <p class="message <?= (strpos($mensaje, 'correctamente') !== false) ? 'success' : 'error'; ?>">
