@@ -34,7 +34,6 @@ if (isset($_POST['iniciar'])) {
             header("Location: Docentes/menuDocente.php");
             exit();
         }
-
         // ======= ALUMNO =======
         $alumno = new Alumno($pdo);
         $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
