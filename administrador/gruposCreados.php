@@ -55,7 +55,8 @@ $listaGrupos = $grupos->leerGrupos();
                     <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p><strong>Descripcion:</strong> <?= htmlspecialchars($grupos['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p><strong>Tutor:</strong> <?= htmlspecialchars($grupos['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
-                    <a class="btn" href="materias.php">Informacion del grupo</a>
+                    <a class="btn" href="materias.php?idGrupo=<?= $grupos['idGrupo']; ?>">Información del grupo</a>
+
                     
                 </div>
             <?php endforeach; ?>
