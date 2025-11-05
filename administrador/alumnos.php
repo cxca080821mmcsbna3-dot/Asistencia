@@ -48,7 +48,19 @@ button{background:#8b4513;color:white;padding:8px 12px;border:none;border-radius
 button:hover{background:#a0522d;}
 .add-btn{background:#3c7a3c;}
 .add-btn:hover{background:#2e5c2e;}
+.back-arrow {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #a0522d;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-arrow:hover {
+  color: #deb887;
+}
 </style>
+<a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 </head>
 <body>
 <div class="container">
