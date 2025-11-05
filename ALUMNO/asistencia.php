@@ -1,6 +1,7 @@
 <?php
 session_start();
 date_default_timezone_set('America/Mexico_City');
+setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'es');
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 
 // Verificación de sesión del alumno
@@ -45,15 +46,17 @@ $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
 
 // Consultar asistencias del alumno
 $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-$sqlAs = "SELECT fecha 
+$sqlAs = "SELECT fecha, estado 
           FROM asistencia 
           WHERE id_alumno = :id_alumno 
             AND id_materia = :id_materia 
+            AND id_grupo = :id_grupo 
             AND fecha LIKE :mes";
 $stmtAs = $pdo->prepare($sqlAs);
 $stmtAs->execute([
     ':id_alumno' => $id_alumno,
     ':id_materia' => $id_materia,
+    ':id_grupo' => $id_grupo,
     ':mes' => $likeMes
 ]);
 $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
@@ -62,11 +65,17 @@ $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
 $inasistencias = [];
 foreach ($rowsAs as $r) {
     $d = intval(date('d', strtotime($r['fecha'])));
-    $inasistencias[$d] = true;
+    $inasistencias[$d] = $r['estado'];
 }
 
 // Días de la semana en español
 $diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+// Meses en español
+$mesesES = [
+    1 => 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -116,18 +125,26 @@ $diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sá
       </tr>
     </thead>
     <tbody>
-      <?php for ($d = 1; $d <= $diasMes; $d++):
+      <?php 
+      for ($d = 1; $d <= $diasMes; $d++) {
         $fechaDia = sprintf('%04d-%02d-%02d', $anio, $mes, $d);
         $numeroDiaSemana = date('w', strtotime($fechaDia));
-        $diaSemana = $diasSemanaES[$numeroDiaSemana];
-        $clase = isset($inasistencias[$d]) ? 'ausente' : 'presente';
+        
+        // Solo mostrar días de lunes (1) a viernes (5)
+        if ($numeroDiaSemana > 0 && $numeroDiaSemana < 6) {
+            $diaSemana = $diasSemanaES[$numeroDiaSemana];
+            $estado = isset($inasistencias[$d]) ? $inasistencias[$d] : 'Presente';
+            $clase = $estado === 'Ausente' ? 'ausente' : 'presente';
       ?>
       <tr>
         <td><?= $d ?></td>
         <td><?= $diaSemana ?></td>
-        <td class="asistencia <?= $clase ?>"><?= isset($inasistencias[$d]) ? '❌ Ausente' : '✅ Presente' ?></td>
+        <td class="asistencia <?= $clase ?>"><?= $estado === 'Ausente' ? '❌ Ausente' : '✅ Presente' ?></td>
       </tr>
-      <?php endfor; ?>
+      <?php 
+        }
+      }
+      ?>
     </tbody>
   </table>
 </div>
