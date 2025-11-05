@@ -50,6 +50,7 @@ $listaGrupos = $grupos->leerGrupos();
                             <input type="hidden" name="idGrupo" value="<?= $grupos['idGrupo']; ?>">
                             <button type="submit" name="eliminar">eliminar</button>
                         </form>
+                        <a href="agregarAlumnosGrupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>Ver alumnos</button></a>
                     </div>
 
                     <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
