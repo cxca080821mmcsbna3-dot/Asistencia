@@ -12,9 +12,10 @@ $idAlumno = $_SESSION['idAlumno'];
 
 try {
     $stmt = $pdo->prepare("
-        SELECT id_alumno, nombre, apellidos, matricula, curp, telefono, id_grupo
-        FROM alumno
-        WHERE id_alumno = :idAlumno
+        SELECT a.id_alumno, a.nombre, a.apellidos, a.matricula, a.curp, a.telefono, a.id_grupo, g.nombre as nombre_grupo
+        FROM alumno a
+        LEFT JOIN grupo g ON a.id_grupo = g.idGrupo
+        WHERE a.id_alumno = :idAlumno
     ");
     $stmt->execute(['idAlumno' => $idAlumno]);
     $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -48,7 +49,7 @@ try {
     </div>
     <div class="perfil-nombre">
         <h2><?= htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellidos']) ?></h2>
-        <p>ID Grupo: <?= htmlspecialchars($alumno['id_grupo']) ?> | Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></p>
+        <p>Grupo: <?= htmlspecialchars($alumno['nombre_grupo'] ?? 'Sin grupo asignado') ?> | Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></p>
     </div>
 
     <div class="perfil-body">
