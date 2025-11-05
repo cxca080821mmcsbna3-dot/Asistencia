@@ -34,7 +34,6 @@ $listaGrupos = $grupos->leerGrupos();
     <h1>Lista de Grupos</h1>
     <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
     <a href="crearGrupo.php" class="back-arrow">Crear Grupo +</a>
-
     </header>
 
     <div class="container">
@@ -43,6 +42,7 @@ $listaGrupos = $grupos->leerGrupos();
                 <div class="card">
                     <div class="headerCardGrupos">
                          <a href="editar_grupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>editar</button></a>
+<<<<<<< HEAD
                         
                         <!-- Botón eliminar con confirmación -->
                         <form method="POST" style="display:inline;" 
@@ -51,14 +51,14 @@ $listaGrupos = $grupos->leerGrupos();
                             <button type="submit" name="eliminar">eliminar</button>
                         </form>
                         <a href="agregarAlumnosGrupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>Ver alumnos</button></a>
+=======
+                         <button onclick="alert('Funcion no disponible');">Vaciar</button>
+>>>>>>> 0899f5dbed54f483025a6428ca628f18c02634aa
                     </div>
-
                     <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p><strong>Descripcion:</strong> <?= htmlspecialchars($grupos['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p><strong>Tutor:</strong> <?= htmlspecialchars($grupos['tutor'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <a class="btn" href="materias.php?idGrupo=<?= $grupos['idGrupo']; ?>">Información del grupo</a>
-
-                    
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

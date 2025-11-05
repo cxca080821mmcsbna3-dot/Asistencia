@@ -233,7 +233,7 @@ th {
 <body>
 
 <div class="wrapper">
-    <a href="materias.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
     <h1>Asistencia: <?= htmlspecialchars($materia['nombre_materia']) ?></h1>
     <p class="small"><strong>Grupo:</strong> <?= htmlspecialchars($materia['nombre_grupo']) ?></p>
 
