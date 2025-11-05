@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('America/Mexico_City');
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 
 // Verificación de sesión del alumno
@@ -23,7 +24,10 @@ $id_alumno = $alumno['id_alumno'];
 $id_grupo  = $alumno['id_grupo'];
 
 // Obtener lista de materias
-$sqlMat = "SELECT id_materia, nombre FROM materias WHERE idGrupo = :id_grupo";
+$sqlMat = "SELECT m.id_materia, m.nombre 
+           FROM grupo_materia gm
+           JOIN materias m ON gm.id_materia = m.id_materia
+           WHERE gm.id_grupo = :id_grupo";
 $stmtMat = $pdo->prepare($sqlMat);
 $stmtMat->execute([':id_grupo' => $id_grupo]);
 $materias = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +45,7 @@ $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
 
 // Consultar asistencias del alumno
 $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-$sqlAs = "SELECT fecha, estado 
+$sqlAs = "SELECT fecha 
           FROM asistencia 
           WHERE id_alumno = :id_alumno 
             AND id_materia = :id_materia 
@@ -58,7 +62,7 @@ $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
 $inasistencias = [];
 foreach ($rowsAs as $r) {
     $d = intval(date('d', strtotime($r['fecha'])));
-    $inasistencias[$d] = $r['estado'];
+    $inasistencias[$d] = true;
 }
 
 // Días de la semana en español
@@ -116,13 +120,12 @@ $diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sá
         $fechaDia = sprintf('%04d-%02d-%02d', $anio, $mes, $d);
         $numeroDiaSemana = date('w', strtotime($fechaDia));
         $diaSemana = $diasSemanaES[$numeroDiaSemana];
-        $estado = $inasistencias[$d] ?? '-';
-        $clase = $estado === 'Ausente' ? 'ausente' : ($estado === 'Presente' ? 'presente' : 'vacio');
+        $clase = isset($inasistencias[$d]) ? 'ausente' : 'presente';
       ?>
       <tr>
         <td><?= $d ?></td>
         <td><?= $diaSemana ?></td>
-        <td class="asistencia <?= $clase ?>"><?= $estado === 'Ausente' ? '❌ Ausente' : ($estado === 'Presente' ? '✅ Presente' : '-') ?></td>
+        <td class="asistencia <?= $clase ?>"><?= isset($inasistencias[$d]) ? '❌ Ausente' : '✅ Presente' ?></td>
       </tr>
       <?php endfor; ?>
     </tbody>
