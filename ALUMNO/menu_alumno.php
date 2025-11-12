@@ -14,7 +14,7 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú Alumno</title>
-  <link rel="stylesheet" href="css/menu_alumno.css?v=2.1">
+  <link rel="stylesheet" href="css/menu_alumno.css?v=2.2">
 </head>
 <body>
 
