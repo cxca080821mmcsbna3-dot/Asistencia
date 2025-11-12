@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+// ✅ Verificación de acceso (solo administrador)
+if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+}
+
+$nombreAdmin = $_SESSION['nombre'];
+
+// ✅ Conexión (usando tu mismo formato)
 $host = 'localhost';
 $db   = 'asistencia';
 $user = 'root';
@@ -14,35 +25,37 @@ $options = [
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    die("Error de conexión a la base de datos: " . $e->getMessage());
+    // Fuerza UTF-8
+    $pdo->exec("SET NAMES utf8mb4");
+
+    // 🔹 IMPORTANTE: enviar el usuario logeado a MySQL
+    if (!empty($_SESSION['nombre'])) {
+        $usuario = $_SESSION['nombre'];
+        $stmt = $pdo->prepare("SET @usuario_logeado = :usuario");
+        $stmt->execute(['usuario' => $usuario]);
+    } else {
+        $pdo->exec("SET @usuario_logeado = NULL");
+    }
+
+} catch (PDOException $e) {
+    die("❌ Error de conexión a la base de datos: " . $e->getMessage());
 }
 
-// Consulta registros auditoria
+// ✅ Consulta registros de auditoría
 $stmt = $pdo->prepare("SELECT * FROM auditoria ORDER BY fecha DESC LIMIT 100");
 $stmt->execute();
 $registros = $stmt->fetchAll();
-
-session_start();
-
-if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
-    header("Location: ../index.php");
-    exit;
-}
-
-$nombreAdmin = $_SESSION['nombre'];
-
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="stylesheet" href="css/auditoria.css?v=1.2">
     <meta charset="UTF-8" />
     <title>Registros de Auditoría</title>
+    <link rel="stylesheet" href="css/auditoria.css?v=1.2">
 </head>
 <body>
-        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
     <table>
         <caption>Registros de Auditoría</caption>
@@ -70,14 +83,12 @@ $nombreAdmin = $_SESSION['nombre'];
                     <td><?= htmlspecialchars($reg['accion']) ?></td>
                     <td><?= nl2br(htmlspecialchars($reg['datos_antes'])) ?></td>
                     <td><?= nl2br(htmlspecialchars($reg['datos_despues'])) ?></td>
-                    <td><?= htmlspecialchars($reg['usuario']) ?></td>
+                    <td><?= htmlspecialchars($reg['usuario'] ?: '—') ?></td>
                     <td><?= htmlspecialchars($reg['fecha']) ?></td>
                 </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
-
 </body>
 </html>
-
