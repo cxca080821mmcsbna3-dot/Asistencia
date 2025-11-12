@@ -56,7 +56,7 @@ $registros = $stmt->fetchAll();
 </head>
 <body>
     <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
-
+  <div class="wrapper">
     <table>
         <caption>Registros de Auditoría</caption>
         <thead>
@@ -90,5 +90,6 @@ $registros = $stmt->fetchAll();
             <?php endif; ?>
         </tbody>
     </table>
+    </div>
 </body>
 </html>
