@@ -11,6 +11,7 @@ if (!isset($_GET['idMateria']) || !isset($_GET['idGrupo'])) {
 $id_materia = intval($_GET['idMateria']);
 $id_grupo   = intval($_GET['idGrupo']);
 
+
 $mes  = isset($_GET['mes'])  ? intval($_GET['mes'])  : intval(date('m'));
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : intval(date('Y'));
 if ($mes < 1 || $mes > 12) $mes = intval(date('m'));
@@ -38,7 +39,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
     $alumnosExp = $stmtA->fetchAll(PDO::FETCH_ASSOC);
 
     $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-    $stmtAs = $pdo->prepare("SELECT id_alumno, fecha FROM asistencia
+    $stmtAs = $pdo->prepare("SELECT id_alumno, fecha, estado FROM asistencia
                              WHERE id_grupo = :id_grupo AND id_materia = :id_materia AND fecha LIKE :mes");
     $stmtAs->execute([':id_grupo' => $id_grupo, ':id_materia' => $id_materia, ':mes' => $likeMes]);
     $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
@@ -46,7 +47,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
     $inas = [];
     foreach ($rowsAs as $r) {
         $d = intval(date('d', strtotime($r['fecha'])));
-        $inas[$r['id_alumno']][$d] = true;
+        $inas[$r['id_alumno']][$d] = $r['estado'];
     }
 
     echo "<table border='1'><tr><th>No.</th><th>Matrícula</th><th>Alumno</th>";
@@ -58,7 +59,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
         echo "<td>" . htmlspecialchars($al['matricula']) . "</td>";
         echo "<td>" . htmlspecialchars($al['apellidos'] . ' ' . $al['nombre']) . "</td>";
         for ($d = 1; $d <= $diasMes; $d++) {
-            echo "<td>" . (isset($inas[$al['id_alumno']][$d]) ? "X" : "") . "</td>";
+            echo "<td>" . (isset($inas[$al['id_alumno']][$d]) ? $inas[$al['id_alumno']][$d] : "") . "</td>";
         }
         echo "</tr>";
     }
@@ -77,7 +78,7 @@ $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
 
 // ---------- Consultar asistencias ----------
 $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-$stmtAs = $pdo->prepare("SELECT id_alumno, fecha FROM asistencia
+$stmtAs = $pdo->prepare("SELECT id_alumno, fecha, estado FROM asistencia
                          WHERE id_grupo = :id_grupo AND id_materia = :id_materia AND fecha LIKE :mes");
 $stmtAs->execute([':id_grupo' => $id_grupo, ':id_materia' => $id_materia, ':mes' => $likeMes]);
 $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
@@ -85,7 +86,7 @@ $rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
 $inasistencias = [];
 foreach ($rowsAs as $r) {
     $d = intval(date('d', strtotime($r['fecha'])));
-    $inasistencias[$r['id_alumno']][$d] = true;
+    $inasistencias[$r['id_alumno']][$d] = $r['estado'];
 }
 
 // ---------- Meses en español ----------
@@ -186,7 +187,6 @@ table {
   min-width: 1200px;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 th, td {
   border: 1px solid #cfcfcf;
@@ -221,8 +221,6 @@ th {
   font-weight: bold;
   padding: 8px 14px;
   border-radius: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
 }
 .back-arrow:hover {
   background-color: #deb887;
@@ -251,10 +249,23 @@ th {
             <input type="number" name="anio" value="<?= $anio ?>" style="width:90px">
             <button type="submit">Ver</button>
         </form>
-
+<div style="display:flex; align-items:center; gap:10px; font-size:14px; margin-left:20px;">
+    <span style="display:flex; align-items:center; gap:4px;">
+        <div style="width:18px; height:18px; background:#ff6b6b; border:1px solid #888;"></div> Ausente
+    </span>
+    <span style="display:flex; align-items:center; gap:4px;">
+        <div style="width:18px; height:18px; background:#ffa500; border:1px solid #888;"></div> Retardo
+    </span>
+    <span style="display:flex; align-items:center; gap:4px;">
+        <div style="width:18px; height:18px; background:#4da6ff; border:1px solid #888;"></div> Justificante
+    </span>
+</div>
         <div style="margin-left:auto;">
             <a class="export-btn" href="?idMateria=<?= $id_materia ?>&idGrupo=<?= $id_grupo ?>&mes=<?= $mes ?>&anio=<?= $anio ?>&export=excel">Descargar Excel</a>
         </div>
+
+        <button id="btnEditar" style="padding:8px 12px; background:#a0522d; color:white; border-radius:6px; border:1px solid #5c4033; cursor:pointer;">Editar</button>
+        <button id="btnGuardar" style="display:none; padding:8px 12px; background:#2e8b57; color:white; border-radius:6px; border:1px solid #1e5f3a; cursor:pointer;">Guardar cambios</button>
     </div>
 
     <div style="overflow:auto">
@@ -276,8 +287,18 @@ th {
                         <td><?= htmlspecialchars($al['matricula']) ?></td>
                         <td class="alumno-col"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
                         <?php for ($d=1;$d<=$diasMes;$d++): 
-                            $marcada = isset($inasistencias[$al['id_alumno']][$d]); ?>
-                            <td><div class="btn-cuadro <?= $marcada ? 'tachado' : '' ?>"></div></td>
+                            $estado = $inasistencias[$al['id_alumno']][$d] ?? "";
+                            $color = $estado == "Ausente" ? "#ff6b6b" :
+                                     ($estado == "Retardo" ? "#ffa500" :
+                                     ($estado == "Justificante" ? "#4da6ff" : "#fff"));
+                        ?>
+                            <td>
+                                <div class="btn-cuadro"
+                                     data-idalumno="<?= $al['id_alumno'] ?>"
+                                     data-fecha="<?= sprintf('%04d-%02d-%02d', $anio, $mes, $d) ?>"
+                                     data-estado="<?= $estado ?>"
+                                     style="background: <?= $color ?>"></div>
+                            </td>
                         <?php endfor; ?>
                     </tr>
                 <?php endforeach; ?>
@@ -285,5 +306,66 @@ th {
         </table>
     </div>
 </div>
+
+
+<script>
+let modoEdicion = false;
+let cambios = [];
+
+const colores = {
+  "Ausente": "#ff6b6b",
+  "Retardo": "#ffa500",
+  "Justificante": "#4da6ff"
+};
+
+// Activar edición
+document.getElementById("btnEditar").onclick = () => {
+  modoEdicion = true;
+  document.getElementById("btnGuardar").style.display = "inline-block";
+
+  const btnEditar = document.getElementById("btnEditar");
+  btnEditar.textContent = "Cancelar";
+  btnEditar.style.background = "#8b0000";
+
+  btnEditar.onclick = () => location.reload();
+};
+
+// Click en cuadritos
+document.querySelectorAll("td div.btn-cuadro").forEach(cuadro => {
+  cuadro.onclick = () => {
+    if (!modoEdicion) return;
+
+    let estado = cuadro.dataset.estado || "Ausente";
+    let siguiente =
+      estado === "Ausente" ? "Retardo" :
+      estado === "Retardo" ? "Justificante" :
+      "Ausente";
+
+    cuadro.dataset.estado = siguiente;
+    cuadro.style.background = colores[siguiente];
+
+    cambios.push({
+      alumno: cuadro.dataset.idalumno,
+      fecha: cuadro.dataset.fecha,
+      estado: siguiente
+    });
+  };
+});
+
+// Guardar cambios
+document.getElementById("btnGuardar").onclick = () => {
+  if (cambios.length === 0) return;
+
+  fetch("guardarAsistencia.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({cambios})
+  })
+  .then(r => r.text())
+  .then(() => location.reload());
+};
+</script>
+
+
 </body>
 </html>
