@@ -31,13 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Registrar alumnos</title>
+<link rel="stylesheet" href="/asistencia/css/menu.css">
 <style>
-body{font-family:Segoe UI;background:#f2eee6;padding:20px;display:flex;justify-content:center;}
+body{font-family:Segoe UI;background:#f2eee6;padding:20px;display:flex;justify-content:center;padding-top: 130px;}
 .container{background:white;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.2);max-width:1100px;width:100%;}
 h1{color:#4b3621;text-align:center;margin-bottom:20px;}
 select, input{padding:6px;border-radius:6px;border:1px solid #ccc;}
@@ -48,23 +50,22 @@ button{background:#8b4513;color:white;padding:8px 12px;border:none;border-radius
 button:hover{background:#a0522d;}
 .add-btn{background:#3c7a3c;}
 .add-btn:hover{background:#2e5c2e;}
-.back-arrow {
-  display: inline-block;
-  margin-bottom: 15px;
-  color: #a0522d;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.back-arrow:hover {
-  color: #deb887;
-}
+.back-arrow {display: inline-block;margin-bottom: 15px;color: #a0522d;text-decoration: none;font-weight: bold;}
+.back-arrow:hover {color: #deb887;}
 </style>
-<a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+
 </head>
+
 <body>
+  <?php include_once "layout/header_admin.php"; ?>
 <div class="container">
   <h1>Registrar Alumnos por Grupo</h1>
+
+  <!-- NUEVO: Subir archivo CSV -->
+  <label><b>Cargar archivo CSV:</b></label>
+  <input type="file" id="csvFile" accept=".csv">
+  <button type="button" onclick="leerCSV()">Cargar CSV</button>
+  <br><br>
 
   <form method="POST">
     <label for="idGrupo">Seleccionar grupo:</label>
@@ -126,6 +127,50 @@ function agregarFila() {
 function eliminarFila(btn) {
   btn.closest("tr").remove();
 }
+
+/* 📌 NUEVO: Leer archivo CSV y llenar la tabla */
+function leerCSV() {
+  const fileInput = document.getElementById("csvFile");
+  if (!fileInput.files.length) {
+    alert("Selecciona un archivo CSV primero.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const lector = new FileReader();
+
+  lector.onload = function(e) {
+    const lineas = e.target.result.split("\n");
+    const tbody = document.querySelector("#tablaAlumnos tbody");
+    tbody.innerHTML = ""; // limpiar tabla actual
+    contador = 0;
+
+    lineas.forEach((linea, index) => {
+      const datos = linea.split(",");
+      if (datos.length < 3) return; // línea vacía
+
+      // Saltar encabezado
+      if (index === 0 && isNaN(datos[0])) return;
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td><input type="number" name="alumnos[${contador}][numero_lista]" value="${datos[0] || ''}" style="width:60px;"></td>
+        <td><input type="text" name="alumnos[${contador}][matricula]" value="${datos[1] || ''}" style="width:120px;"></td>
+        <td><input type="text" name="alumnos[${contador}][nombre]" value="${datos[2] || ''}" required></td>
+        <td><input type="text" name="alumnos[${contador}][apellidos]" value="${datos[3] || ''}" required></td>
+        <td><input type="text" name="alumnos[${contador}][telefono]" value="${datos[4] || ''}" style="width:100px;"></td>
+        <td><input type="text" name="alumnos[${contador}][curp]" value="${datos[5] || ''}" style="width:160px;"></td>
+        <td><button type="button" onclick="eliminarFila(this)">❌</button></td>`;
+      tbody.appendChild(fila);
+      contador++;
+    });
+
+    alert("CSV cargado correctamente.");
+  };
+
+  lector.readAsText(file);
+}
 </script>
 </body>
+<?php include_once "layout/footer_admin.php"; ?>
 </html>

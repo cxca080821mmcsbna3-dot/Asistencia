@@ -1,0 +1,175 @@
+/* ======== NAVBAR ======== */
+header {
+  position: fixed;          /* <-- Ya no tapa contenido */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;            /* Que esté encima de todo */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 60px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+label img {
+  height: 60px;
+  margin: 0%;
+}
+
+.cecytem {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 2px;
+  margin: 0%;
+}
+
+.navbar a {
+  color: #fff;
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #ffb300;
+}
+
+/* ======== Ajuste para que NO se tape contenido ======== */
+body {
+  padding-top: 140px !important;   /* <-- El header ocupa espacio */
+  font-family: Segoe UI;
+  background: #f2eee6;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ======== Tabla y formulario ======== */
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  max-width: 1100px;
+  width: 100%;
+}
+
+h1 {
+  color: #4b3621;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+select, input {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+th {
+  background: #d2b48c;
+  color: #3b2a1a;
+}
+
+button {
+  background: #8b4513;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover {
+  background: #a0522d;
+}
+
+.add-btn {
+  background: #3c7a3c;
+}
+
+.add-btn:hover {
+  background: #2e5c2e;
+}
+
+.back-arrow {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #a0522d;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-arrow:hover {
+  color: #deb887;
+}
+
+/* ======== Switch Modo oscuro ======== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-left: 20px;
+}
+
+.switch input { display:none; }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  border-radius: 24px;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* ======== Modo oscuro ======== */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode header {
+  background-color: rgba(30,30,30,0.9);
+}
+
+body.dark-mode .navbar a {
+  color: #e0e0e0;
+}

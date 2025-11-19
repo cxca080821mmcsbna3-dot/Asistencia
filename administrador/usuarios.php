@@ -151,13 +151,15 @@ if ($editarID && $tipo) {
 <head>
     <meta charset="UTF-8">
     <title>Usuarios</title>
-    <link rel="stylesheet" href="css/usuarios.css?v=2.2">
+    //<
+    //link rel="stylesheet" href="css/usuarios.css?v=2.2">
 
 </head>
-<body>
-<div class="usuarios">
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
+<body>
+<?php include_once "layout/header_admin.php"; ?>
+<main>
+<div class="usuarios">
     <h2><?= $editarID ? 'Editar Usuario' : 'Crear Usuario' ?></h2>
 
     <?php if (!empty($mensaje)): ?>
@@ -247,6 +249,10 @@ if ($editarID && $tipo) {
     <?php else: ?>
         <p>No hay registros de este tipo.</p>
     <?php endif; ?>
-<?php endif; ?>
+<?php endif; 
+
+?>
+</main>
+<?php include_once "layout/footer_admin.php"; ?>
 </body>
 </html>

@@ -63,7 +63,7 @@ if (!$grupo) {
 }
 
 // Alumnos pertenecientes al grupo
-$stmt = $pdo->prepare('SELECT id_alumno, matricula, nombre, apellidos, numero_lista FROM alumno WHERE id_grupo = :idGrupo ORDER BY numero_lista ASC');
+$stmt = $pdo->prepare('SELECT id_alumno, matricula, nombre, apellidos FROM alumno WHERE id_grupo = :idGrupo');
 $stmt->execute([':idGrupo' => $idGrupo]);
 $alumnosGrupo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -268,25 +268,33 @@ strong {
 			<p>No hay alumnos asignados a este grupo.</p>
 		<?php else: ?>
 			<table>
-				<thead>
-					<tr><th>No.</th><th>Matrícula</th><th>Alumno</th><th>Acciones</th></tr>
-				</thead>
-				<tbody>
-					<?php foreach ($alumnosGrupo as $al): ?>
-						<tr>
-							<td><?= htmlspecialchars($al['numero_lista']) ?></td>
-							<td><?= htmlspecialchars($al['matricula']) ?></td>
-							<td><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
-							<td>
-								<form class="inline" method="post" onsubmit="return confirm('¿Retirar a este alumno del grupo?');">
-									<input type="hidden" name="id_alumno" value="<?= $al['id_alumno'] ?>">
-									<button type="submit" name="remove" class="btn btn-danger">Retirar</button>
-								</form>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
+	<thead>
+		<tr>
+			<th>No. Lista</th>
+			<th>Matrícula</th>
+			<th>Alumno</th>
+			<th>Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php $contador = 1; ?>
+		<?php foreach ($alumnosGrupo as $al): ?>
+			<tr>
+				<td><?= $contador ?></td>
+				<td><?= htmlspecialchars($al['matricula']) ?></td>
+				<td><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
+				<td>
+					<form class="inline" method="post" onsubmit="return confirm('¿Retirar a este alumno del grupo?');">
+						<input type="hidden" name="id_alumno" value="<?= $al['id_alumno'] ?>">
+						<button type="submit" name="remove" class="btn btn-danger">Retirar</button>
+					</form>
+				</td>
+			</tr>
+			<?php $contador++; ?>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
 		<?php endif; ?>
 
 
