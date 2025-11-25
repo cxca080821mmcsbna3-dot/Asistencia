@@ -3,37 +3,36 @@ session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
-$cambios = $data["cambios"] ?? [];
 
-if(!$cambios){
-    echo "No hay cambios";
+if (!isset($data["cambios"]) || empty($data["cambios"])) {
+    echo "Sin cambios";
     exit;
 }
 
-foreach($cambios as $c){
-    $id_alumno = intval($c["alumno"]);
-    $fecha = $c["fecha"];
-    $estado = $c["estado"];
-    $id_grupo = $_SESSION["id_grupo_asistencia"];
-    $id_materia = $_SESSION["id_materia_asistencia"];
+foreach ($data["cambios"] as $cambio) {
+    $idAlumno = $cambio["alumno"];
+    $fecha = $cambio["fecha"];
+    $estado = $cambio["estado"];
+    $idMateria = $_SESSION["idMateria"];
+    $idGrupo   = $_SESSION["idGrupo"];
 
     // Verificar si ya existe registro
-    $check = $pdo->prepare("SELECT id_asistencia FROM asistencia 
-        WHERE id_alumno = ? AND fecha = ? AND id_grupo = ? AND id_materia = ? LIMIT 1");
-    $check->execute([$id_alumno, $fecha, $id_grupo, $id_materia]);
+    $sqlCheck = "SELECT id_asistencia FROM asistencia 
+                 WHERE id_alumno = ? AND fecha = ? AND id_materia = ? AND id_grupo = ?";
+    $stmt = $pdo->prepare($sqlCheck);
+    $stmt->execute([$idAlumno, $fecha, $idMateria, $idGrupo]);
 
-    if ($check->rowCount() > 0) {
-        // Actualizar
-        $id_asistencia = $check->fetchColumn();
-        $upd = $pdo->prepare("UPDATE asistencia SET estado = ? WHERE id_asistencia = ?");
-        $upd->execute([$estado, $id_asistencia]);
-
+    if ($stmt->rowCount() > 0) {
+        // ACTUALIZAR
+        $sqlUpdate = "UPDATE asistencia SET estado = ? 
+                      WHERE id_alumno = ? AND fecha = ? AND id_materia = ? AND id_grupo = ?";
+        $pdo->prepare($sqlUpdate)->execute([$estado, $idAlumno, $fecha, $idMateria, $idGrupo]);
     } else {
-        // Insertar
-        $ins = $pdo->prepare("INSERT INTO asistencia (id_alumno, id_grupo, id_materia, fecha, estado) 
-                              VALUES (?, ?, ?, ?, ?)");
-        $ins->execute([$id_alumno, $id_grupo, $id_materia, $fecha, $estado]);
+        // INSERTAR
+        $sqlInsert = "INSERT INTO asistencia (id_alumno, fecha, estado, id_materia, id_grupo)
+                      VALUES (?, ?, ?, ?, ?)";
+        $pdo->prepare($sqlInsert)->execute([$idAlumno, $fecha, $estado, $idMateria, $idGrupo]);
     }
 }
 
-echo "ok";
+echo "OK";

@@ -10,6 +10,8 @@ if (!isset($_GET['idMateria']) || !isset($_GET['idGrupo'])) {
 
 $id_materia = intval($_GET['idMateria']);
 $id_grupo   = intval($_GET['idGrupo']);
+$_SESSION["idMateria"] = $id_materia;
+$_SESSION["idGrupo"] = $id_grupo;
 
 
 $mes  = isset($_GET['mes'])  ? intval($_GET['mes'])  : intval(date('m'));
