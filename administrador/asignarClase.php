@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
-session_start();
 
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../index.php");
