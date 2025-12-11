@@ -227,6 +227,7 @@ if ($editarID && $tipo) {
                 <table>
                     <tr>
                         <?php foreach(array_keys($usuarios[0]) as $campo): ?>
+                            <?php if (($tipo === 'profesor' || $tipo === 'administrador') && $campo === 'password') continue; ?>
                             <th><?= htmlspecialchars($campo) ?></th>
                         <?php endforeach; ?>
                         <th>Acciones</th>
@@ -234,10 +235,13 @@ if ($editarID && $tipo) {
 
                     <?php foreach($usuarios as $usuario): ?>
                         <tr>
-                            <?php foreach($usuario as $valor): ?>
+                            <?php foreach($usuario as $campo => $valor): ?>
+                                <?php if (($tipo === 'profesor' || $tipo === 'administrador') && $campo === 'password') continue; ?>
                                 <td><?= htmlspecialchars($valor) ?></td>
                             <?php endforeach; ?>
+
                             <?php $idCampo = array_keys($usuario)[0]; ?>
+
                             <td>
                                 <a class="btn-link" href="?editar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>">Editar</a> |
                                 <a class="btn-link delete" href="?eliminar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>" onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">Eliminar</a>
