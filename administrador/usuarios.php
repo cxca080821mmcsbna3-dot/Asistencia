@@ -214,10 +214,30 @@ if ($editarID && $tipo) {
 
             <?php
             switch ($tipo) {
-                case 'profesor': $stmt = $pdo->query("SELECT * FROM profesor"); break;
-                case 'alumno': $stmt = $pdo->query("SELECT * FROM alumno"); break;
-                case 'administrador': $stmt = $pdo->query("SELECT * FROM administrador"); break;
-            }
+    case 'profesor':
+        $stmt = $pdo->query("SELECT * FROM profesor");
+        break;
+
+    case 'alumno':
+        $stmt = $pdo->query("
+            SELECT 
+                
+                alumno.matricula,
+                alumno.nombre,
+                alumno.apellidos,
+                alumno.telefono,
+                grupo.nombre AS grupo,
+                alumno.curp
+            FROM alumno
+            LEFT JOIN grupo ON alumno.id_grupo = grupo.idGrupo
+        ");
+        break;
+
+    case 'administrador':
+        $stmt = $pdo->query("SELECT * FROM administrador");
+        break;
+}
+
 
             $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
