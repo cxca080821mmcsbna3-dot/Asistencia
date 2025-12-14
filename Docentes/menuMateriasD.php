@@ -2,15 +2,15 @@
 session_start();
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
 
-// Verificar que haya sesión de profesor
-if (!isset($_SESSION['idProfesor'])) {
+// 🔐 Verificar sesión EXCLUSIVA de docente
+if (!isset($_SESSION['DOCENTE'])) {
     header("Location: index.php");
     exit();
 }
 
-$idProfesor = $_SESSION['idProfesor'];
+$idProfesor = $_SESSION['DOCENTE']['idProfesor'];
 
-// Si el grupo viene por GET (ej. de gruposD.php)
+// Si el grupo viene por GET
 if (!isset($_GET['idGrupo'])) {
     echo "No se especificó un grupo.";
     exit();
@@ -35,7 +35,6 @@ $stmt->execute([
 ]);
 $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -44,28 +43,29 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="assets/css/materiasD.css">
 </head>
 <body>
-    <a href="menuDocente.php" class="back-arrow">&#8592; Regresar</a>
 
-  <header>
-    <h1>Selecciona una Materia</h1>
-  </header>s
+<a href="menuDocente.php" class="back-arrow">&#8592; Regresar</a>
 
-  <div class="container">
-    <?php if (!empty($materias)): ?>
-      <div class="materias-grid">
-  <?php foreach ($materias as $materia): ?>
-    <div class="card">
-      <h2><?= htmlspecialchars($materia['nombre']) ?></h2>
-      <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>" class="btn">
-        Tomar asistencia
-      </a>
-    </div>
-  <?php endforeach; ?>
+<header>
+  <h1>Selecciona una Materia</h1>
+</header>
+
+<div class="container">
+<?php if (!empty($materias)): ?>
+  <div class="materias-grid">
+    <?php foreach ($materias as $materia): ?>
+      <div class="card">
+        <h2><?= htmlspecialchars($materia['nombre']) ?></h2>
+        <a href="listaAlumnos.php?id_materia=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>" class="btn">
+          Tomar asistencia
+        </a>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php else: ?>
+  <p>No hay materias registradas para este grupo y profesor.</p>
+<?php endif; ?>
 </div>
 
-    <?php else: ?>
-      <p>No hay materias registradas para este grupo y profesor.</p>
-    <?php endif; ?>
-  </div>
 </body>
 </html>

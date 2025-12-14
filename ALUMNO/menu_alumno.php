@@ -1,12 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['idAlumno']) || $_SESSION['rol'] !== 'alumno') {
+// 🔐 Validar sesión EXCLUSIVA de alumno
+if (!isset($_SESSION['ALUMNO'])) {
     header("Location: ../index.php");
-    exit;
+    exit();
 }
 
-$nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
+$nombreAlumno = $_SESSION['ALUMNO']['apellidos'] . ' ' . $_SESSION['ALUMNO']['nombre'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,7 +26,10 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
     </video>
 
     <header>
-      <label class="cecytem"><img src="img/CECYTEM.PNG" alt="Incorrecto">  CECYTEM</label>
+      <label class="cecytem">
+        <img src="img/CECYTEM.PNG" alt="Incorrecto"> CECYTEM
+      </label>
+
       <nav class="navbar">
         <a href="asistencia.php">Asistencia</a>
         <a href="Perfil.php">Perfil</a>
@@ -40,7 +44,7 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
     </header>
 
     <div class="saludo">
-      <h1>Bienvenid@ <?php echo htmlspecialchars($nombreAlumno); ?></h1>
+      <h1>Bienvenid@ <?= htmlspecialchars($nombreAlumno) ?></h1>
       <p>Explora tu espacio de alumno y sigue avanzando.</p>
     </div>
   </div>
@@ -48,8 +52,6 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
   <div class="contenedor2">
     <h2>Calendario Escolar 2025</h2><br>
     <img src="img/calendario.jpeg" alt=""><br><br>
-    <br><br>
-
   </div>
 </div>
 
@@ -58,14 +60,12 @@ $nombreAlumno = $_SESSION['apellidos'] . ' ' . $_SESSION['nombre'];
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("modoOscuro");
 
-  // Aplicar modo oscuro si ya estaba activado
   const dark = localStorage.getItem("modo") === "oscuro";
   if (dark) {
     document.body.classList.add("dark-mode");
     toggle.checked = true;
   }
 
-  // Cambiar modo al usar el switch
   toggle.addEventListener("change", () => {
     if (toggle.checked) {
       document.body.classList.add("dark-mode");

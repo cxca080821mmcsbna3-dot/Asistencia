@@ -3,13 +3,20 @@ session_start();
 date_default_timezone_set('America/Mexico_City');
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
 
+// 🔐 Validar sesión DOCENTE
+if (!isset($_SESSION['DOCENTE'])) {
+    header("Location: index.php");
+    exit();
+}
+
 if (!isset($_GET['id_materia']) || !isset($_GET['idGrupo'])) {
-    header("Location: menuMaterias.php");
+    header("Location: menuMateriasD.php");
     exit();
 }
 
 $id_materia = intval($_GET['id_materia']);
 $id_grupo = intval($_GET['idGrupo']);
+
 
 // Datos de la materia y grupo
 $sqlMat = "SELECT m.nombre AS nombre_materia, g.nombre AS nombre_grupo

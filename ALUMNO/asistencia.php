@@ -4,25 +4,31 @@ date_default_timezone_set('America/Mexico_City');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'es');
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 
-// Verificación de sesión del alumno
-if (!isset($_SESSION['matricula'])) {
+// 🔐 Verificación de sesión EXCLUSIVA del alumno
+if (!isset($_SESSION['ALUMNO'])) {
     header("Location: ../index.php");
     exit();
 }
 
-$matricula = $_SESSION['matricula'];
+// 🔑 Datos del alumno desde sesión
+$id_alumno = $_SESSION['ALUMNO']['idAlumno'];
+$matricula = $_SESSION['ALUMNO']['matricula'];
 
 // Buscar los datos completos del alumno
 $sql = "SELECT id_alumno, numero_lista, matricula, nombre, apellidos, telefono, id_grupo 
-        FROM alumno WHERE matricula = :matricula LIMIT 1";
+        FROM alumno 
+        WHERE id_alumno = :id_alumno 
+        LIMIT 1";
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':matricula' => $matricula]);
+$stmt->execute([':id_alumno' => $id_alumno]);
 $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$alumno) die("Alumno no encontrado.");
+if (!$alumno) {
+    die("Alumno no encontrado.");
+}
 
-$id_alumno = $alumno['id_alumno'];
-$id_grupo  = $alumno['id_grupo'];
+$id_grupo = $alumno['id_grupo'];
+
 
 // Obtener lista de materias
 $sqlMat = "SELECT m.id_materia, m.nombre 

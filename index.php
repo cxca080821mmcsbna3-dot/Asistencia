@@ -6,58 +6,71 @@ require_once __DIR__ . "/assets/sentenciasSQL/claseUsuarios.php";
 $error = "";
 
 if (isset($_POST['iniciar'])) {
-    $usuario = trim($_POST['usuario']); // Puede ser correo o matrícula
+    $usuario = trim($_POST['usuario']); // Correo o matrícula
     $contrasena = trim($_POST['contrasena']); // Contraseña o CURP
 
     if (empty($usuario) || empty($contrasena)) {
         $error = "⚠️ Todos los campos son obligatorios.";
     } else {
         try {
-            // ======= ADMIN =======
+
+            /* ========= ADMIN ========= */
             $admin = new Admin($pdo);
             $adminData = $admin->leerAdmin($usuario, $contrasena);
             if ($adminData) {
-                $_SESSION['rol'] = 'admin';
-                $_SESSION['idAdmin'] = $adminData['id_admin'];
-                $_SESSION['nombre'] = $adminData['nombre'];
+
+                // 🔐 Sesión EXCLUSIVA de admin
+                $_SESSION['ADMIN'] = [
+                    'idAdmin' => $adminData['id_admin'],
+                    'nombre'  => $adminData['nombre']
+                ];
+
                 header("Location: administrador/menuGrupos.php");
                 exit();
             }
 
-            // ======= PROFESOR =======
+            /* ========= DOCENTE ========= */
             $profesor = new Profesor($pdo);
             $profesorData = $profesor->leerProfesor($usuario, $contrasena);
             if ($profesorData) {
-                $_SESSION['rol'] = 'profesor';
-                $_SESSION['idProfesor'] = $profesorData['id_profesor'];
-                $_SESSION['correo'] = $profesorData['correo'];
-                $_SESSION['nombre'] = $profesorData['nombre'];
+
+                // 🔐 Sesión EXCLUSIVA de docente
+                $_SESSION['DOCENTE'] = [
+                    'idProfesor' => $profesorData['id_profesor'],
+                    'correo'     => $profesorData['correo'],
+                    'nombre'     => $profesorData['nombre']
+                ];
+
                 header("Location: Docentes/menuDocente.php");
                 exit();
             }
 
-            // ======= ALUMNO =======
+            /* ========= ALUMNO ========= */
             $alumno = new Alumno($pdo);
             $alumnoData = $alumno->buscarPorMatriculaYCurp($usuario, $contrasena);
             if ($alumnoData) {
-                $_SESSION['rol'] = 'alumno';
-                $_SESSION['idAlumno'] = $alumnoData['id_alumno'];
-                $_SESSION['nombre'] = $alumnoData['nombre'];
-                $_SESSION['matricula'] = $alumnoData['matricula'];
-                $_SESSION['apellidos'] = $alumnoData['apellidos'];
+
+                // 🔐 Sesión EXCLUSIVA de alumno
+                $_SESSION['ALUMNO'] = [
+                    'idAlumno'  => $alumnoData['id_alumno'],
+                    'nombre'    => $alumnoData['nombre'],
+                    'apellidos' => $alumnoData['apellidos'],
+                    'matricula' => $alumnoData['matricula']
+                ];
+
                 header("Location: alumno/menu_alumno.php");
                 exit();
             }
 
-            // Ninguno coincidió
+            // ❌ Ningún rol coincidió
             $error = "❌ Credenciales incorrectas o usuario no registrado.";
+
         } catch (PDOException $e) {
-            // Evitar mostrar detalles técnicos al usuario; registrar el error para diagnósticos
-            error_log("[Login] Error de base de datos: " . $e->getMessage());
-            $error = "❌ Error al comunicarse con la base de datos. Intenta más tarde.";
+            error_log("[Login] Error DB: " . $e->getMessage());
+            $error = "❌ Error al comunicarse con la base de datos.";
         } catch (Exception $e) {
-            error_log("[Login] Error inesperado: " . $e->getMessage());
-            $error = "❌ Ocurrió un error. Intenta de nuevo.";
+            error_log("[Login] Error general: " . $e->getMessage());
+            $error = "❌ Ocurrió un error inesperado.";
         }
     }
 }
@@ -123,5 +136,3 @@ if (isset($_POST['iniciar'])) {
     </div>
 </body>
 </html>
-
-
