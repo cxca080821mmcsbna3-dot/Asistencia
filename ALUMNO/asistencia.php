@@ -1,167 +1,172 @@
 <?php
 session_start();
-date_default_timezone_set('America/Mexico_City');
-setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'es');
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 
-// 🔐 Verificación de sesión EXCLUSIVA del alumno
+/* 🔐 Validar sesión */
 if (!isset($_SESSION['ALUMNO'])) {
     header("Location: ../index.php");
-    exit();
+    exit;
 }
 
-// 🔑 Datos del alumno desde sesión
-$id_alumno = $_SESSION['ALUMNO']['idAlumno'];
+/* 📌 Matrícula */
 $matricula = $_SESSION['ALUMNO']['matricula'];
 
-// Buscar los datos completos del alumno
-$sql = "SELECT id_alumno, numero_lista, matricula, nombre, apellidos, telefono, id_grupo 
-        FROM alumno 
-        WHERE id_alumno = :id_alumno 
-        LIMIT 1";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([':id_alumno' => $id_alumno]);
+/* 🔎 Obtener alumno */
+$stmt = $pdo->prepare("
+    SELECT id_alumno, id_grupo 
+    FROM alumno 
+    WHERE matricula = :matricula
+    LIMIT 1
+");
+$stmt->execute([':matricula' => $matricula]);
 $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$alumno) {
     die("Alumno no encontrado.");
 }
 
-$id_grupo = $alumno['id_grupo'];
+$id_alumno = $alumno['id_alumno'];
+$id_grupo  = $alumno['id_grupo'];
 
-
-// Obtener lista de materias
-$sqlMat = "SELECT m.id_materia, m.nombre 
-           FROM grupo_materia gm
-           JOIN materias m ON gm.id_materia = m.id_materia
-           WHERE gm.id_grupo = :id_grupo";
-$stmtMat = $pdo->prepare($sqlMat);
-$stmtMat->execute([':id_grupo' => $id_grupo]);
+/* 📚 Materias */
+$stmtMat = $pdo->prepare("
+    SELECT DISTINCT m.id_materia, m.nombre
+    FROM materias m
+    JOIN grupo_materia gm ON gm.id_materia = m.id_materia
+    WHERE gm.id_grupo = :grupo
+    ORDER BY m.nombre
+");
+$stmtMat->execute([':grupo' => $id_grupo]);
 $materias = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
 
-// Materia seleccionada
-$id_materia = isset($_GET['id_materia']) ? intval($_GET['id_materia']) : ($materias[0]['id_materia'] ?? 0);
+/* 📅 Fecha actual */
+$mesActual  = (int) date('m');
+$anioActual = (int) date('Y');
 
-// Mes y año seleccionados
-$mes  = isset($_GET['mes'])  ? intval($_GET['mes'])  : intval(date('m'));
-$anio = isset($_GET['anio']) ? intval($_GET['anio']) : intval(date('Y'));
-if ($mes < 1 || $mes > 12) $mes = intval(date('m'));
+/* 📘 Materia seleccionada */
+$id_materia = intval($_GET['idMateria'] ?? ($materias[0]['id_materia'] ?? 0));
 
-// Cantidad de días del mes
-$diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
+/* 📅 Mes y año solicitados */
+$mes  = intval($_GET['mes'] ?? $mesActual);
+$anio = intval($_GET['anio'] ?? $anioActual);
 
-// Consultar asistencias del alumno
-$likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-$sqlAs = "SELECT fecha, estado 
-          FROM asistencia 
-          WHERE id_alumno = :id_alumno 
-            AND id_materia = :id_materia 
-            AND id_grupo = :id_grupo 
-            AND fecha LIKE :mes";
-$stmtAs = $pdo->prepare($sqlAs);
-$stmtAs->execute([
-    ':id_alumno' => $id_alumno,
-    ':id_materia' => $id_materia,
-    ':id_grupo' => $id_grupo,
-    ':mes' => $likeMes
-]);
-$rowsAs = $stmtAs->fetchAll(PDO::FETCH_ASSOC);
-
-// Crear arreglo con inasistencias
-$inasistencias = [];
-foreach ($rowsAs as $r) {
-    $d = intval(date('d', strtotime($r['fecha'])));
-    $inasistencias[$d] = $r['estado'];
+/* 🚫 Bloquear meses y años futuros */
+if ($anio > $anioActual || ($anio == $anioActual && $mes > $mesActual)) {
+    $mes  = $mesActual;
+    $anio = $anioActual;
 }
 
-// Días de la semana en español
-$diasSemanaES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+$mes  = ($mes < 1 || $mes > 12) ? $mesActual : $mes;
+$anio = ($anio < 2000 || $anio > $anioActual) ? $anioActual : $anio;
 
-// Meses en español
-$mesesES = [
-    1 => 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-];
+$diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
+
+/* 📊 Asistencias */
+$likeMes = sprintf("%04d-%02d%%", $anio, $mes);
+
+$stmtAs = $pdo->prepare("
+    SELECT fecha, estado 
+    FROM asistencia
+    WHERE id_alumno = :alumno
+      AND id_materia = :materia
+      AND fecha LIKE :mes
+");
+$stmtAs->execute([
+    ':alumno'  => $id_alumno,
+    ':materia' => $id_materia,
+    ':mes'     => $likeMes
+]);
+
+$asistencias = [];
+foreach ($stmtAs as $r) {
+    $dia = (int) date('d', strtotime($r['fecha']));
+    $asistencias[$dia] = $r['estado'];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Asistencia de <?= htmlspecialchars($alumno['nombre']) ?></title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="css/asistencia.css?v=2.1">
+<title>Mis asistencias</title>
+<link rel="stylesheet" href="css/asistencia.css">
 </head>
+
 <body>
-<a href="menu_alumno.php" class="back-arrow">&#8592; Regresar</a>
 
 <div class="wrapper">
-  <h1>Asistencia: <?= htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellidos']) ?></h1>
-  <p class="small"><strong>Matrícula:</strong> <?= htmlspecialchars($alumno['matricula']) ?></p>
+<a href="menu_alumno.php" class="back-arrow">&#8592; Regresar</a>
+<h2>Mis asistencias</h2>
 
-  <form method="get" class="filtro">
-    <input type="hidden" name="id_materia" value="<?= $id_materia ?>">
-    
-    <label>Materia:</label>
-    <select name="id_materia" onchange="this.form.submit()">
-      <?php foreach ($materias as $m): ?>
-        <option value="<?= $m['id_materia'] ?>" <?= $m['id_materia']==$id_materia?'selected':'' ?>>
-          <?= htmlspecialchars($m['nombre']) ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
+<!-- 🔍 FILTROS -->
+<div class="controls">
+<form method="get">
 
-    <label>Mes:</label>
-    <select name="mes">
-      <?php for ($m=1;$m<=12;$m++): ?>
-        <option value="<?= $m ?>" <?= $m==$mes?'selected':'' ?>><?= strftime('%B', mktime(0,0,0,$m,1)) ?></option>
-      <?php endfor; ?>
-    </select>
+<label><strong>Materia:</strong></label>
+<select name="idMateria" onchange="this.form.submit()">
+<?php foreach ($materias as $m): ?>
+    <option value="<?= $m['id_materia'] ?>" <?= $m['id_materia']==$id_materia?'selected':'' ?>>
+        <?= htmlspecialchars($m['nombre']) ?>
+    </option>
+<?php endforeach; ?>
+</select>
 
-    <label>Año:</label>
-    <input type="number" name="anio" value="<?= $anio ?>" style="width:90px">
-    <button type="submit">Ver</button>
-  </form>
+<label>Mes:</label>
+<select name="mes">
+<?php for ($i=1; $i<=12; $i++): ?>
+    <?php
+        if ($anio == $anioActual && $i > $mesActual) continue;
+    ?>
+    <option value="<?= $i ?>" <?= $i==$mes?'selected':'' ?>><?= $i ?></option>
+<?php endfor; ?>
+</select>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Día</th>
-        <th>Día de la semana</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php 
-      for ($d = 1; $d <= $diasMes; $d++) {
-        $fechaDia = sprintf('%04d-%02d-%02d', $anio, $mes, $d);
-        $numeroDiaSemana = date('w', strtotime($fechaDia));
-        
-        // Solo mostrar días de lunes (1) a viernes (5)
-        if ($numeroDiaSemana > 0 && $numeroDiaSemana < 6) {
-            $diaSemana = $diasSemanaES[$numeroDiaSemana];
-            $estado = isset($inasistencias[$d]) ? $inasistencias[$d] : 'Presente';
-            $clase = $estado === 'Ausente' ? 'ausente' : 'presente';
-      ?>
-      <tr>
-        <td><?= $d ?></td>
-        <td><?= $diaSemana ?></td>
-        <td class="asistencia <?= $clase ?>"><?= $estado === 'Ausente' ? '❌ Ausente' : '✅ Presente' ?></td>
-      </tr>
-      <?php 
-        }
-      }
-      ?>
-    </tbody>
-  </table>
+<label>Año:</label>
+<input type="number" name="anio" value="<?= $anio ?>" max="<?= $anioActual ?>" style="width:80px">
+
+<button type="submit">Ver</button>
+</form>
 </div>
 
+<br>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("modo") === "oscuro") {
-    document.body.classList.add("dark-mode");
-  }
-});
-</script>
+<!-- 📅 TABLA -->
+<div class="table-container">
+<table>
+
+<tr>
+<?php for ($d=1; $d<=$diasMes; $d++): ?>
+    <th><?= $d ?></th>
+<?php endfor; ?>
+</tr>
+
+<tr>
+<?php for ($d=1; $d<=$diasMes; $d++):
+    $fechaActualDia = sprintf("%04d-%02d-%02d", $anio, $mes, $d);
+    $diaSemana = date('N', strtotime($fechaActualDia));
+
+    if ($diaSemana == 6) {
+        $estado = 'Sábado';
+        $color  = '#e0e0e0';
+    } elseif ($diaSemana == 7) {
+        $estado = 'Domingo';
+        $color  = '#e0e0e0';
+    } else {
+        $estado = $asistencias[$d] ?? '';
+        $color = $estado === 'Ausente' ? '#ff6b6b'
+               : ($estado === 'Retardo' ? '#ffa500'
+               : ($estado === 'Justificante' ? '#4da6ff' : '#fff'));
+    }
+?>
+<td style="background:<?= $color ?>; font-size:12px">
+    <?= htmlspecialchars($estado) ?>
+</td>
+<?php endfor; ?>
+</tr>
+
+</table>
+</div>
+</div>
+
 </body>
 </html>

@@ -1,14 +1,16 @@
 <?php
 session_start();
 
-// 🔐 Validar sesión EXCLUSIVA de alumno
 if (!isset($_SESSION['ALUMNO'])) {
     header("Location: ../index.php");
-    exit();
+    exit;
 }
 
+// ✔ NO intentes leer id_alumno si no existe
 $nombreAlumno = $_SESSION['ALUMNO']['apellidos'] . ' ' . $_SESSION['ALUMNO']['nombre'];
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
