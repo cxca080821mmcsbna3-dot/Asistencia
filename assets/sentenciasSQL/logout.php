@@ -1,7 +1,11 @@
 <?php
 session_start();
-session_unset();
-session_destroy();
+
+// 🔐 Cerrar SOLO sesión de administrador
+unset($_SESSION['idAdmin']);
+
+// Seguridad
+session_regenerate_id(true);
+
 header("Location: ../../index.php");
 exit();
-?>

@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
@@ -18,13 +19,9 @@ if (isset($_POST['iniciar'])) {
             $admin = new Admin($pdo);
             $adminData = $admin->leerAdmin($usuario, $contrasena);
             if ($adminData) {
-
-                // 🔐 Sesión EXCLUSIVA de admin
-                $_SESSION['ADMIN'] = [
-                    'idAdmin' => $adminData['id_admin'],
-                    'nombre'  => $adminData['nombre']
-                ];
-
+                $_SESSION['rol'] = 'admin';
+                $_SESSION['idAdmin'] = $adminData['id_admin'];
+                $_SESSION['nombre'] = $adminData['nombre'];
                 header("Location: administrador/menuGrupos.php");
                 exit();
             }
