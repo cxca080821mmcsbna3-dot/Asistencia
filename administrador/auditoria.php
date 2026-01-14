@@ -108,10 +108,7 @@ $registros = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 6f2679b44ad18e58f4b0c15589a2663122a804be
+
     <meta charset="UTF-8">
     <title>Auditoría del Sistema</title>
     <link rel="stylesheet" href="css/auditoria.css">
@@ -121,7 +118,6 @@ $registros = $stmt->fetchAll();
 
 <?php include_once "layout/header_admin.php"; ?>
 
-<a href="menuGrupos.php" class="back-arrow">← Regresar</a>
 
 <form method="GET" class="filtros">
     <select name="tabla">
@@ -156,9 +152,6 @@ $registros = $stmt->fetchAll();
 </form>
 
 <div class="wrapper">
-<<<<<<< HEAD
-=======
-=======
     <meta charset="UTF-8" />
     <title>Registros de Auditoría</title>
     <link rel="stylesheet" href="css/auditoria.css?v=1.2">
@@ -167,8 +160,6 @@ $registros = $stmt->fetchAll();
 <body>
     <?php include_once "layout/header_admin.php"; ?>
   <div class="wrapper">
->>>>>>> b84acd2e1f92af2a14f4a536182aab7b9dc555d5
->>>>>>> 6f2679b44ad18e58f4b0c15589a2663122a804be
     <table>
         <thead>
             <tr>
