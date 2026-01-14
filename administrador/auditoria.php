@@ -123,6 +123,7 @@ $registros = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <title>Auditoría del Sistema</title>
     <link rel="stylesheet" href="css/auditoria.css?v=1.1">
@@ -164,6 +165,16 @@ $registros = $stmt->fetchAll();
 </form>
 
 <div class="wrapper">
+=======
+    <meta charset="UTF-8" />
+    <title>Registros de Auditoría</title>
+    <link rel="stylesheet" href="css/auditoria.css?v=1.2">
+    <link rel="stylesheet" href="css/materiascrud.css?v=1.2">
+</head>
+<body>
+    <?php include_once "layout/header_admin.php"; ?>
+  <div class="wrapper">
+>>>>>>> b84acd2e1f92af2a14f4a536182aab7b9dc555d5
     <table>
         <thead>
             <tr>

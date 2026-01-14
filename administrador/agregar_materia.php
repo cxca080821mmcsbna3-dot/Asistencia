@@ -79,9 +79,12 @@ $listaMaterias = $materiaObj->Consultar();
     <title>Gestión de Materias</title>
     <link rel="stylesheet" href="css/materiascrud.css">
 </head>
-<body>
+<style>
+   
 
-<a href="menuGrupos.php" class="back-arrow">← Regresar</a>
+    </style>
+<body>
+<?php include_once "layout/header_admin.php"; ?>
 
 <?php if ($mensaje): ?>
     <p style="text-align:center; background-color:#fff5e6; border:1px solid #deb887; padding:10px; border-radius:8px; width:60%; margin:10px auto;">

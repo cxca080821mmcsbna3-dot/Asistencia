@@ -6,29 +6,106 @@ body {
     color: #4b3621;
 }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 40px;
-    flex-wrap: wrap;
-}
-
-.materias,
-.consultar {
+ .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #deb887;
-    width: 460px;
-    padding: 25px 30px;
+    gap: 30px;
+    max-width: 1200px;
+    margin: auto;
+}
+.materias {
     background-color: #fffaf0;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: auto;
+}
+
+.materias h1 {
+    text-align: center;
+    color: #8b4513;
+    margin-bottom: 20px;
+}
+
+.materias label {
+    font-weight: bold;
+    color: #5c4033;
+}
+
+.materias input[type="text"] {
+    width: 96%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #c8b6a6;
+}
+
+.materias input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #a0522d;
+    color: white;
+    border: none;
     border-radius: 12px;
-    gap: 15px;
-    overflow-x: auto;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.materias input[type="submit"]:hover {
+    background-color: #8b4513;
+}
+
+.consultar {
+    background-color: #fffaf0;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.consultar h2 {
+    text-align: center;
+    color: #8b4513;
+    margin-bottom: 20px;
+}
+
+/* Tabla ocupa casi todo */
+.consultar table {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.consultar th {
+    background-color: #deb887;
+    color: #4b3621;
+    padding: 12px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.consultar td {
+    padding: 12px;
+    border-bottom: 1px solid #f7a63b;
+    border-radius: 5px;
+}
+
+.consultar tr:hover {
+    background-color: #f3e5d0;
+    border-radius: 5px;
+}
+.btn-accion {
+    padding: 6px 10px;
+    background-color: #a0522d;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 13px;
+    margin: 2px;
+    display: inline-block;
+}
+
+.btn-accion:hover {
+    background-color: #8b4513;
 }
 
 h1,

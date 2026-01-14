@@ -41,6 +41,149 @@ if (isset($_POST['crear'])) {
 
 </head>
 <style>
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0e8dc;
+    margin: 0;
+    padding: 20px;
+    color: #4b3621;
+}
+
+/* Flecha regresar */
+.back-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 7px;
+    margin: 4px;
+    color: #a0522d;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: #fff5e1;
+    border: 1px solid #deb887;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.back-arrow:hover {
+    background-color: #deb887;
+    color: #fff;
+    transform: translateX(-4px);
+}
+
+/* Contenedor del formulario */
+.form-container {
+    max-width: 520px;
+    margin: 40px auto;
+    background-color: #fffaf0;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Título */
+.form-container h2 {
+    text-align: center;
+    color: #8b4513;
+    margin-bottom: 25px;
+}
+
+/* Labels */
+.form-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #5c4033;
+}
+
+/* Inputs y textareas */
+.form-container input,
+.form-container textarea {
+    width: 96%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #c8b6a6;
+    font-size: 14px;
+    margin-bottom: 18px;
+    transition: border 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+}
+
+.form-container textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-container input:focus,
+.form-container textarea:focus {
+    outline: none;
+    border-color: #a0522d;
+    box-shadow: 0 0 6px rgba(160, 82, 45, 0.4);
+}
+
+/* Botón */
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #a0522d;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #8b4513;
+    transform: translateY(-2px);
+}
+
+/* Validaciones */
+input.valid, textarea.valid {
+    border: 2px solid green;
+    background: #e8f5e9;
+}
+
+input.invalid, textarea.invalid {
+    border: 2px solid red;
+    background: #ffebee;
+}
+
+/* 🌙 Modo oscuro */
+body.dark-mode {
+    background-color: #2c2c2c;
+    color: #f0e8dc;
+}
+
+body.dark-mode .form-container {
+    background-color: #4a4a4a;
+}
+
+body.dark-mode h2 {
+    color: #ffd39b;
+}
+
+body.dark-mode label {
+    color: #f5deb3;
+}
+
+body.dark-mode input,
+body.dark-mode textarea {
+    background-color: #5a5a5a;
+    color: #fff;
+    border-color: #888;
+}
+
+body.dark-mode .btn {
+    background-color: #6b4c2a;
+}
+
+body.dark-mode .btn:hover {
+    background-color: #8b5a2b;
+}
+
 input.valid, textarea.valid {
   border: 2px solid green;
   background: #e8f5e9;
@@ -51,23 +194,26 @@ input.invalid, textarea.invalid {
 }
 </style>
 <body>
-        <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
 
+<a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
 
+<div class="form-container">
     <h2>Agregar Grupo</h2>
-   <form id="formGrupo" action="crearGrupo.php" method="POST" enctype="multipart/form-data">
-    <label>Nombre del Grupo:</label>
-    <input type="text" id="nombre_grupo" name="nombre_grupo" required>
 
-    <label>Descripción:</label>
-    <textarea id="descripcion" name="descripcion"></textarea>
+    <form id="formGrupo" action="crearGrupo.php" method="POST">
+        <label>Nombre del Grupo</label>
+        <input type="text" id="nombre_grupo" name="nombre_grupo" required>
 
-    <label>Tutor:</label>
-    <textarea id="tutor" name="tutor"></textarea>
+        <label>Descripción</label>
+        <textarea id="descripcion" name="descripcion"></textarea>
 
-    <br><br>
-    <button type="submit" name="crear">Agregar Grupo</button>
-</form>
+        <label>Tutor</label>
+        <textarea id="tutor" name="tutor"></textarea>
+
+        <button type="submit" name="crear" class="btn">Agregar Grupo</button>
+    </form>
+</div>
 
 </body>
+
 </html>
