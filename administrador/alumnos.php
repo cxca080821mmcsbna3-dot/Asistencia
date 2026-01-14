@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="/asistencia/css/menu.css">
 <style>
 body{font-family:Segoe UI;background:#f2eee6;padding:20px;display:flex;justify-content:center;padding-top: 130px;}
-.container{background:white;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.2);max-width:1100px;width:100%;}
+.container{background:white;padding:10px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.2);max-width:1300px;width:100%;}
 h1{color:#4b3621;text-align:center;margin-bottom:20px;}
 select, input{padding:6px;border-radius:6px;border:1px solid #ccc;}
 table{width:100%;border-collapse:collapse;margin-top:15px;}
@@ -58,7 +58,7 @@ button:hover{background:#a0522d;}
 
 <body>
   <?php include_once "layout/header_admin.php"; ?>
-<div class="container">
+<center><div class="container">
   <h1>Registrar Alumnos por Grupo</h1>
 
   <!-- NUEVO: Subir archivo CSV -->
@@ -105,7 +105,7 @@ button:hover{background:#a0522d;}
     <button type="submit">Guardar todos</button>
   </form>
 </div>
-
+</center>
 <script>
 let contador = 1;
 

@@ -166,7 +166,7 @@ input:checked + .slider:before {
 :root {
   --fondo1: rgba(0,0,0,0.1);
   --texto1: #000;
-  --fondo2: #f4f6f9;
+  --fondo2: #f2d7b2;
   --texto2: #333;
 }
 
@@ -252,6 +252,7 @@ body.dark-mode .saludo p {
   </label>
 
   <nav class="navbar">
+    <a href="menuGrupos.php" class="boton">Inicio</a>
     <a href="gruposCreados.php" class="boton">Grupos</a>
     <a href="agregar_materia.php" class="boton">Materias</a>
     <a href="usuarios.php" class="boton">Usuarios</a>
