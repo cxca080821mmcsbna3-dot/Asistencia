@@ -153,7 +153,46 @@ if ($editarID && $tipo) {
     <title>Usuarios</title>
     
 </head>
+<style>
+    /* 🎯 Contenedor de botones */
+td .btn-link {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    margin: 2px;
+}
 
+/* ✏️ Botón Editar */
+td .btn-link:not(.delete) {
+    background-color: #deb887;
+    color: #4b3621;
+    border: 1px solid #caa472;
+}
+
+td .btn-link:not(.delete):hover {
+    background-color: #d2b48c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* 🗑️ Botón Eliminar */
+td .btn-link.delete {
+    background-color: #c0392b;
+    color: #fff;
+    border: 1px solid #a93226;
+}
+
+td .btn-link.delete:hover {
+    background-color: #a93226;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(192,57,43,0.4);
+}
+
+    </style>
 <body>
     
 <?php include_once "layout/header_admin.php"; ?>
