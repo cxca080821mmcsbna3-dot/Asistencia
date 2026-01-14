@@ -1,95 +1,200 @@
 <?php
 session_start();
 
-// ✅ Verificación de acceso (solo administrador)
+/* ===============================
+   VERIFICAR SESIÓN (ADMIN)
+================================ */
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../index.php");
     exit;
 }
 
+$idAdmin     = $_SESSION['idAdmin'];
 $nombreAdmin = $_SESSION['nombre'];
 
-// ✅ Conexión (usando tu mismo formato)
-$host = 'localhost';
-$db   = 'asistencia';
-$user = 'root';
-$pass = ''; 
-$charset = 'utf8mb4';
+/* ===============================
+   CONEXIÓN A LA BD
+================================ */
+$pdo = new PDO(
+    "mysql:host=localhost;dbname=asistencia;charset=utf8mb4",
+    "root",
+    "",
+    [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]
+);
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+/* ===============================
+   PASAR ADMIN A MYSQL (TRIGGERS)
+================================ */
+$stmt = $pdo->prepare("
+    SET @admin_id = :id,
+        @admin_nombre = :nombre
+");
+$stmt->execute([
+    'id' => $idAdmin,
+    'nombre' => $nombreAdmin
+]);
 
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-    // Fuerza UTF-8
-    $pdo->exec("SET NAMES utf8mb4");
+/* ===============================
+   CONSULTA BASE (CON NOMBRE)
+================================ */
+$sql = "
+SELECT 
+    a.id_auditoria,
+    a.tabla_afectada,
+    a.accion,
+    a.datos_antes,
+    a.datos_despues,
+    a.admin_nombre,
+    a.fecha,
 
-    // 🔹 IMPORTANTE: enviar el usuario logeado a MySQL
-    if (!empty($_SESSION['nombre'])) {
-        $usuario = $_SESSION['nombre'];
-        $stmt = $pdo->prepare("SET @usuario_logeado = :usuario");
-        $stmt->execute(['usuario' => $usuario]);
-    } else {
-        $pdo->exec("SET @usuario_logeado = NULL");
-    }
+    CASE a.tabla_afectada
+        WHEN 'alumno' THEN (
+            SELECT CONCAT(nombre,' ',apellidos)
+            FROM alumno 
+            WHERE id_alumno = a.id_registro
+        )
+        WHEN 'profesor' THEN (
+            SELECT CONCAT(nombre,' ',apellidos)
+            FROM profesor 
+            WHERE id_profesor = a.id_registro
+        )
+        WHEN 'materias' THEN (
+            SELECT nombre
+            FROM materias 
+            WHERE id_materia = a.id_registro
+        )
+        WHEN 'grupo' THEN (
+            SELECT nombre
+            FROM grupo 
+            WHERE idGrupo = a.id_registro
+        )
+        WHEN 'administrador' THEN (
+            SELECT correo
+            FROM administrador
+            WHERE id_admin = a.id_registro
+        )
+        ELSE a.id_registro
+    END AS registro_legible
 
-} catch (PDOException $e) {
-    die("❌ Error de conexión a la base de datos: " . $e->getMessage());
+FROM auditoria a
+WHERE 1=1
+";
+
+$params = [];
+
+/* ===============================
+   FILTROS (YA FUNCIONALES)
+================================ */
+if (isset($_GET['tabla']) && $_GET['tabla'] !== '') {
+    $sql .= " AND a.tabla_afectada = :tabla";
+    $params['tabla'] = $_GET['tabla'];
 }
 
-// ✅ Consulta registros de auditoría
-$stmt = $pdo->prepare("SELECT * FROM auditoria ORDER BY fecha DESC LIMIT 100");
-$stmt->execute();
+if (isset($_GET['accion']) && $_GET['accion'] !== '') {
+    $sql .= " AND a.accion = :accion";
+    $params['accion'] = $_GET['accion'];
+}
+
+if (isset($_GET['admin']) && $_GET['admin'] !== '') {
+    $sql .= " AND a.admin_nombre LIKE :admin";
+    $params['admin'] = '%' . $_GET['admin'] . '%';
+}
+
+/* FECHAS (FORMA CORRECTA) */
+if (!empty($_GET['desde'])) {
+    $sql .= " AND a.fecha >= :desde";
+    $params['desde'] = $_GET['desde'] . " 00:00:00";
+}
+
+if (!empty($_GET['hasta'])) {
+    $sql .= " AND a.fecha <= :hasta";
+    $params['hasta'] = $_GET['hasta'] . " 23:59:59";
+}
+
+$sql .= " ORDER BY a.fecha DESC LIMIT 200";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $registros = $stmt->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Registros de Auditoría</title>
-    <link rel="stylesheet" href="css/auditoria.css?v=1.2">
+    <meta charset="UTF-8">
+    <title>Auditoría del Sistema</title>
+    <link rel="stylesheet" href="css/auditoria.css?v=1.1">
 </head>
 <body>
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
-  <div class="wrapper">
+
+<a href="menuGrupos.php" class="back-arrow">← Regresar</a>
+
+<form method="GET" class="filtros">
+    <select name="tabla">
+        <option value="">Todas las tablas</option>
+        <?php
+        $tablas = ['alumno','grupo','profesor','materias','grupo_materia','asistencia','administrador'];
+        foreach ($tablas as $t):
+        ?>
+            <option value="<?= $t ?>" <?= ($_GET['tabla'] ?? '') === $t ? 'selected' : '' ?>>
+                <?= ucfirst(str_replace('_',' ', $t)) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
+    <select name="accion">
+        <option value="">Todas las acciones</option>
+        <?php foreach (['INSERT','UPDATE','DELETE'] as $a): ?>
+            <option value="<?= $a ?>" <?= ($_GET['accion'] ?? '') === $a ? 'selected' : '' ?>>
+                <?= $a ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
+    <input type="text" name="admin" placeholder="Administrador"
+           value="<?= htmlspecialchars($_GET['admin'] ?? '') ?>">
+
+    <input type="date" name="desde" value="<?= $_GET['desde'] ?? '' ?>">
+    <input type="date" name="hasta" value="<?= $_GET['hasta'] ?? '' ?>">
+
+    <button type="submit">Filtrar</button>
+    <a href="auditoria.php" class="btn-reset">Limpiar</a>
+</form>
+
+<div class="wrapper">
     <table>
-        <caption>Registros de Auditoría</caption>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Tabla Afectada</th>
-                <th>ID Registro</th>
+                <th>Tabla</th>
+                <th>Registro</th>
                 <th>Acción</th>
-                <th>Datos Antes</th>
-                <th>Datos Después</th>
-                <th>Usuario</th>
+                <th>Antes</th>
+                <th>Después</th>
+                <th>Administrador</th>
                 <th>Fecha</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (count($registros) === 0): ?>
-                <tr><td colspan="8" style="text-align:center;">No hay registros.</td></tr>
-            <?php else: ?>
-                <?php foreach ($registros as $reg): ?>
-                <tr>
-                    <td><?= htmlspecialchars($reg['id_auditoria']) ?></td>
-                    <td><?= htmlspecialchars($reg['tabla_afectada']) ?></td>
-                    <td><?= htmlspecialchars($reg['id_registro']) ?></td>
-                    <td><?= htmlspecialchars($reg['accion']) ?></td>
-                    <td><?= nl2br(htmlspecialchars($reg['datos_antes'])) ?></td>
-                    <td><?= nl2br(htmlspecialchars($reg['datos_despues'])) ?></td>
-                    <td><?= htmlspecialchars($reg['usuario'] ?: '—') ?></td>
-                    <td><?= htmlspecialchars($reg['fecha']) ?></td>
-                </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
+        <?php if (!$registros): ?>
+            <tr><td colspan="8">No hay registros</td></tr>
+        <?php else: foreach ($registros as $r): ?>
+            <tr>
+                <td><?= $r['id_auditoria'] ?></td>
+                <td><?= $r['tabla_afectada'] ?></td>
+                <td><?= htmlspecialchars($r['registro_legible']) ?></td>
+                <td><?= $r['accion'] ?></td>
+                <td><?= nl2br(htmlspecialchars($r['datos_antes'] ?? '—')) ?></td>
+                <td><?= nl2br(htmlspecialchars($r['datos_despues'] ?? '—')) ?></td>
+                <td><?= $r['admin_nombre'] ?></td>
+                <td><?= $r['fecha'] ?></td>
+            </tr>
+        <?php endforeach; endif; ?>
         </tbody>
     </table>
-    </div>
+</div>
+
 </body>
 </html>

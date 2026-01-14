@@ -116,12 +116,15 @@ if (isset($_POST['crear'])) {
             $stmt->execute([$correo]);
             if ($stmt->fetchColumn() > 0) {
                 $mensaje = "Error: El correo ya está registrado para un administrador.";
-            } else {
-                $passHash = password_hash($password, PASSWORD_DEFAULT);
-                $sql = "INSERT INTO administrador (nombre, correo, password) VALUES (?, ?, ?)";
-                $stmt->execute([$nombre, $correo, $passHash]);
-                $mensaje = "Administrador creado correctamente.";
-            }
+} else {
+    $passHash = password_hash($password, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO administrador (nombre, correo, password) VALUES (?, ?, ?)";
+    $stmt = $pdo->prepare($sql);   // ✅ FALTABA ESTA LÍNEA
+    $stmt->execute([$nombre, $correo, $passHash]);
+
+    $mensaje = "Administrador creado correctamente.";
+}
         }
     }
 }
