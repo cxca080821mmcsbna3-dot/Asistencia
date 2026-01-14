@@ -118,7 +118,6 @@ $registros = $stmt->fetchAll();
 
 <?php include_once "layout/header_admin.php"; ?>
 
-
 <form method="GET" class="filtros">
     <select name="tabla">
         <option value="">Todas las tablas</option>
