@@ -31,6 +31,13 @@ body {
   background: var(--fondo2);
 }
 
+/* Spacer que empuja el contenido por debajo del header fijo */
+#header-spacer {
+  height: var(--header-height, 140px);
+  width: 100%;
+  display: block;
+}
+
 label img{
   height: 60px;
   margin: 0%;
@@ -271,14 +278,21 @@ body.dark-mode .saludo p {
 
 <!-- CARGA AUTOMÁTICA DEL JS (solo aquí) -->
 <script src="js/modo_oscuro.js"></script>
+<!-- Spacer: empuja el contenido para que no lo tape el header fijo -->
+<div id="header-spacer" aria-hidden="true"></div>
 <!-- Ajustar padding-top del body según la altura real del header para que no tape el contenido -->
 <script>
   (function(){
     function ajustarPadding(){
       var h = document.querySelector('header');
-      if(!h) return;
-      // Asignar padding-top igual a la altura del header
-      document.body.style.paddingTop = h.offsetHeight + 'px';
+      var spacer = document.getElementById('header-spacer');
+      if(!h || !spacer) return;
+      var alto = h.offsetHeight;
+      // Asignar variable CSS y altura al spacer para empujar contenido
+      document.documentElement.style.setProperty('--header-height', alto + 'px');
+      spacer.style.height = alto + 'px';
+      // También como respaldo, ajustar padding-top del body
+      document.body.style.paddingTop = alto + 'px';
     }
 
     // Ejecutar al cargar y al cambiar el tamaño de ventana

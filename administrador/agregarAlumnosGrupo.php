@@ -67,10 +67,8 @@ $stmt = $pdo->prepare('SELECT id_alumno, matricula, nombre, apellidos FROM alumn
 $stmt->execute([':idGrupo' => $idGrupo]);
 $alumnosGrupo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Alumnos disponibles en el sistema (no en este grupo) - pueden pertenecer a otro grupo o ser null
-$stmt2 = $pdo->prepare('SELECT id_alumno, matricula, nombre, apellidos, numero_lista, id_grupo FROM alumno WHERE id_grupo IS NULL OR id_grupo != :idGrupo ORDER BY apellidos, nombre');
-$stmt2->execute([':idGrupo' => $idGrupo]);
-$alumnosDisponibles = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+// Nota: se eliminó la sección de "Agregar alumnos existentes" en la interfaz,
+// por lo que ya no es necesario obtener la lista de alumnos disponibles aquí.
 
 ?>
 <!doctype html>
@@ -297,112 +295,4 @@ strong {
 
 		<?php endif; ?>
 
-
-<h3 style="margin-top:18px">Agregar alumnos existentes</h3>
-<p>Selecciona uno o varios alumnos para asignarlos a este grupo. Los alumnos que ya pertenezcan a otro grupo se actualizarán para pertenecer a este.</p>
-
-<?php if (empty($alumnosDisponibles)): ?>
-	<p>No hay alumnos disponibles en el sistema.</p>
-<?php else: ?>
-	<?php
-	// Obtener todos los grupos (excepto el actual)
-	$stmtGAll = $pdo->prepare("SELECT idGrupo, nombre FROM grupo WHERE idGrupo != :idGrupo ORDER BY nombre");
-	$stmtGAll->execute([':idGrupo' => $idGrupo]);
-	$gruposExistentes = $stmtGAll->fetchAll(PDO::FETCH_ASSOC);
-
-	// Agrupar alumnos por ID de grupo (más 'null' para los sin grupo)
-	$gruposAlumnos = [];
-
-	// Sin grupo (id_grupo = NULL)
-	$gruposAlumnos['0'] = [
-		'nombre' => 'Sin grupo',
-		'alumnos' => array_values(array_filter($alumnosDisponibles, fn($a) => $a['id_grupo'] === null))
-	];
-
-	// Con grupo
-	foreach ($gruposExistentes as $g) {
-		$gruposAlumnos[$g['idGrupo']] = [
-			'nombre' => $g['nombre'],
-			'alumnos' => array_values(array_filter($alumnosDisponibles, fn($a) => $a['id_grupo'] == $g['idGrupo']))
-		];
-	}
-	?>
-
-	<form method="post">
-		<label for="grupoSelect"><strong>Selecciona un grupo para ver sus alumnos:</strong></label>
-		<select id="grupoSelect" required class="btn" style="margin-left:8px;">
-			<option value="">-- Elegir grupo --</option>
-			<option value="0">Sin grupo</option>
-			<?php foreach ($gruposExistentes as $g): ?>
-				<option value="<?= $g['idGrupo'] ?>"><?= htmlspecialchars($g['nombre']) ?></option>
-			<?php endforeach; ?>
-		</select>
-
-		<div id="contenedorAlumnos" style="margin-top:16px;">
-			<p style="color:#555;">Selecciona un grupo para mostrar sus alumnos.</p>
-		</div>
-
-		<div style="margin-top:12px;">
-			<button type="submit" name="add" class="btn">Agregar seleccionados</button>
-		</div>
-	</form>
-
-	<script>
-		const data = <?= json_encode($gruposAlumnos, JSON_UNESCAPED_UNICODE) ?>;
-		const contenedor = document.getElementById('contenedorAlumnos');
-		const select = document.getElementById('grupoSelect');
-
-		select.addEventListener('change', () => {
-			const grupoID = select.value;
-			contenedor.innerHTML = '';
-
-			if (!grupoID || !data[grupoID]) {
-				contenedor.innerHTML = '<p style="color:#555;">Selecciona un grupo para mostrar sus alumnos.</p>';
-				return;
-			}
-
-			const grupo = data[grupoID];
-			const alumnos = grupo.alumnos;
-
-			if (alumnos.length === 0) {
-				contenedor.innerHTML = `<p style="color:#777;">No hay alumnos en ${grupo.nombre}.</p>`;
-				return;
-			}
-
-			const titulo = document.createElement('h4');
-			titulo.textContent = `Alumnos en ${grupo.nombre}:`;
-			contenedor.appendChild(titulo);
-
-			const grid = document.createElement('div');
-			grid.style.display = 'grid';
-			grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
-			grid.style.gap = '6px';
-
-			alumnos.forEach(al => {
-				const label = document.createElement('label');
-				label.style.display = 'flex';
-				label.style.alignItems = 'center';
-				label.style.gap = '6px';
-				label.style.background = '#fff';
-				label.style.border = '1px solid #ccc';
-				label.style.padding = '6px';
-				label.style.borderRadius = '6px';
-				label.style.cursor = 'pointer';
-
-				const input = document.createElement('input');
-				input.type = 'checkbox';
-				input.name = 'alumnos[]';
-				input.value = al.id_alumno;
-
-				const span = document.createElement('span');
-				span.textContent = `${al.apellidos} ${al.nombre} (${al.matricula})`;
-
-				label.appendChild(input);
-				label.appendChild(span);
-				grid.appendChild(label);
-			});
-
-			contenedor.appendChild(grid);
-		});
-	</script>
-<?php endif; ?>
+<!-- Se eliminó la sección "Agregar alumnos existentes" según la solicitud. -->
