@@ -155,9 +155,9 @@ if ($editarID && $tipo) {
 </head>
 
 <body>
-    <header>
+    
 <?php include_once "layout/header_admin.php"; ?>
-</header>
+
 <div class="contenedor-pagina">
 <main class="usuarios">
 

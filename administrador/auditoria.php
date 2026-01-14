@@ -53,9 +53,10 @@ $registros = $stmt->fetchAll();
     <meta charset="UTF-8" />
     <title>Registros de Auditoría</title>
     <link rel="stylesheet" href="css/auditoria.css?v=1.2">
+    <link rel="stylesheet" href="css/materiascrud.css?v=1.2">
 </head>
 <body>
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
+    <?php include_once "layout/header_admin.php"; ?>
   <div class="wrapper">
     <table>
         <caption>Registros de Auditoría</caption>

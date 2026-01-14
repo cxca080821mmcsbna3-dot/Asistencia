@@ -192,39 +192,48 @@ body.dark-mode .back-arrow {
 
     </style>
 <body>
-<header>
+    <?php include_once "layout/header_admin.php"; ?>
+
     <h1>Asignar Materia y Grupo a un Profesor</h1>
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
-</header>
 
-<div class="form-container">
-    <form method="POST">
-        <label for="idGrupo">Grupo:</label>
-        <select name="idGrupo" required>
-            <option value="">Selecciona un grupo</option>
-            <?php foreach ($grupos as $grupo): ?>
-                <option value="<?= $grupo['idGrupo'] ?>"><?= htmlspecialchars($grupo['nombre']) ?></option>
-            <?php endforeach; ?>
-        </select>
 
-        <label for="idMateria">Materia:</label>
-        <select name="idMateria" required>
-            <option value="">Selecciona una materia</option>
-            <?php foreach ($materias as $materia): ?>
-                <option value="<?= $materia['id_materia'] ?>"><?= htmlspecialchars($materia['nombre']) ?></option>
-            <?php endforeach; ?>
-        </select>
+<div class="container">
+    <div class="card">
+        <form method="POST">
+            <label for="idGrupo">Grupo:</label>
+            <select name="idGrupo" required>
+                <option value="">Selecciona un grupo</option>
+                <?php foreach ($grupos as $grupo): ?>
+                    <option value="<?= $grupo['idGrupo'] ?>">
+                        <?= htmlspecialchars($grupo['nombre']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
-        <label for="idProfesor">Profesor:</label>
-        <select name="idProfesor" required>
-            <option value="">Selecciona un profesor</option>
-            <?php foreach ($profesores as $profesor): ?>
-                <option value="<?= $profesor['id_profesor'] ?>"><?= htmlspecialchars($profesor['nombre']) ?></option>
-            <?php endforeach; ?>
-        </select>
+            <label for="idMateria">Materia:</label>
+            <select name="idMateria" required>
+                <option value="">Selecciona una materia</option>
+                <?php foreach ($materias as $materia): ?>
+                    <option value="<?= $materia['id_materia'] ?>">
+                        <?= htmlspecialchars($materia['nombre']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
-        <button type="submit">Asignar Clase</button>
-    </form>
+            <label for="idProfesor">Profesor:</label>
+            <select name="idProfesor" required>
+                <option value="">Selecciona un profesor</option>
+                <?php foreach ($profesores as $profesor): ?>
+                    <option value="<?= $profesor['id_profesor'] ?>">
+                        <?= htmlspecialchars($profesor['nombre']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <center><input type="submit" value="Asignar Clase"></center>
+        </form>
+    </div>
 </div>
+
 </body>
 </html>

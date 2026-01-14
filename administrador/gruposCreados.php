@@ -29,28 +29,49 @@ $listaGrupos = $grupos->leerGrupos();
     <title>Grupos</title>
     <link rel="stylesheet" href="css/grupos.css?v=2.1">
 </head>
+<style>
+    .back-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 7px;
+    margin: 7px;
+    color: #a0522d;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: #fff5e1;
+    border: 1px solid #deb887;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.back-arrow:hover {
+    background-color: #deb887;
+    color: #fff;
+    transform: translateX(-4px);
+}
+</style>
 <body>
-    <header>
+<?php include_once "layout/header_admin.php"; ?>
     <h1>Lista de Grupos</h1>
-    <a href="menuGrupos.php" class="back-arrow">&#8592; Regresar</a>
     <a href="crearGrupo.php" class="back-arrow">Crear Grupo +</a>
-    </header>
+   
 
     <div class="container">
         <?php if (!empty($listaGrupos)): ?>
             <?php foreach ($listaGrupos as $grupos): ?>
                 <div class="card">
                     <div class="headerCardGrupos">
-                         <a href="editar_grupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>editar</button></a>
+                         <a href="editar_grupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button class="back-arrow">editar</button></a>
                         
                         <!-- Botón eliminar con confirmación -->
                         <form method="POST" style="display:inline;" 
                               onsubmit="return confirm('¿Estás seguro de eliminar este Grupo?');">
                             <input type="hidden" name="idGrupo" value="<?= $grupos['idGrupo']; ?>">
-                            <button type="submit" name="eliminar">eliminar</button>
+                            <button type="submit" name="eliminar" class="back-arrow">eliminar</button>
                         </form>
-                        <a href="agregarAlumnosGrupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button>Ver alumnos</button></a>
-                         <button onclick="alert('Funcion no disponible');">Vaciar</button>
+                        <a href="agregarAlumnosGrupo.php?idGrupo=<?= $grupos['idGrupo']; ?>"><button class="back-arrow">Ver alumnos</button></a>
+                         
                     </div>
                     <h2><?= htmlspecialchars($grupos['nombre'], ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p><strong>Descripcion:</strong> <?= htmlspecialchars($grupos['descripcion'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -64,3 +85,4 @@ $listaGrupos = $grupos->leerGrupos();
     </div>
 </body>
 </html>
+    
