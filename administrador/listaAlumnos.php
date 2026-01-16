@@ -36,7 +36,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
     header("Content-Type: application/vnd.ms-excel; charset=UTF-8");
     header("Content-Disposition: attachment; filename=asistencia_{$materia['nombre_materia']}_{$materia['nombre_grupo']}_{$anio}-{$mes}.xls");
 
-    $stmtA = $pdo->prepare("SELECT * FROM alumno WHERE id_grupo = :id_grupo ORDER BY numero_lista ASC");
+    $stmtA = $pdo->prepare("SELECT id_alumno, matricula, nombre, apellidos FROM alumno WHERE id_grupo = :id_grupo ORDER BY id_alumno ASC");
     $stmtA->execute([':id_grupo' => $id_grupo]);
     $alumnosExp = $stmtA->fetchAll(PDO::FETCH_ASSOC);
 
@@ -57,7 +57,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
     echo "</tr>";
     foreach ($alumnosExp as $i => $al) {
         echo "<tr>";
-        echo "<td>" . htmlspecialchars($al['numero_lista']) . "</td>";
+        echo "<td>" . ($i + 1) . "</td>";
         echo "<td>" . htmlspecialchars($al['matricula']) . "</td>";
         echo "<td>" . htmlspecialchars($al['apellidos'] . ' ' . $al['nombre']) . "</td>";
         for ($d = 1; $d <= $diasMes; $d++) {
@@ -70,10 +70,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
 }
 
 // ---------- Consultar alumnos ----------
-$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, numero_lista
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
           FROM alumno
           WHERE id_grupo = :id_grupo
-          ORDER BY numero_lista ASC";
+          ORDER BY id_alumno ASC";
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
@@ -283,9 +283,9 @@ th {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($alumnos as $al): ?>
+                <?php foreach ($alumnos as $indice => $al): ?>
                     <tr>
-                        <td><?= htmlspecialchars($al['numero_lista']) ?></td>
+                        <td><?= ($indice + 1) ?></td>
                         <td><?= htmlspecialchars($al['matricula']) ?></td>
                         <td class="alumno-col"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
                         <?php for ($d=1;$d<=$diasMes;$d++): 

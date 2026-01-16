@@ -10,14 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idGrupo = intval($_POST['idGrupo']);
     $alumnos = $_POST['alumnos'] ?? [];
 
+    // Obtener el número de lista más alto actual del grupo
+    $sqlMax = "SELECT COALESCE(MAX(numero_lista), 0) AS max_num FROM alumno WHERE id_grupo = :id_grupo";
+    $stmtMax = $pdo->prepare($sqlMax);
+    $stmtMax->execute([':id_grupo' => $idGrupo]);
+    $maxNum = (int) $stmtMax->fetchColumn();
+
     $sql = "INSERT INTO alumno (numero_lista, matricula, nombre, apellidos, telefono, id_grupo, curp)
             VALUES (:numero_lista, :matricula, :nombre, :apellidos, :telefono, :id_grupo, :curp)";
     $stmt = $pdo->prepare($sql);
 
+    $numeroLista = $maxNum;
     foreach ($alumnos as $a) {
         if (trim($a['nombre']) === '' || trim($a['apellidos']) === '') continue;
+        $numeroLista++;
         $stmt->execute([
-            ':numero_lista' => $a['numero_lista'] ?? null,
+            ':numero_lista' => $numeroLista,
             ':matricula' => $a['matricula'] ?? null,
             ':nombre' => $a['nombre'],
             ':apellidos' => $a['apellidos'],
@@ -79,7 +87,6 @@ button:hover{background:#a0522d;}
     <table id="tablaAlumnos">
       <thead>
         <tr>
-          <th>No. Lista</th>
           <th>Matrícula</th>
           <th>Nombre</th>
           <th>Apellidos</th>
@@ -90,7 +97,6 @@ button:hover{background:#a0522d;}
       </thead>
       <tbody>
         <tr>
-          <td><input type="number" name="alumnos[0][numero_lista]" style="width:60px;"></td>
           <td><input type="text" name="alumnos[0][matricula]" style="width:120px;"></td>
           <td><input type="text" name="alumnos[0][nombre]" required></td>
           <td><input type="text" name="alumnos[0][apellidos]" required></td>
@@ -113,7 +119,6 @@ function agregarFila() {
   const tbody = document.querySelector("#tablaAlumnos tbody");
   const fila = document.createElement("tr");
   fila.innerHTML = `
-    <td><input type="number" name="alumnos[${contador}][numero_lista]" style="width:60px;"></td>
     <td><input type="text" name="alumnos[${contador}][matricula]" style="width:120px;"></td>
     <td><input type="text" name="alumnos[${contador}][nombre]" required></td>
     <td><input type="text" name="alumnos[${contador}][apellidos]" required></td>
@@ -154,12 +159,11 @@ function leerCSV() {
 
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td><input type="number" name="alumnos[${contador}][numero_lista]" value="${datos[0] || ''}" style="width:60px;"></td>
-        <td><input type="text" name="alumnos[${contador}][matricula]" value="${datos[1] || ''}" style="width:120px;"></td>
-        <td><input type="text" name="alumnos[${contador}][nombre]" value="${datos[2] || ''}" required></td>
-        <td><input type="text" name="alumnos[${contador}][apellidos]" value="${datos[3] || ''}" required></td>
-        <td><input type="text" name="alumnos[${contador}][telefono]" value="${datos[4] || ''}" style="width:100px;"></td>
-        <td><input type="text" name="alumnos[${contador}][curp]" value="${datos[5] || ''}" style="width:160px;"></td>
+        <td><input type="text" name="alumnos[${contador}][matricula]" value="${datos[0] || ''}" style="width:120px;"></td>
+        <td><input type="text" name="alumnos[${contador}][nombre]" value="${datos[1] || ''}" required></td>
+        <td><input type="text" name="alumnos[${contador}][apellidos]" value="${datos[2] || ''}" required></td>
+        <td><input type="text" name="alumnos[${contador}][telefono]" value="${datos[3] || ''}" style="width:100px;"></td>
+        <td><input type="text" name="alumnos[${contador}][curp]" value="${datos[4] || ''}" style="width:160px;"></td>
         <td><button type="button" onclick="eliminarFila(this)">❌</button></td>`;
       tbody.appendChild(fila);
       contador++;

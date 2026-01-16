@@ -76,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'toggl
 
 
 // --- Obtener alumnos del grupo ---
-$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, numero_lista
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
           FROM alumno 
           WHERE id_grupo = :id_grupo 
-          ORDER BY numero_lista";
+          ORDER BY id_alumno";
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
@@ -138,9 +138,9 @@ th{background:#f5deb3;color:#4b3621;}
       </tr>
     </thead>
     <tbody>
-      <?php foreach($alumnos as $al): ?>
+      <?php foreach($alumnos as $indice => $al): ?>
       <tr>
-        <td><?= $al['numero_lista'] ?></td>
+        <td><?= ($indice + 1) ?></td>
         <td><?= htmlspecialchars($al['matricula']) ?></td>
         <td style="text-align:left"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
 
