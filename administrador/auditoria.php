@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-/* ===============================
-   VERIFICAR SESIÓN (ADMIN)
-================================ */
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../index.php");
     exit;
@@ -12,9 +9,6 @@ if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
 $idAdmin     = $_SESSION['idAdmin'];
 $nombreAdmin = $_SESSION['nombre'];
 
-/* ===============================
-   CONEXIÓN A LA BD
-================================ */
 $pdo = new PDO(
     "mysql:host=localhost;dbname=asistencia;charset=utf8mb4",
     "root",
@@ -37,9 +31,6 @@ $stmt->execute([
     'nombre' => $nombreAdmin
 ]);
 
-/* ===============================
-   CONSULTA BASE (CON NOMBRE)
-================================ */
 $sql = "
 SELECT 
     a.id_auditoria,
@@ -49,7 +40,6 @@ SELECT
     a.datos_despues,
     a.admin_nombre,
     a.fecha,
-
     CASE a.tabla_afectada
         WHEN 'alumno' THEN (
             SELECT CONCAT(nombre,' ',apellidos)
@@ -78,32 +68,27 @@ SELECT
         )
         ELSE a.id_registro
     END AS registro_legible
-
 FROM auditoria a
 WHERE 1=1
 ";
 
 $params = [];
 
-/* ===============================
-   FILTROS (YA FUNCIONALES)
-================================ */
-if (isset($_GET['tabla']) && $_GET['tabla'] !== '') {
+if (!empty($_GET['tabla'])) {
     $sql .= " AND a.tabla_afectada = :tabla";
     $params['tabla'] = $_GET['tabla'];
 }
 
-if (isset($_GET['accion']) && $_GET['accion'] !== '') {
+if (!empty($_GET['accion'])) {
     $sql .= " AND a.accion = :accion";
     $params['accion'] = $_GET['accion'];
 }
 
-if (isset($_GET['admin']) && $_GET['admin'] !== '') {
+if (!empty($_GET['admin'])) {
     $sql .= " AND a.admin_nombre LIKE :admin";
     $params['admin'] = '%' . $_GET['admin'] . '%';
 }
 
-/* FECHAS (FORMA CORRECTA) */
 if (!empty($_GET['desde'])) {
     $sql .= " AND a.fecha >= :desde";
     $params['desde'] = $_GET['desde'] . " 00:00:00";
@@ -123,14 +108,15 @@ $registros = $stmt->fetchAll();
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<<<<<<< HEAD
+
     <meta charset="UTF-8">
     <title>Auditoría del Sistema</title>
-    <link rel="stylesheet" href="css/auditoria.css?v=1.1">
+    <link rel="stylesheet" href="css/auditoria.css">
+    <link rel="stylesheet" href="css/materiascrud.css">
 </head>
 <body>
 
-<a href="menuGrupos.php" class="back-arrow">← Regresar</a>
+<?php include_once "layout/header_admin.php"; ?>
 
 <form method="GET" class="filtros">
     <select name="tabla">
@@ -165,7 +151,6 @@ $registros = $stmt->fetchAll();
 </form>
 
 <div class="wrapper">
-=======
     <meta charset="UTF-8" />
     <title>Registros de Auditoría</title>
     <link rel="stylesheet" href="css/auditoria.css?v=1.2">
@@ -174,7 +159,6 @@ $registros = $stmt->fetchAll();
 <body>
     <?php include_once "layout/header_admin.php"; ?>
   <div class="wrapper">
->>>>>>> b84acd2e1f92af2a14f4a536182aab7b9dc555d5
     <table>
         <thead>
             <tr>
@@ -190,7 +174,9 @@ $registros = $stmt->fetchAll();
         </thead>
         <tbody>
         <?php if (!$registros): ?>
-            <tr><td colspan="8">No hay registros</td></tr>
+            <tr>
+                <td colspan="8">No hay registros</td>
+            </tr>
         <?php else: foreach ($registros as $r): ?>
             <tr>
                 <td><?= $r['id_auditoria'] ?></td>
