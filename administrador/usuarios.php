@@ -265,8 +265,8 @@ td .btn-link.delete:hover {
             SELECT 
                 
                 alumno.matricula,
-                alumno.nombre,
                 alumno.apellidos,
+                alumno.nombre,
                 alumno.telefono,
                 grupo.nombre AS grupo,
                 alumno.curp

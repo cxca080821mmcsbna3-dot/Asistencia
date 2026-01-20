@@ -2,24 +2,23 @@
 
 class Grupos {
 
-    public function crearGrupo($idGrupo, $nombre, $descripcion, $tutor) {
+    public function crearGrupo($idGrupo, $nombre, $semestre, $tutor) {
         include "Conexion.php";
-        $stmt = $pdo->prepare("INSERT INTO grupo (idGrupo, nombre, descripcion, tutor) 
-                               VALUES (:idGrupo, :nombre, :descripcion, :tutor)");
+        $stmt = $pdo->prepare("INSERT INTO grupo (idGrupo, nombre, semestre, tutor) 
+                               VALUES (:idGrupo, :nombre, :semestre, :tutor)");
         try {
             $alta = $stmt->execute([
-                ':idGrupo'    => $idGrupo,
-                ':nombre'     => $nombre,
-                ':descripcion'=> $descripcion,
-                ':tutor'      => $tutor
+                ':idGrupo'  => $idGrupo,
+                ':nombre'   => $nombre,
+                ':semestre' => $semestre,
+                ':tutor'    => $tutor
             ]);
             return $alta;
         } catch (PDOException $e) {
             if ($e->getCode() === "23000") {
-                // clave duplicada
                 return 'duplicado';
             } else {
-                return false; // Otro error
+                return false;
             }
         }
     }
@@ -28,14 +27,12 @@ class Grupos {
         include "Conexion.php";
         $stmt = $pdo->prepare("SELECT * FROM grupo ORDER BY nombre ASC");
         $stmt->execute();
-        $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $grupos;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function inscribirUsuario($idGrupo, $idUsuario) {
         include "Conexion.php";
 
-        // Verificar si ya está inscrito
         $stmt = $pdo->prepare("SELECT * FROM inscripciones_grupos WHERE idGrupo = :idGrupo AND idR = :idUsuario");
         $stmt->execute([':idGrupo' => $idGrupo, ':idUsuario' => $idUsuario]);
         $yaExiste = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -44,7 +41,6 @@ class Grupos {
             return 'duplicado';
         }
 
-        // Insertar inscripción
         $stmt = $pdo->prepare("INSERT INTO inscripciones_grupos (idGrupo, idR) VALUES (:idGrupo, :idUsuario)");
         $ok = $stmt->execute([':idGrupo' => $idGrupo, ':idUsuario' => $idUsuario]);
 
@@ -83,18 +79,18 @@ class Grupos {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function actualizarGrupo($idGrupo, $nombre, $descripcion, $tutor) {
+    public function actualizarGrupo($idGrupo, $nombre, $semestre, $tutor) {
         include "Conexion.php";
         $stmt = $pdo->prepare("UPDATE grupo 
                                SET nombre = :nombre, 
-                                   descripcion = :descripcion, 
+                                   semestre = :semestre, 
                                    tutor = :tutor
                                WHERE idGrupo = :idGrupo");
         return $stmt->execute([
-            ':nombre'      => $nombre,
-            ':descripcion' => $descripcion,
-            ':tutor'       => $tutor,
-            ':idGrupo'     => $idGrupo
+            ':nombre'   => $nombre,
+            ':semestre' => $semestre,
+            ':tutor'    => $tutor,
+            ':idGrupo'  => $idGrupo
         ]);
     }
 
@@ -104,7 +100,6 @@ class Grupos {
         return $stmt->execute([':idGrupo' => $idGrupo]);
     }
 
-    // Opcional: si quieres ver asistentes (por ejemplo, usuarios activos)
     public function verAsistentes($idGrupo) {
         include "Conexion.php";
         $stmt = $pdo->prepare("

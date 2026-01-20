@@ -158,9 +158,12 @@ foreach ($stmtAs as $r) {
                : ($estado === 'Justificante' ? '#4da6ff' : '#fff'));
     }
 ?>
-<td style="background:<?= $color ?>; font-size:12px">
-    <?= htmlspecialchars($estado) ?>
+<td 
+  data-label="Día <?= $d ?>" 
+  style="background:<?= $color ?>; font-size:12px">
+    <?= htmlspecialchars($estado) ?: '-' ?>
 </td>
+
 <?php endfor; ?>
 </tr>
 

@@ -257,7 +257,7 @@ strong {
 	<div class="box">
 		<a class="btn back" href="gruposCreados.php">&#8592; Volver</a>
 		<h1>Alumnos del grupo: <?= htmlspecialchars($grupo['nombre']) ?></h1>
-		<p><strong>Descripción:</strong> <?= htmlspecialchars($grupo['descripcion']) ?></p>
+		<p><strong>Semestre:</strong> <?= htmlspecialchars($grupo['semestre']) ?></p>
 
 		<?php if (!empty($error)): ?>
 			<div style="color:red; margin-bottom:12px"><?= htmlspecialchars($error) ?></div>

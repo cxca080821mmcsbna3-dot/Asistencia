@@ -99,3 +99,97 @@ header h1 {
 .back-arrow:hover {
   color: #deb887;
 }
+/* ===============================
+   RESPONSIVE TABLET
+================================ */
+@media (max-width: 1024px) {
+
+  .container {
+    gap: 16px;
+  }
+
+  .card {
+    width: 45%; /* 2 tarjetas por fila */
+  }
+
+  header h1 {
+    font-size: 1.7rem;
+  }
+}
+
+/* ===============================
+   RESPONSIVE CELULAR
+================================ */
+@media (max-width: 768px) {
+
+  body {
+    padding: 12px;
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+  }
+
+  .container {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    padding: 16px;
+  }
+
+  .card h2 {
+    font-size: 1.2rem;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  /* Botón cerrar sesión */
+  .back-arrow {
+    position: static;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+}
+
+/* ===============================
+   CELULARES MUY PEQUEÑOS
+================================ */
+@media (max-width: 480px) {
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .card h2 {
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+  }
+}

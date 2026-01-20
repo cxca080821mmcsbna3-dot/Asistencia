@@ -138,19 +138,57 @@ th {
   background-color: #4da6ff;
 }
 
-/* Responsive */
+/* ===============================
+   TABLA VERTICAL EN CELULAR
+================================ */
 @media (max-width: 768px) {
-  h1, h2 {
-    font-size: 1.3rem;
+
+  .table-container {
+    overflow-x: hidden;
   }
 
   table {
-    font-size: 12px;
-    min-width: 700px;
+    width: 100%;
+    min-width: unset;
+    border: none;
   }
 
-  select,
-  input[type="number"] {
-    font-size: 0.85rem;
+  thead {
+    display: none;
+  }
+
+  tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    background: #fffaf0;
+    padding: 0.5rem;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.6rem;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #5c4033;
+    text-align: left;
+  }
+
+  td:last-child {
+    border-bottom: none;
   }
 }
