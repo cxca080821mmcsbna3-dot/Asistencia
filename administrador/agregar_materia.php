@@ -12,10 +12,12 @@ class Materia {
     private $pdo;
     public function __construct($pdo) { $this->pdo = $pdo; }
 
-    public function Ingresar($nombre, $descripcion) {
-        $stmt = $this->pdo->prepare("INSERT INTO materias (nombre, descripcion) VALUES (:nombre, :descripcion)");
+    public function Ingresar($nombre, $semestre) {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO materias (nombre, semestre) VALUES (:nombre, :semestre)"
+        );
         $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':descripcion', $descripcion);
+        $stmt->bindParam(':semestre', $semestre);
         return $stmt->execute();
     }
 
@@ -31,10 +33,14 @@ class Materia {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function Actualizar($id, $nombre, $descripcion) {
-        $stmt = $this->pdo->prepare("UPDATE materias SET nombre = :nombre, descripcion = :descripcion WHERE id_materia = :id");
+    public function Actualizar($id, $nombre, $semestre) {
+        $stmt = $this->pdo->prepare(
+            "UPDATE materias 
+             SET nombre = :nombre, semestre = :semestre 
+             WHERE id_materia = :id"
+        );
         $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':descripcion', $descripcion);
+        $stmt->bindParam(':semestre', $semestre);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -52,10 +58,10 @@ $materiaEditar = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['accion'] === 'agregar') {
-        $materiaObj->Ingresar($_POST['nombre'], $_POST['descripcion']);
+        $materiaObj->Ingresar($_POST['nombre'], $_POST['semestre']);
         $mensaje = "✅ Materia agregada correctamente.";
     } elseif ($_POST['accion'] === 'actualizar') {
-        $materiaObj->Actualizar($_POST['id_materia'], $_POST['nombre'], $_POST['descripcion']);
+        $materiaObj->Actualizar($_POST['id_materia'], $_POST['nombre'], $_POST['semestre']);
         $mensaje = "✅ Materia actualizada correctamente.";
     }
 }
@@ -79,10 +85,7 @@ $listaMaterias = $materiaObj->Consultar();
     <title>Gestión de Materias</title>
     <link rel="stylesheet" href="css/materiascrud.css">
 </head>
-<style>
-   
 
-    </style>
 <body>
 <?php include_once "layout/header_admin.php"; ?>
 
@@ -96,7 +99,7 @@ $listaMaterias = $materiaObj->Consultar();
 
     <!-- 📝 Formulario -->
     <div class="materias">
-        <form method="POST" action="">
+        <form method="POST">
             <h1><?= $materiaEditar ? "Editar Materia" : "Agregar Materia" ?></h1>
 
             <input type="hidden" name="accion" value="<?= $materiaEditar ? "actualizar" : "agregar" ?>">
@@ -106,13 +109,31 @@ $listaMaterias = $materiaObj->Consultar();
 
             <label for="nombre">Nombre:</label>
             <input type="text" name="nombre" id="nombre" required
-                value="<?= $materiaEditar ? htmlspecialchars($materiaEditar['nombre']) : '' ?>">
+                   value="<?= $materiaEditar ? htmlspecialchars($materiaEditar['nombre']) : '' ?>">
 
-            <label for="descripcion">Descripción:</label>
-            <input type="text" name="descripcion" id="descripcion" required
-                value="<?= $materiaEditar ? htmlspecialchars($materiaEditar['descripcion']) : '' ?>">
+            <label for="semestre">Semestre:</label>
+            <select name="semestre" id="semestre" class="sem" required>
+                <option value="">Selecciona un semestre</option>
+                <?php
+                $semestres = [
+                    'Primer semestre',
+                    'Segundo semestre',
+                    'Tercer semestre',
+                    'Cuarto semestre',
+                    'Quinto semestre',
+                    'Sexto semestre'
+                ];
+                foreach ($semestres as $s):
+                ?>
+                    <option value="<?= $s ?>"
+                        <?= ($materiaEditar && $materiaEditar['semestre'] === $s) ? 'selected' : '' ?>>
+                        <?= $s ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
-            <input type="submit" value="<?= $materiaEditar ? "Actualizar Materia" : "Agregar Materia" ?>">
+            <input type="submit"
+                   value="<?= $materiaEditar ? "Actualizar Materia" : "Agregar Materia" ?>">
         </form>
     </div>
 
@@ -125,7 +146,7 @@ $listaMaterias = $materiaObj->Consultar();
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Semestre</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -135,16 +156,22 @@ $listaMaterias = $materiaObj->Consultar();
                         <tr>
                             <td><?= htmlspecialchars($mat['id_materia']) ?></td>
                             <td><?= htmlspecialchars($mat['nombre']) ?></td>
-                            <td><?= htmlspecialchars($mat['descripcion']) ?></td>
+                            <td><?= htmlspecialchars($mat['semestre']) ?></td>
                             <td style="text-align:center;">
-                                <a href="?editar=<?= $mat['id_materia'] ?>" class="btn-accion" > Editar</a>
+                                <a href="?editar=<?= $mat['id_materia'] ?>" class="btn-accion">Editar</a>
                                 <a href="?eliminar=<?= $mat['id_materia'] ?>" class="btn-accion"
-                                   onclick="return confirm('¿Seguro que deseas eliminar esta materia?')"> Eliminar</a>
+                                   onclick="return confirm('¿Seguro que deseas eliminar esta materia?')">
+                                   Eliminar
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="4" style="text-align:center;">No hay materias registradas.</td></tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;">
+                            No hay materias registradas.
+                        </td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>

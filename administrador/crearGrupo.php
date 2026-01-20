@@ -1,7 +1,6 @@
 <?php
 
 include_once(__DIR__ . '/../assets/sentenciasSQL/grupos.php');
-
 session_start();
 
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
@@ -12,15 +11,14 @@ if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
 $nombreAdmin = $_SESSION['nombre'];
 
 if (isset($_POST['crear'])) {
-    $idGrupo        = random_int(10000000, 99999999);
-    $nombre_grupo  = htmlspecialchars(trim($_POST['nombre_grupo']), ENT_QUOTES, 'UTF-8');
-    $descripcion    = htmlspecialchars(trim($_POST['descripcion']), ENT_QUOTES, 'UTF-8');
-    $tutor          = htmlspecialchars(trim($_POST['tutor']), ENT_QUOTES, 'UTF-8');
-    
 
+    $idGrupo       = random_int(10000000, 99999999);
+    $nombre_grupo  = htmlspecialchars(trim($_POST['nombre_grupo']), ENT_QUOTES, 'UTF-8');
+    $semestre      = htmlspecialchars(trim($_POST['semestre']), ENT_QUOTES, 'UTF-8');
+    $tutor         = htmlspecialchars(trim($_POST['tutor']), ENT_QUOTES, 'UTF-8');
 
     $crear_grupos = new Grupos();
-    $crear = $crear_grupos->crearGrupo($idGrupo, $nombre_grupo, $descripcion, $tutor);
+    $crear = $crear_grupos->crearGrupo($idGrupo, $nombre_grupo, $semestre, $tutor);
 
     if ($crear === true) {
         echo "<script>alert('Grupo creado exitosamente'); window.location='crearGrupo.php';</script>";
@@ -28,7 +26,7 @@ if (isset($_POST['crear'])) {
     } elseif ($crear === 'duplicado') {
         echo "<script>alert('Grupo ya existente. Intenta de nuevo.');</script>";
     } else {
-        echo "<script>alert('Error al crear el grupo. Por favor, intenta de nuevo.');</script>";
+        echo "<script>alert('Error al crear el grupo.');</script>";
     }
 }
 ?>
@@ -36,11 +34,11 @@ if (isset($_POST['crear'])) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Crear Evento</title>
+<meta charset="UTF-8">
+<title>Crear Grupo</title>
 
-</head>
 <style>
+
     body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0e8dc;
@@ -192,28 +190,76 @@ input.invalid, textarea.invalid {
   border: 2px solid red;
   background: #ffebee;
 }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0e8dc;
+    margin: 0;
+    padding: 20px;
+}
+
+.form-container {
+    max-width: 520px;
+    margin: 40px auto;
+    background-color: #fffaf0;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+label {
+    font-weight: bold;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 1px solid #c8b6a6;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #a0522d;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+}
 </style>
+</head>
+
 <body>
 
-<a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
+<a href="gruposCreados.php">&#8592; Regresar</a>
 
 <div class="form-container">
-    <h2>Agregar Grupo</h2>
+<h2>Agregar Grupo</h2>
 
-    <form id="formGrupo" action="crearGrupo.php" method="POST">
-        <label>Nombre del Grupo</label>
-        <input type="text" id="nombre_grupo" name="nombre_grupo" required>
+<form method="POST">
 
-        <label>Descripción</label>
-        <textarea id="descripcion" name="descripcion"></textarea>
+<label>Nombre del Grupo</label>
+<input type="text" name="nombre_grupo" required>
 
-        <label>Tutor</label>
-        <textarea id="tutor" name="tutor"></textarea>
+<label>Semestre</label>
+<select name="semestre" required>
+<option value="">Selecciona un semestre</option>
+<option>Primer semestre</option>
+<option>Segundo semestre</option>
+<option>Tercer semestre</option>
+<option>Cuarto semestre</option>
+<option>Quinto semestre</option>
+<option>Sexto semestre</option>
+</select>
 
-        <button type="submit" name="crear" class="btn">Agregar Grupo</button>
-    </form>
+<label>Tutor</label>
+<textarea name="tutor"></textarea>
+
+<button type="submit" name="crear">Agregar Grupo</button>
+
+</form>
 </div>
 
 </body>
-
 </html>

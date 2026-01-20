@@ -19,11 +19,19 @@ if (!isset($_GET['idGrupo'])) {
 
 $idGrupo = intval($_GET['idGrupo']);
 
-// Consultar materias relacionadas al grupo
-$sql = "SELECT m.id_materia, m.nombre, m.descripcion 
+
+        $sql = "SELECT 
+            gm.id_clase,
+            m.id_materia,
+            m.nombre AS nombre,
+            m.semestre,
+            p.id_profesor,
+            p.nombre AS profesor
         FROM grupo_materia gm
         INNER JOIN materias m ON gm.id_materia = m.id_materia
+        LEFT JOIN profesor p ON gm.id_profesor = p.id_profesor
         WHERE gm.id_grupo = ?";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$idGrupo]);
 $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -163,10 +171,14 @@ body.dark-mode .back-arrow:hover {
             <?php foreach ($materias as $materia): ?>
                 <div class="card">
                     <h2><?= htmlspecialchars($materia['nombre']) ?></h2>
-                    <p><strong>Descripción:</strong> <?= htmlspecialchars($materia['descripcion']) ?></p>
+                    <p><strong>Semestre:</strong> <?= htmlspecialchars($materia['semestre']) ?></p>
                     <a class="btn" href="listaAlumnos.php?idMateria=<?= $materia['id_materia'] ?>&idGrupo=<?= $idGrupo ?>">
                         Ver alumnos
                     </a>
+                    <a class="btn" href="profesorMateria.php?idClase=<?= $materia['id_clase'] ?>&idGrupo=<?= $idGrupo ?>">
+    Profesor asignado
+</a>
+
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

@@ -8,7 +8,6 @@ if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
 
 // Traer datos de las tablas
 $grupos = $pdo->query("SELECT idGrupo, nombre FROM grupo")->fetchAll(PDO::FETCH_ASSOC);
-$materias = $pdo->query("SELECT id_materia, nombre FROM materias")->fetchAll(PDO::FETCH_ASSOC);
 $profesores = $pdo->query("SELECT id_profesor, nombre FROM profesor")->fetchAll(PDO::FETCH_ASSOC);
 
 // Si se envió el formulario
@@ -192,16 +191,16 @@ body.dark-mode .back-arrow {
 
     </style>
 <body>
-    <?php include_once "layout/header_admin.php"; ?>
+<?php include_once "layout/header_admin.php"; ?>
 
-    <h1>Asignar Materia y Grupo a un Profesor</h1>
-
+<h1>Asignar Materia y Grupo a un Profesor</h1>
 
 <div class="container">
     <div class="card">
         <form method="POST">
+
             <label for="idGrupo">Grupo:</label>
-            <select name="idGrupo" required>
+            <select name="idGrupo" id="idGrupo" required>
                 <option value="">Selecciona un grupo</option>
                 <?php foreach ($grupos as $grupo): ?>
                     <option value="<?= $grupo['idGrupo'] ?>">
@@ -211,13 +210,8 @@ body.dark-mode .back-arrow {
             </select>
 
             <label for="idMateria">Materia:</label>
-            <select name="idMateria" required>
+            <select name="idMateria" id="idMateria" required>
                 <option value="">Selecciona una materia</option>
-                <?php foreach ($materias as $materia): ?>
-                    <option value="<?= $materia['id_materia'] ?>">
-                        <?= htmlspecialchars($materia['nombre']) ?>
-                    </option>
-                <?php endforeach; ?>
             </select>
 
             <label for="idProfesor">Profesor:</label>
@@ -234,6 +228,45 @@ body.dark-mode .back-arrow {
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('idGrupo').addEventListener('change', function () {
+    const materiaSelect = document.getElementById('idMateria');
+
+    materiaSelect.innerHTML = '<option value="">Cargando materias...</option>';
+
+    if (!this.value) {
+        materiaSelect.innerHTML = '<option value="">Selecciona una materia</option>';
+        return;
+    }
+
+    // El semestre se obtiene del PRIMER DIGITO del NOMBRE del grupo (101 → 1)
+    const textoGrupo = this.options[this.selectedIndex].text;
+    const semestre = parseInt(textoGrupo.charAt(0));
+
+    fetch(`obtenerMaterias.php?semestre=${semestre}`)
+        .then(response => response.json())
+        .then(data => {
+            materiaSelect.innerHTML = '<option value="">Selecciona una materia</option>';
+
+            if (data.length === 0) {
+                materiaSelect.innerHTML = '<option value="">No hay materias</option>';
+                return;
+            }
+
+            data.forEach(materia => {
+                const option = document.createElement('option');
+                option.value = materia.id_materia;
+                option.textContent = materia.nombre;
+                materiaSelect.appendChild(option);
+            });
+        })
+        .catch(() => {
+            materiaSelect.innerHTML = '<option value="">Error al cargar materias</option>';
+        });
+});
+</script>
+
 
 </body>
 </html>

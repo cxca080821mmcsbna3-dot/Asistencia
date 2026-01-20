@@ -42,6 +42,25 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <title>Seleccionar Materia</title>
   <link rel="stylesheet" href="assets/css/materiasD.css">
 </head>
+<style>
+    .back-arrow {
+
+  top: 12px;
+  right: 15px;
+  background-color: #a0522d;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+.back-arrow:hover {
+  background-color: #deb887;
+  color: #4b2e05;
+}
+    </style>
 <body>
 
 <a href="menuDocente.php" class="back-arrow">&#8592; Regresar</a>
