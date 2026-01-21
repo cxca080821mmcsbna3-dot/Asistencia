@@ -77,6 +77,8 @@ if (isset($_POST['iniciar'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Login</title>
     <link rel="stylesheet" href="assets/css/admin.css?v=123">
     <style>
@@ -98,10 +100,7 @@ if (isset($_POST['iniciar'])) {
         .login-alert-icon {
             font-size: 1.5em;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+       
     </style>
 </head>
 <body>

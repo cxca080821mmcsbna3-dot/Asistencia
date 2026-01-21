@@ -81,34 +81,146 @@ $inasistencias = array_flip($rowsAs);
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asistencia <?= htmlspecialchars($materia['nombre_materia']) ?></title>
 <style>
-body{font-family:Segoe UI;background:#f0e8dc;padding:15px;display:flex;justify-content:center;}
-.wrapper{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 0 10px rgba(0,0,0,0.2);}
-h1{color:#8b4513;margin-bottom:5px;}
-.small{color:#5c4033;margin-bottom:20px;}
-table{border-collapse:collapse;width:100%;min-width:600px;}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-th{background:#f5deb3;color:#4b3621;}
-.btn-cuadro{width:22px;height:22px;border:1px solid #888;border-radius:4px;background:#fff;cursor:pointer;}
-.btn-cuadro.tachado{background:#ff6b6b;}
-.back-arrow {
+* {
+  box-sizing: border-box;
+}
 
-  top: 12px;
-  right: 15px;
+body {
+  font-family: 'Segoe UI', Tahoma;
+  background: #f0e8dc;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenedor */
+.wrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+}
+
+/* Títulos */
+h1 {
+  color: #8b4513;
+  margin-bottom: 5px;
+}
+
+.small {
+  color: #5c4033;
+  margin-bottom: 15px;
+}
+
+/* Botón regresar */
+.back-arrow {
+  display: inline-block;
+  margin-bottom: 10px;
   background-color: #a0522d;
   color: #fff;
   text-decoration: none;
   font-weight: bold;
   padding: 8px 14px;
   border-radius: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: 0.3s;
 }
+
 .back-arrow:hover {
   background-color: #deb887;
   color: #4b2e05;
 }
+
+/* =======================
+   TABLA NORMAL (PC)
+   ======================= */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 600px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #f5deb3;
+  color: #4b3621;
+}
+
+/* Botón asistencia */
+.btn-cuadro {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btn-cuadro.tachado {
+  background: #ff6b6b;
+}
+
+/* =======================
+   MODO CELULAR
+   ======================= */
+@media (max-width: 600px) {
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    background: #fff8ef;
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  td {
+    border: none;
+    text-align: left;
+    padding: 6px 0;
+  }
+
+  td::before {
+    font-weight: bold;
+    color: #8b4513;
+    display: inline-block;
+    width: 110px;
+  }
+
+  td:nth-child(1)::before { content: "No:"; }
+  td:nth-child(2)::before { content: "Matrícula:"; }
+  td:nth-child(3)::before { content: "Alumno:"; }
+  td:nth-child(4)::before { content: "Asistencia:"; }
+
+  .btn-cuadro {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -118,8 +230,9 @@ th{background:#f5deb3;color:#4b3621;}
   <h1>Asistencia: <?= htmlspecialchars($materia['nombre_materia']) ?></h1>
   <p class="small"><b>Grupo:</b> <?= htmlspecialchars($materia['nombre_grupo']) ?><br>
   <b>Fecha:</b> <?= date('d/m/Y') ?></p>
-
+<div class="table-responsive">
   <table>
+
     <thead><tr><th>No.</th><th>Matrícula</th><th>Alumno</th><th>Asistencia</th></tr></thead>
     <tbody>
       <?php foreach($alumnos as $al): ?>
@@ -135,6 +248,7 @@ th{background:#f5deb3;color:#4b3621;}
       <?php endforeach; ?>
     </tbody>
   </table>
+      </div>
 </div>
 
 <script>
