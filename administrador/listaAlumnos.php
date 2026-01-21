@@ -230,45 +230,36 @@ th {
   color: #4b2e05;
 }
 
-/* ===============================
-   SCROLL HORIZONTAL EN MOVIL
-================================ */
-.tabla-scroll {
+/* ===== CONTENEDOR TABLA ===== */
+.tabla-wrapper {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: auto;              /* 👈 CLAVE */
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Evita que la tabla se aplaste */
-table {
-    min-width: 1200px; /* AJUSTA según columnas */
+/* ===== TABLA ===== */
+.tabla-wrapper table {
+    width: max-content;            /* 👈 CLAVE */
+    min-width: 100%;
+    border-collapse: collapse;
 }
 
-/* Encabezados siempre visibles */
-th {
+/* Encabezados */
+.tabla-wrapper th {
     white-space: nowrap;
 }
 
-/* Celdas parejas */
-td {
-    min-width: 40px;
+/* Celdas */
+.tabla-wrapper td {
+    min-width: 42px;
+    text-align: center;
 }
 
-/* ===============================
-   AJUSTES SOLO MOVIL
-================================ */
+/* ===== MOVIL ===== */
 @media (max-width: 768px) {
-
-    .filtros {
-        flex-wrap: wrap; /* filtros siguen arriba */
-    }
-
     .wrapper {
         padding: 10px;
-    }
-
-    caption {
-        font-size: 1.2em;
     }
 }
 
