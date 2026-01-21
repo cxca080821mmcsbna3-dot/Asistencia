@@ -133,3 +133,53 @@ body.dark-mode button:hover {
   background-color: #6b4c2a;
   color: #fff1d0;
 }
+
+/* ===============================
+   PERFIL RESPONSIVO (CELULAR)
+================================ */
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .wrapper {
+    padding: 0.8rem;
+    border-radius: 14px;
+    max-width: 100%;
+  }
+
+  .perfil-tarjeta {
+    padding: 15px;
+  }
+
+  .perfil-imagen img {
+    width: 95px;
+    height: 95px;
+    margin-bottom: 12px;
+  }
+
+  .perfil-nombre h2 {
+    font-size: 1.2rem;
+  }
+
+  .perfil-nombre p {
+    font-size: 0.9rem;
+  }
+
+  .perfil-body {
+    padding: 12px;
+  }
+
+  .perfil-seccion h3 {
+    font-size: 1rem;
+  }
+
+  .perfil-seccion p {
+    font-size: 0.9rem;
+  }
+
+  .back-arrow {
+    font-size: 0.95rem;
+  }
+}

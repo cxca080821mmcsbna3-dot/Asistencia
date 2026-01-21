@@ -220,3 +220,86 @@ body, header, .contenedor2 {
     width: 260px;
   }
 }
+
+/* ===============================
+   RESPONSIVE REAL (CELULAR)
+================================ */
+@media (max-width: 768px) {
+
+  /* Evitar desbordes horizontales */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Video de fondo ajustado */
+  #videoFondo {
+    height: 100%;
+    min-height: 100vh;
+  }
+
+  /* Header más compacto */
+  header {
+    position: fixed;
+    top: 0;
+    padding: 12px 18px;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  /* Logo */
+  .cecytem {
+    font-size: 1.4em;
+    margin-bottom: 8px;
+  }
+
+  label img {
+    height: 45px;
+  }
+
+  /* Navbar en filas */
+  .navbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navbar a {
+    font-size: 0.95em;
+    margin: 6px 8px;
+  }
+
+  /* Sección principal */
+  .contenedor1 {
+    padding: 90px 15px 30px;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  /* Texto saludo */
+  .saludo h1 {
+    font-size: 1.9em;
+    line-height: 1.2;
+  }
+
+  .saludo p {
+    font-size: 1.05em;
+  }
+
+  /* Sección secundaria */
+  .contenedor2 {
+    padding: 40px 15px;
+  }
+
+  .contenedor2 h2 {
+    font-size: 1.8em;
+  }
+
+  .contenedor2 img {
+    width: 220px;
+  }
+
+  /* Switch modo oscuro centrado */
+  .switch {
+    margin: 12px auto 0;
+  }
+}
