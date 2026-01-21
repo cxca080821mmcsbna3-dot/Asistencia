@@ -230,37 +230,54 @@ th {
   color: #4b2e05;
 }
 
-/* ===== CONTENEDOR TABLA ===== */
+/* ===== CONTENEDOR CON SCROLL ===== */
 .tabla-wrapper {
     width: 100%;
-    overflow-x: auto;              /* 👈 CLAVE */
-    overflow-y: visible;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 /* ===== TABLA ===== */
 .tabla-wrapper table {
-    width: max-content;            /* 👈 CLAVE */
+    width: max-content;
     min-width: 100%;
     border-collapse: collapse;
 }
 
-/* Encabezados */
-.tabla-wrapper th {
+/* ===== COLUMNAS FIJAS ===== */
+
+/* No. Lista */
+.tabla-wrapper th:nth-child(1),
+.tabla-wrapper td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    background: #fffdfa;
+    z-index: 3;
+    min-width: 60px;
+}
+
+/* Alumno */
+.tabla-wrapper th:nth-child(2),
+.tabla-wrapper td:nth-child(2) {
+    position: sticky;
+    left: 60px; /* ancho de la columna anterior */
+    background: #fffdfa;
+    z-index: 3;
+    min-width: 180px;
+}
+
+/* Encabezados siempre visibles */
+.tabla-wrapper thead th {
+    top: 0;
+    z-index: 4;
     white-space: nowrap;
 }
 
-/* Celdas */
-.tabla-wrapper td {
+/* Días */
+.tabla-wrapper td,
+.tabla-wrapper th {
     min-width: 42px;
     text-align: center;
-}
-
-/* ===== MOVIL ===== */
-@media (max-width: 768px) {
-    .wrapper {
-        padding: 10px;
-    }
 }
 
 </style>
