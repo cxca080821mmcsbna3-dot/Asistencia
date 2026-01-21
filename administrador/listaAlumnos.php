@@ -70,10 +70,11 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
 }
 
 // ---------- Consultar alumnos ----------
-$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, telefono
           FROM alumno
           WHERE id_grupo = :id_grupo
           ORDER BY id_alumno ASC";
+
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
@@ -228,6 +229,140 @@ th {
   background-color: #deb887;
   color: #4b2e05;
 }
+
+/* =========================================
+   📱 CELULAR PARADO (portrait)
+========================================= */
+@media (max-width: 768px) and (orientation: portrait) {
+
+  /* ----- BODY ----- */
+  html, body {
+    padding: 4px;
+    justify-content: flex-start;
+  }
+
+  /* ----- CONTENEDOR PRINCIPAL ----- */
+  .wrapper {
+    padding: 0.8rem;
+    border-radius: 12px;
+  }
+
+  /* ----- BOTÓN REGRESAR ----- */
+  .back-arrow {
+    position: static;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  /* ----- TÍTULOS ----- */
+  h1 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .small {
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  /* ----- CONTROLES ----- */
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .controls form {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .controls label {
+    font-size: 0.85rem;
+  }
+
+  select,
+  input[type="number"],
+  .controls button {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .export-btn {
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  #btnEditar,
+  #btnGuardar {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  /* ----- LEYENDA DE COLORES ----- */
+  .controls > div {
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    margin-left: 0 !important;
+  }
+
+  /* ----- TABLA ----- */
+  table {
+    font-size: 11px;
+    min-width: 950px; /* fuerza scroll horizontal */
+  }
+
+  th, td {
+    padding: 6px 4px;
+  }
+
+  th {
+    font-size: 11px;
+  }
+
+  /* ----- COLUMNA ALUMNO ----- */
+  .alumno-col {
+    min-width: 160px;
+    font-size: 11px;
+  }
+
+  /* ----- FILAS ----- */
+  table tbody tr {
+    height: auto;
+  }
+
+  table td {
+    vertical-align: middle;
+  }
+
+  /* ----- CUADROS DE ASISTENCIA ----- */
+  .btn-cuadro {
+    width: 18px;
+    height: 18px;
+    margin: auto;
+  }
+
+  /* ----- BOTÓN MENSAJE ----- */
+  a[href*="wa.me"] {
+    display: block;
+    width: 100%;
+    font-size: 11px;
+    padding: 6px 4px;
+    border-radius: 6px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+}
+
 </style>
 </head>
 <body>
@@ -277,6 +412,7 @@ th {
                     <th>No.</th>
                     <th>Matrícula</th>
                     <th class="alumno-col">Alumno</th>
+                    <th>Mensaje</th>
                     <?php for ($d = 1; $d <= $diasMes; $d++): ?>
                         <th><?= $d ?></th>
                     <?php endfor; ?>
@@ -288,6 +424,24 @@ th {
                         <td><?= ($indice + 1) ?></td>
                         <td><?= htmlspecialchars($al['matricula']) ?></td>
                         <td class="alumno-col"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
+                        <td>
+                            <?php
+                                $telefono = "52" . $al['telefono']; // 52 = México
+                                $nombreCompleto = $al['nombre'] . " " . $al['apellidos'];
+
+                                $mensaje = urlencode(
+                                  "Buenos días señor padre de familia, se le informa que su hijo $nombreCompleto llegó con retardo el día de hoy."
+                                );
+
+                                $linkWhats = "https://wa.me/$telefono?text=$mensaje";
+                            ?>
+                            <a href="<?= $linkWhats ?>" target="_blank"
+                              style="background:#white; color:#4da6ff; padding:6px 10px;
+                                border-radius:6px; text-decoration:none; font-size:13px;">
+                                Mensaje
+                            </a>
+                        </td>
+
                         <?php for ($d=1;$d<=$diasMes;$d++): 
                             $estado = $inasistencias[$al['id_alumno']][$d] ?? "";
                             $color = $estado == "Ausente" ? "#ff6b6b" :
