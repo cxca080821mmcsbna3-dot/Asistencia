@@ -300,7 +300,6 @@ th {
                 <tr>
                     <th>No.</th>
                     <th>Matrícula</th>
-                    <th>Mensaje</th>
                     <th class="alumno-col">Alumno</th>
                     <?php for ($d = 1; $d <= $diasMes; $d++): ?>
                         <th><?= $d ?></th>
@@ -344,7 +343,7 @@ th {
         }
 
         $mensaje = urlencode(
-            "*Buen día señor padre de familia*. Se le informa que su hijo {$al['apellidos']} {$al['nombre']} ha acumulado {$retardos} *retardos* en el mes."
+            "*BUEN DIA PADRE DE FAMILIA*. Se le informa que su hijo *{$al['nombre']} {$al['apellidos']}* ha acumulado *{$retardos}* retardos en el mes."
         );
 
         $linkWhats = "https://wa.me/{$telefono}?text={$mensaje}";
