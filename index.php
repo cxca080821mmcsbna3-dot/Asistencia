@@ -55,7 +55,7 @@ if (isset($_POST['iniciar'])) {
                     'matricula' => $alumnoData['matricula']
                 ];
 
-                header("Location: alumno/menu_alumno.php");
+                header("Location: alumno/index.php");
                 exit();
             }
 

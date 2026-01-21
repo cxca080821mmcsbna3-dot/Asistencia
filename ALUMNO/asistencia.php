@@ -84,7 +84,7 @@ foreach ($stmtAs as $r) {
 <body>
 
 <div class="wrapper">
-<a href="menu_alumno.php" class="back-arrow">&#8592; Regresar</a>
+<a href="index.php" class="back-arrow">&#8592; Regresar</a>
 <h2>Mis asistencias</h2>
 
 <div class="controls">
