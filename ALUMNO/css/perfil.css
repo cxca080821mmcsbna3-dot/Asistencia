@@ -120,6 +120,135 @@ body.dark-mode .perfil-seccion p {
   color: #f5deb3;
 }
 
+/* ======================================
+   ESTILOS PARA INASISTENCIAS (NUEVO)
+====================================== */
+.inasistencias-seccion {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+  border: 2px solid #e8c8a8;
+  margin-top: 20px;
+}
+
+body.dark-mode .inasistencias-seccion {
+  background: linear-gradient(135deg, #4a3a2a 0%, #3a2a1a 100%);
+  border: 2px solid #8b6914;
+}
+
+.inasistencias-total {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.total-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+  color: white;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.total-badge .numero {
+  font-size: 2.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.total-badge .label {
+  font-size: 0.75rem;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.sin-inasistencias {
+  color: #2ecc71;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px;
+  background-color: #f0fff4;
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+}
+
+body.dark-mode .sin-inasistencias {
+  background-color: #0d3a0d;
+  color: #52d652;
+}
+
+.inasistencias-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .inasistencias-tabla {
+  background: #3a3a3a;
+}
+
+.inasistencias-tabla thead {
+  background: #d2b48c;
+  color: white;
+  font-weight: bold;
+}
+
+body.dark-mode .inasistencias-tabla thead {
+  background: #8b6914;
+}
+
+.inasistencias-tabla th,
+.inasistencias-tabla td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+body.dark-mode .inasistencias-tabla td {
+  color: #f0e8dc;
+  border-bottom: 1px solid #555;
+}
+
+.inasistencias-tabla tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+body.dark-mode .inasistencias-tabla tbody tr:hover {
+  background-color: #454545;
+}
+
+.inasistencias-tabla .ausentes {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.inasistencias-tabla .retardos {
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.inasistencias-tabla .justificantes {
+  color: #4da6ff;
+  font-weight: bold;
+}
+
+.inasistencias-tabla h4 {
+  color: #8b4513;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+body.dark-mode .inasistencias-tabla h4 {
+  color: #ffdead;
+}
+
 /* Inputs, selects y botones */
 body.dark-mode input,
 body.dark-mode select,

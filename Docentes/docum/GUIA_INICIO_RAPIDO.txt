@@ -1,0 +1,209 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    🚀 GUÍA DE INICIO RÁPIDO
+═══════════════════════════════════════════════════════════════════════════════
+
+¿QUIERES EMPEZAR AHORA?
+
+Opción 1: VERIFICAR QUE TODO FUNCIONA (1 minuto)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abre tu navegador
+2. Ve a: http://localhost/Asistencia/verificar_instalacion.php
+3. Espera a que cargue
+4. ¡Si todo dice ✅, está todo listo!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Opción 2: PROBAR COMO ALUMNO (2 minutos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Accede al sistema con tu cuenta de alumno
+2. Ve a tu perfil
+3. Desplázate hacia abajo
+4. ¡Verás la nueva sección "📊 Resumen de Inasistencias"!
+5. Ahí tendrás:
+   - Un badge rojo con el total
+   - Una tabla con inasistencias por materia
+   - Conteo de: Ausentes, Retardos, Justificantes
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Opción 3: PROBAR COMO ADMINISTRADOR (3 minutos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Accede como administrador
+2. Ve a: Materias → Grupos creados
+3. Selecciona un grupo y una materia
+4. En la tabla de asistencias verás la nueva columna "⚠️ Inasist."
+5. Esta columna muestra el total de ausencias de cada alumno en esa materia
+6. BONUS: Haz clic en el nombre de un alumno
+7. ¡Se abrirá una página con detalle completo de sus inasistencias!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+AQUÍ ENCONTRARÁS DOCUMENTACIÓN COMPLETA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 README_INASISTENCIAS.txt (ESE ARCHIVO)
+   └─ Este documento
+
+📄 RESUMEN_CAMBIOS.md ⭐ EMPIEZA AQUÍ
+   └─ Qué se hizo en 5 minutos
+   └─ Vistas nuevas
+   └─ Características
+   └─ Flujos de datos
+
+📄 DOCUMENTO_DE_CAMBIOS_INASISTENCIAS.md
+   └─ Para desarrolladores
+   └─ Cada línea de código modificada
+   └─ Cómo revertir TODO si no te gusta
+
+📄 INDICE_REFERENCIA.md
+   └─ Referencia rápida
+   └─ Búsqueda de funciones
+   └─ Preguntas frecuentes
+
+═══════════════════════════════════════════════════════════════════════════════
+
+¿QUÉ SE IMPLEMENTÓ?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Contador de inasistencias en PERFIL DEL ALUMNO
+   • Muestra total de ausencias
+   • Tabla con inasistencias por materia
+   • Colores intuitivos: Rojo (ausentes), Naranja (retardos), Azul (justificantes)
+
+✅ Columna de inasistencias en LISTA DE ALUMNOS (Admin)
+   • Nueva columna "⚠️ Inasist." con el contador
+   • Fondo rojo si hay inasistencias, gris si no
+   • Nombres clickeables para ver detalles
+
+✅ Página de DETALLES DE INASISTENCIAS (Nuevo)
+   • Estadísticas visuales en tarjetas de colores
+   • Tabla con historial completo
+   • Fechas en formato legible
+   • Accesible desde el nombre del alumno en listaAlumnos
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ARCHIVOS CREADOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 assets/sentenciasSQL/asistenciaFunciones.php
+   └─ 7 funciones SQL para obtener inasistencias
+
+📄 administrador/detalleInasistencias.php
+   └─ Nueva página de detalle con estadísticas
+
+📄 verificar_instalacion.php
+   └─ Herramienta para verificar que todo está bien
+
+📄 RESUMEN_CAMBIOS.md
+📄 DOCUMENTO_DE_CAMBIOS_INASISTENCIAS.md
+📄 INDICE_REFERENCIA.md
+   └─ Documentación completa
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ARCHIVOS MODIFICADOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 ALUMNO/perfil.php
+   └─ Agregó sección de inasistencias
+
+📝 ALUMNO/css/perfil.css
+   └─ Agregó estilos para la nueva sección
+
+📝 administrador/listaAlumnos.php
+   └─ Agregó columna de inasistencias
+
+═══════════════════════════════════════════════════════════════════════════════
+
+¿ALGO NO TE GUSTA?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Puedes revertir TODOS los cambios en 5 minutos.
+
+Consulta: DOCUMENTO_DE_CAMBIOS_INASISTENCIAS.md
+
+Ahí encontrarás:
+✓ Instrucciones paso a paso de cómo revertir CADA cambio
+✓ Código original exacto
+✓ Archivos que eliminar
+✓ Líneas que restaurar
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CARACTERÍSTICAS PRINCIPALES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Responsive Design
+   └─ Funciona en móvil, tablet y desktop
+
+✨ Modo Oscuro
+   └─ Compatible con el tema oscuro del sistema
+
+✨ Seguridad
+   └─ Prepared statements en todas las consultas
+
+✨ Performance
+   └─ Consultas optimizadas sin N+1
+
+✨ Sin efectos secundarios
+   └─ No toca la base de datos
+   └─ No afecta otros módulos
+
+═══════════════════════════════════════════════════════════════════════════════
+
+COLORES UTILIZADOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ausentes:       🔴 Rojo      (#ff6b6b)
+Retardos:       🟠 Naranja   (#ffa500)
+Justificantes:  🔵 Azul      (#4da6ff)
+Presentes:      🟢 Verde     (#4caf50)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PRÓXIMOS PASOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ Ejecuta verificar_instalacion.php
+   
+2. ✅ Prueba como alumno (ve a tu perfil)
+   
+3. ✅ Prueba como admin (lista de alumnos)
+   
+4. ✅ Lee RESUMEN_CAMBIOS.md para entender todo
+   
+5. ✅ Si todo ok, ¡lo hemos logrado! 🎉
+
+═══════════════════════════════════════════════════════════════════════════════
+
+¿PREGUNTAS?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+P: ¿Se modificó la base de datos?
+R: No. Solo consultas SELECT sobre tablas existentes.
+
+P: ¿Puedo revertir los cambios?
+R: Sí, 100% reversible. Consulta DOCUMENTO_DE_CAMBIOS_INASISTENCIAS.md
+
+P: ¿Afecta a otros módulos?
+R: No. Los cambios son aislados al perfil del alumno y admin.
+
+P: ¿Funciona en móvil?
+R: Sí, con diseño completamente responsivo.
+
+P: ¿Qué pasa si no hay inasistencias?
+R: Muestra un mensaje verde: "✅ No tienes registros de inasistencias aún."
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Versión: 1.0
+Implementado: 20 de enero de 2026
+Estado: ✅ Listo para usar
+Documentación: 100% completa
+Reversibilidad: 100% segura
+
+═══════════════════════════════════════════════════════════════════════════════
