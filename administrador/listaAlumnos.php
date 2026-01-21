@@ -230,81 +230,54 @@ th {
   color: #4b2e05;
 }
 
-/* =====================================
-   📱 RESPONSIVO GENERAL (CELULAR)
-===================================== */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
 
-    /* BODY */
-    body {
-        font-size: 0.9em;
+    /* ===== FILA SUPERIOR (leyenda + botones) ===== */
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 12px;
     }
 
-    /* BOTÓN REGRESAR */
-    .back-arrow {
-        margin: 15px auto 10px auto;
-        font-size: 0.95em;
-        text-align: center;
-        display: block;
+    /* Leyenda (Retardo / Justificante) */
+    .controls > div {
+        justify-content: center;
+        font-size: 13px;
+        margin: 0;
+        flex-wrap: wrap;
     }
 
-    /* CONTENEDOR */
-    .wrapper {
-        width: 98%;
-        padding: 16px 14px;
-        margin: 20px auto 40px auto;
-        border-radius: 14px;
-    }
-
-    /* TÍTULO */
-    caption {
-        font-size: 1.3em;
-        margin: 10px 0 15px 0;
-    }
-
-    /* TABLA */
-    table {
-        font-size: 0.85em;
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap; /* 👈 scroll horizontal limpio */
-    }
-
-    th,
-    td {
-        padding: 8px 6px;
-        font-size: 0.85em;
-    }
-
-    /* COLUMNA ALUMNO (no se aplasta) */
-    .alumno-col {
-        min-width: 160px;
-        text-align: left;
-    }
-
-    /* FILAS */
-    tbody tr {
-        height: auto;
-    }
-
-    /* BOTÓN MENSAJE */
-    a[href*="wa.me"] {
-        display: block;
+    /* ===== CONTENEDOR DE BOTONES ===== */
+    .controls form,
+    .controls .acciones {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         width: 100%;
-        padding: 6px 4px;
-        font-size: 0.8em;
-        text-align: center;
-        white-space: nowrap;
-        border-radius: 8px;
     }
 
-    /* CUADROS DE ASISTENCIA */
-    .btn-cuadro {
-        width: 18px;
-        height: 18px;
-        margin: auto;
+    /* ===== BOTONES ===== */
+    .controls button,
+    .export-btn,
+    #btnEditar,
+    #btnGuardar {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    /* Botón Regresar */
+    .back-arrow {
+        position: static;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 14px;
     }
 }
+
 
 </style>
 </head>
