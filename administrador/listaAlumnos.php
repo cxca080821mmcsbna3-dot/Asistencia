@@ -230,137 +230,80 @@ th {
   color: #4b2e05;
 }
 
-/* =========================================
-   📱 CELULAR PARADO (portrait)
-========================================= */
-@media (max-width: 768px) and (orientation: portrait) {
+/* =====================================
+   📱 RESPONSIVO GENERAL (CELULAR)
+===================================== */
+@media (max-width: 768px) {
 
-  /* ----- BODY ----- */
-  html, body {
-    padding: 4px;
-    justify-content: flex-start;
-  }
+    /* BODY */
+    body {
+        font-size: 0.9em;
+    }
 
-  /* ----- CONTENEDOR PRINCIPAL ----- */
-  .wrapper {
-    padding: 0.8rem;
-    border-radius: 12px;
-  }
+    /* BOTÓN REGRESAR */
+    .back-arrow {
+        margin: 15px auto 10px auto;
+        font-size: 0.95em;
+        text-align: center;
+        display: block;
+    }
 
-  /* ----- BOTÓN REGRESAR ----- */
-  .back-arrow {
-    position: static;
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 14px;
-    padding: 10px;
-  }
+    /* CONTENEDOR */
+    .wrapper {
+        width: 98%;
+        padding: 16px 14px;
+        margin: 20px auto 40px auto;
+        border-radius: 14px;
+    }
 
-  /* ----- TÍTULOS ----- */
-  h1 {
-    font-size: 1.2rem;
-    text-align: center;
-  }
+    /* TÍTULO */
+    caption {
+        font-size: 1.3em;
+        margin: 10px 0 15px 0;
+    }
 
-  .small {
-    font-size: 0.9rem;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
+    /* TABLA */
+    table {
+        font-size: 0.85em;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap; /* 👈 scroll horizontal limpio */
+    }
 
-  /* ----- CONTROLES ----- */
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
+    th,
+    td {
+        padding: 8px 6px;
+        font-size: 0.85em;
+    }
 
-  .controls form {
-    flex-direction: column;
-    gap: 6px;
-  }
+    /* COLUMNA ALUMNO (no se aplasta) */
+    .alumno-col {
+        min-width: 160px;
+        text-align: left;
+    }
 
-  .controls label {
-    font-size: 0.85rem;
-  }
+    /* FILAS */
+    tbody tr {
+        height: auto;
+    }
 
-  select,
-  input[type="number"],
-  .controls button {
-    width: 100%;
-    font-size: 0.9rem;
-  }
+    /* BOTÓN MENSAJE */
+    a[href*="wa.me"] {
+        display: block;
+        width: 100%;
+        padding: 6px 4px;
+        font-size: 0.8em;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
 
-  .export-btn {
-    width: 100%;
-    text-align: center;
-    font-size: 0.9rem;
-    padding: 10px;
-  }
-
-  #btnEditar,
-  #btnGuardar {
-    width: 100%;
-    font-size: 0.9rem;
-  }
-
-  /* ----- LEYENDA DE COLORES ----- */
-  .controls > div {
-    justify-content: center;
-    flex-wrap: wrap;
-    font-size: 12px;
-    margin-left: 0 !important;
-  }
-
-  /* ----- TABLA ----- */
-  table {
-    font-size: 11px;
-    min-width: 950px; /* fuerza scroll horizontal */
-  }
-
-  th, td {
-    padding: 6px 4px;
-  }
-
-  th {
-    font-size: 11px;
-  }
-
-  /* ----- COLUMNA ALUMNO ----- */
-  .alumno-col {
-    min-width: 160px;
-    font-size: 11px;
-  }
-
-  /* ----- FILAS ----- */
-  table tbody tr {
-    height: auto;
-  }
-
-  table td {
-    vertical-align: middle;
-  }
-
-  /* ----- CUADROS DE ASISTENCIA ----- */
-  .btn-cuadro {
-    width: 18px;
-    height: 18px;
-    margin: auto;
-  }
-
-  /* ----- BOTÓN MENSAJE ----- */
-  a[href*="wa.me"] {
-    display: block;
-    width: 100%;
-    font-size: 11px;
-    padding: 6px 4px;
-    border-radius: 6px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
+    /* CUADROS DE ASISTENCIA */
+    .btn-cuadro {
+        width: 18px;
+        height: 18px;
+        margin: auto;
+    }
 }
 
 </style>
