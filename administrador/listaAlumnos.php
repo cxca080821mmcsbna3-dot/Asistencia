@@ -70,7 +70,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
 }
 
 // ---------- Consultar alumnos ----------
-$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, telefono
           FROM alumno
           WHERE id_grupo = :id_grupo
           ORDER BY id_alumno ASC";
@@ -90,6 +90,30 @@ foreach ($rowsAs as $r) {
     $d = intval(date('d', strtotime($r['fecha'])));
     $inasistencias[$r['id_alumno']][$d] = $r['estado'];
 }
+
+// ---------- Contar retardos por alumno (mes actual) ----------
+$retardosPorAlumno = [];
+
+$stmtRet = $pdo->prepare("
+    SELECT id_alumno, COUNT(*) AS total
+    FROM asistencia
+    WHERE id_grupo = :id_grupo
+      AND id_materia = :id_materia
+      AND estado = 'Retardo'
+      AND fecha LIKE :mes
+    GROUP BY id_alumno
+");
+
+$stmtRet->execute([
+    ':id_grupo'   => $id_grupo,
+    ':id_materia'=> $id_materia,
+    ':mes'       => $likeMes
+]);
+
+while ($r = $stmtRet->fetch()) {
+    $retardosPorAlumno[$r['id_alumno']] = $r['total'];
+}
+
 
 // ---------- Meses en español ----------
 $meses = [
@@ -276,6 +300,7 @@ th {
                 <tr>
                     <th>No.</th>
                     <th>Matrícula</th>
+                    <th>Mensaje</th>
                     <th class="alumno-col">Alumno</th>
                     <?php for ($d = 1; $d <= $diasMes; $d++): ?>
                         <th><?= $d ?></th>
@@ -302,6 +327,45 @@ th {
                                      style="background: <?= $color ?>"></div>
                             </td>
                         <?php endfor; ?>
+                        <td>
+<td>
+<?php
+    $idAlumno = $al['id_alumno'];
+    $retardos = $retardosPorAlumno[$idAlumno] ?? 0;
+
+    if ($retardos >= 3):
+
+        // Teléfono desde BD (solo números)
+        $telefono = preg_replace('/[^0-9]/', '', $al['telefono']);
+
+        // Agregar código país si no lo tiene
+        if (strlen($telefono) === 10) {
+            $telefono = '52' . $telefono;
+        }
+
+        $mensaje = urlencode(
+            "*Buen día señor padre de familia*. Se le informa que su hijo {$al['apellidos']} {$al['nombre']} ha acumulado {$retardos} *retardos* en el mes."
+        );
+
+        $linkWhats = "https://wa.me/{$telefono}?text={$mensaje}";
+?>
+    <a href="<?= $linkWhats ?>"
+       target="_blank"
+       style="
+        background:#25D366;
+        color:white;
+        padding:6px 10px;
+        border-radius:6px;
+        text-decoration:none;
+        font-size:12px;
+        font-weight:bold;">
+        Mensaje
+    </a>
+<?php endif; ?>
+</td>
+
+</td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
