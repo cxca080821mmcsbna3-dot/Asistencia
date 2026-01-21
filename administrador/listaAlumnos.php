@@ -230,54 +230,58 @@ th {
   color: #4b2e05;
 }
 
+/* ===============================
+   MODO MOVIL - TABLA A TARJETAS
+================================ */
 @media (max-width: 768px) {
 
-    /* ===== FILA SUPERIOR (leyenda + botones) ===== */
-    .controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    /* Leyenda (Retardo / Justificante) */
-    .controls > div {
-        justify-content: center;
-        font-size: 13px;
-        margin: 0;
-        flex-wrap: wrap;
-    }
-
-    /* ===== CONTENEDOR DE BOTONES ===== */
-    .controls form,
-    .controls .acciones {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+    table {
         width: 100%;
+        border-collapse: collapse;
     }
 
-    /* ===== BOTONES ===== */
-    .controls button,
-    .export-btn,
-    #btnEditar,
-    #btnGuardar {
-        width: 100%;
-        font-size: 14px;
-        padding: 10px;
+    thead {
+        display: none; /* ocultamos encabezados */
+    }
+
+    tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
         border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
-    /* Botón Regresar */
-    .back-arrow {
-        position: static;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 10px;
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 6px;
         font-size: 14px;
+        border: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #555;
+    }
+
+    /* Botón */
+    td:last-child {
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    td:last-child button,
+    td:last-child a {
+        width: 100%;
+        padding: 10px;
+        font-size: 15px;
+        border-radius: 8px;
     }
 }
-
 
 </style>
 </head>
