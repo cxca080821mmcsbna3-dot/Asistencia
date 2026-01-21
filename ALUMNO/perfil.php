@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/asistenciaFunciones.php";
 
 // 🔐 Bloqueo: SOLO alumnos (sesión nueva)
 if (!isset($_SESSION['ALUMNO'])) {
@@ -29,6 +30,10 @@ try {
     // Gravatar basado en CURP
     $emailHash = md5(strtolower(trim($alumno['curp'])));
     $avatarUrl = "https://www.gravatar.com/avatar/$emailHash?s=200&d=identicon";
+
+    // 📊 NUEVO: Obtener resumen de inasistencias por materia
+    $resumenInasistencias = obtenerResumenInasistenciasPorMateria($pdo, $idAlumno);
+    $totalInasistencias = obtenerTotalInasistencias($pdo, $idAlumno);
 
 } catch (PDOException $e) {
     die("❌ Error al consultar la base de datos");
@@ -65,6 +70,45 @@ try {
             <h3>Datos del Alumno</h3>
             <p><strong>CURP:</strong> <?= htmlspecialchars($alumno['curp']) ?></p>
             <p><strong>Teléfono:</strong> <?= htmlspecialchars($alumno['telefono']) ?></p>
+        </div>
+
+        <!-- 📊 NUEVO: Sección de Inasistencias -->
+        <div class="perfil-seccion inasistencias-seccion">
+            <h3>📊 Resumen de Inasistencias</h3>
+            <div class="inasistencias-total">
+                <div class="total-badge">
+                    <span class="numero"><?= $totalInasistencias ?></span>
+                    <span class="label">Total de Inasistencias</span>
+                </div>
+            </div>
+
+            <?php if (count($resumenInasistencias) > 0): ?>
+            <h4>Por Materia:</h4>
+            <table class="inasistencias-tabla">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Ausentes</th>
+                        <th>Retardos</th>
+                        <th>Justificantes</th>
+                        <th>Total Registros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($resumenInasistencias as $materia): ?>
+                    <tr>
+                        <td><strong><?= htmlspecialchars($materia['nombre']) ?></strong></td>
+                        <td class="ausentes"><?= $materia['inasistencias'] ?></td>
+                        <td class="retardos"><?= $materia['retardos'] ?></td>
+                        <td class="justificantes"><?= $materia['justificantes'] ?></td>
+                        <td><?= $materia['total_registros'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php else: ?>
+            <p class="sin-inasistencias">✅ No tienes registros de inasistencias aún.</p>
+            <?php endif; ?>
         </div>
     </div>
 </div>

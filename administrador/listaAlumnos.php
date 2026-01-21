@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/asistenciaFunciones.php";
 
 // --- Validar materia y grupo ---
 if (!isset($_GET['idMateria']) || !isset($_GET['idGrupo'])) {
@@ -77,6 +78,15 @@ $sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
+
+// 📊 NUEVO: Obtener inasistencias totales por alumno en esta materia
+$alumnosConInasistencias = [];
+foreach ($alumnos as $alumno) {
+    $inasistenciasMateria = obtenerInasistenciasPorMateria($pdo, $alumno['id_alumno'], $id_materia);
+    $alumno['inasistencias'] = $inasistenciasMateria;
+    $alumnosConInasistencias[] = $alumno;
+}
+$alumnos = $alumnosConInasistencias;
 
 // ---------- Consultar asistencias ----------
 $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
@@ -233,7 +243,7 @@ th {
 <body>
 
 <div class="wrapper">
-    <a href="gruposCreados.php" class="back-arrow">&#8592; Regresar</a>
+    <a href="materias.php?idGrupo=<?= $id_grupo ?>" class="back-arrow">&#8592; Regresar</a>
     <h1>Asistencia: <?= htmlspecialchars($materia['nombre_materia']) ?></h1>
     <p class="small"><strong>Grupo:</strong> <?= htmlspecialchars($materia['nombre_grupo']) ?></p>
 
@@ -277,6 +287,7 @@ th {
                     <th>No.</th>
                     <th>Matrícula</th>
                     <th class="alumno-col">Alumno</th>
+                    <th style="background-color: #ffcccc; color: #8b0000;">⚠️ Inasist.</th>
                     <?php for ($d = 1; $d <= $diasMes; $d++): ?>
                         <th><?= $d ?></th>
                     <?php endfor; ?>
@@ -287,7 +298,16 @@ th {
                     <tr>
                         <td><?= ($indice + 1) ?></td>
                         <td><?= htmlspecialchars($al['matricula']) ?></td>
-                        <td class="alumno-col"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
+                        <td class="alumno-col">
+                            <a href="detalleInasistencias.php?idAlumno=<?= $al['id_alumno'] ?>&idMateria=<?= $id_materia ?>" style="text-decoration: none; color: #4b3621; font-weight: bold;">
+                                <?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?>
+                            </a>
+                        </td>
+                        <td style="background-color: <?= $al['inasistencias'] > 0 ? '#ffebee' : '#f0f0f0' ?>;">
+                            <strong style="color: <?= $al['inasistencias'] > 0 ? '#d32f2f' : '#4caf50' ?>;">
+                                <?= $al['inasistencias'] ?>
+                            </strong>
+                        </td>
                         <?php for ($d=1;$d<=$diasMes;$d++): 
                             $estado = $inasistencias[$al['id_alumno']][$d] ?? "";
                             $color = $estado == "Ausente" ? "#ff6b6b" :
