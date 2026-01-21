@@ -231,55 +231,44 @@ th {
 }
 
 /* ===============================
-   MODO MOVIL - TABLA A TARJETAS
+   SCROLL HORIZONTAL EN MOVIL
+================================ */
+.tabla-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Evita que la tabla se aplaste */
+table {
+    min-width: 1200px; /* AJUSTA según columnas */
+}
+
+/* Encabezados siempre visibles */
+th {
+    white-space: nowrap;
+}
+
+/* Celdas parejas */
+td {
+    min-width: 40px;
+}
+
+/* ===============================
+   AJUSTES SOLO MOVIL
 ================================ */
 @media (max-width: 768px) {
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
+    .filtros {
+        flex-wrap: wrap; /* filtros siguen arriba */
     }
 
-    thead {
-        display: none; /* ocultamos encabezados */
-    }
-
-    tr {
-        display: block;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
+    .wrapper {
         padding: 10px;
-        background: #fff;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
-    td {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 6px;
-        font-size: 14px;
-        border: none;
-    }
-
-    td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: #555;
-    }
-
-    /* Botón */
-    td:last-child {
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    td:last-child button,
-    td:last-child a {
-        width: 100%;
-        padding: 10px;
-        font-size: 15px;
-        border-radius: 8px;
+    caption {
+        font-size: 1.2em;
     }
 }
 
