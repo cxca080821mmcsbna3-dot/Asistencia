@@ -70,11 +70,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
 }
 
 // ---------- Consultar alumnos ----------
-$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos, telefono
+$sqlAl = "SELECT id_alumno, matricula, nombre, apellidos
           FROM alumno
           WHERE id_grupo = :id_grupo
           ORDER BY id_alumno ASC";
-
 $stmtAl = $pdo->prepare($sqlAl);
 $stmtAl->execute([':id_grupo' => $id_grupo]);
 $alumnos = $stmtAl->fetchAll(PDO::FETCH_ASSOC);
@@ -229,57 +228,6 @@ th {
   background-color: #deb887;
   color: #4b2e05;
 }
-
-/* ===== CONTENEDOR CON SCROLL ===== */
-.tabla-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* ===== TABLA ===== */
-.tabla-wrapper table {
-    width: max-content;
-    min-width: 100%;
-    border-collapse: collapse;
-}
-
-/* ===== COLUMNAS FIJAS ===== */
-
-/* No. Lista */
-.tabla-wrapper th:nth-child(1),
-.tabla-wrapper td:nth-child(1) {
-    position: sticky;
-    left: 0;
-    background: #fffdfa;
-    z-index: 3;
-    min-width: 60px;
-}
-
-/* Alumno */
-.tabla-wrapper th:nth-child(2),
-.tabla-wrapper td:nth-child(2) {
-    position: sticky;
-    left: 60px; /* ancho de la columna anterior */
-    background: #fffdfa;
-    z-index: 3;
-    min-width: 180px;
-}
-
-/* Encabezados siempre visibles */
-.tabla-wrapper thead th {
-    top: 0;
-    z-index: 4;
-    white-space: nowrap;
-}
-
-/* Días */
-.tabla-wrapper td,
-.tabla-wrapper th {
-    min-width: 42px;
-    text-align: center;
-}
-
 </style>
 </head>
 <body>
@@ -329,7 +277,6 @@ th {
                     <th>No.</th>
                     <th>Matrícula</th>
                     <th class="alumno-col">Alumno</th>
-                    <th>Mensaje</th>
                     <?php for ($d = 1; $d <= $diasMes; $d++): ?>
                         <th><?= $d ?></th>
                     <?php endfor; ?>
@@ -341,24 +288,6 @@ th {
                         <td><?= ($indice + 1) ?></td>
                         <td><?= htmlspecialchars($al['matricula']) ?></td>
                         <td class="alumno-col"><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
-                        <td>
-                            <?php
-                                $telefono = "52" . $al['telefono']; // 52 = México
-                                $nombreCompleto = $al['nombre'] . " " . $al['apellidos'];
-
-                                $mensaje = urlencode(
-                                  "Buenos días señor padre de familia, se le informa que su hijo $nombreCompleto llegó con retardo el día de hoy."
-                                );
-
-                                $linkWhats = "https://wa.me/$telefono?text=$mensaje";
-                            ?>
-                            <a href="<?= $linkWhats ?>" target="_blank"
-                              style="background:#white; color:#4da6ff; padding:6px 10px;
-                                border-radius:6px; text-decoration:none; font-size:13px;">
-                                Mensaje
-                            </a>
-                        </td>
-
                         <?php for ($d=1;$d<=$diasMes;$d++): 
                             $estado = $inasistencias[$al['id_alumno']][$d] ?? "";
                             $color = $estado == "Ausente" ? "#ff6b6b" :
