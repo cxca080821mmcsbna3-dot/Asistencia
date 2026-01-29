@@ -9,6 +9,13 @@
 session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 require_once __DIR__ . "/../assets/sentenciasSQL/asistenciaFunciones.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/funciones_seguridad.php";
+
+// 🔐 CORRECCIÓN #3: Validar que es administrador
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
+    header("Location: ../index.php");
+    exit();
+}
 
 // --- Validaciones ---
 if (!isset($_GET['idAlumno']) || !isset($_GET['idMateria'])) {
@@ -16,97 +23,126 @@ if (!isset($_GET['idAlumno']) || !isset($_GET['idMateria'])) {
     exit();
 }
 
-$idAlumno = intval($_GET['idAlumno']);
-$idMateria = intval($_GET['idMateria']);
+// 🔐 CORRECCIÓN #4: Validar IDs
+$idAlumno = intval($_GET['idAlumno'] ?? 0);
+$idMateria = intval($_GET['idMateria'] ?? 0);
+
+// Validar que los IDs sean válidos
+$mensajeError = null;
+if ($idAlumno <= 0 || $idMateria <= 0) {
+    $mensajeError = "Parámetros inválidos";
+}
+
+// Validar que el alumno existe
+if (!$mensajeError) {
+    $stmtValida = $pdo->prepare("SELECT id_alumno FROM alumno WHERE id_alumno = ?");
+    $stmtValida->execute([$idAlumno]);
+    if (!$stmtValida->fetch()) {
+        $mensajeError = "Alumno no encontrado";
+    }
+}
+
+// Validar que la materia existe
+if (!$mensajeError) {
+    $stmtValida = $pdo->prepare("SELECT id_materia FROM materias WHERE id_materia = ?");
+    $stmtValida->execute([$idMateria]);
+    if (!$stmtValida->fetch()) {
+        $mensajeError = "Materia no encontrada";
+    }
+}
 
 // --- Obtener datos del alumno ---
 try {
-    $stmt = $pdo->prepare("
-        SELECT a.id_alumno, a.nombre, a.apellidos, a.matricula, a.numero_lista,
-               g.nombre AS nombre_grupo
-        FROM alumno a
-        LEFT JOIN grupo g ON a.id_grupo = g.idGrupo
-        WHERE a.id_alumno = :idAlumno
-        LIMIT 1
-    ");
-    $stmt->execute([':idAlumno' => $idAlumno]);
-    $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$mensajeError) {
+        $stmt = $pdo->prepare("
+            SELECT a.id_alumno, a.nombre, a.apellidos, a.matricula, a.numero_lista,
+                   g.nombre AS nombre_grupo
+            FROM alumno a
+            LEFT JOIN grupo g ON a.id_grupo = g.idGrupo
+            WHERE a.id_alumno = :idAlumno
+            LIMIT 1
+        ");
+        $stmt->execute([':idAlumno' => $idAlumno]);
+        $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$alumno) {
-        die("❌ Alumno no encontrado");
+        if (!$alumno) {
+            $mensajeError = "Alumno no encontrado";
+        }
+
+        // --- Obtener datos de la materia ---
+        if (!$mensajeError) {
+            $stmt = $pdo->prepare("
+                SELECT id_materia, nombre
+                FROM materias
+                WHERE id_materia = :idMateria
+                LIMIT 1
+            ");
+            $stmt->execute([':idMateria' => $idMateria]);
+            $materia = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$materia) {
+                $mensajeError = "Materia no encontrada";
+            }
+        }
     }
 
-    // --- Obtener datos de la materia ---
-    $stmt = $pdo->prepare("
-        SELECT id_materia, nombre
-        FROM materias
-        WHERE id_materia = :idMateria
-        LIMIT 1
-    ");
-    $stmt->execute([':idMateria' => $idMateria]);
-    $materia = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$mensajeError) {
+        // --- Obtener inasistencias en esta materia ---
+        $historial = obtenerHistorialInasistencias($pdo, $idAlumno, $idMateria);
+        $inasistencias = obtenerInasistenciasPorMateria($pdo, $idAlumno, $idMateria);
+        
+        // CORRECCIÓN #6: Simplificar consulta (eliminar window functions innecesarias)
+        $stmt = $pdo->prepare("
+            SELECT fecha, estado
+            FROM asistencia
+            WHERE id_alumno = :idAlumno AND id_materia = :idMateria
+            ORDER BY fecha DESC
+        ");
+        $stmt->execute([':idAlumno' => $idAlumno, ':idMateria' => $idMateria]);
+        $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!$materia) {
-        die("❌ Materia no encontrada");
+        // Contar estados
+        $estadisticas = [
+            'ausentes' => 0,
+            'retardos' => 0,
+            'justificantes' => 0,
+            'presentes' => 0,
+            'total' => 0
+        ];
+
+        foreach ($registros as $r) {
+            $estadisticas['total']++;
+            if ($r['estado'] == 'Ausente') $estadisticas['ausentes']++;
+            elseif ($r['estado'] == 'Retardo') $estadisticas['retardos']++;
+            elseif ($r['estado'] == 'Justificante') $estadisticas['justificantes']++;
+            else $estadisticas['presentes']++;
+        }
+
+        // 📊 NUEVO: Obtener resumen de inasistencias en TODAS las materias
+        $resumenTodasMaterias = obtenerResumenInasistenciasPorMateria($pdo, $idAlumno);
+
+        // CORRECCIÓN #7: Contar TODAS las inasistencias (Ausente, Retardo, Justificante)
+        $stmt = $pdo->prepare("
+            SELECT COUNT(DISTINCT id_materia) as total_materias
+            FROM asistencia
+            WHERE id_alumno = :idAlumno AND estado IN ('Ausente', 'Retardo', 'Justificante')
+        ");
+        $stmt->execute([':idAlumno' => $idAlumno]);
+        $totalMaterias = intval($stmt->fetchColumn() ?? 0);
+
+        // CORRECCIÓN #7: Contar días únicos con TODAS las inasistencias
+        $stmt = $pdo->prepare("
+            SELECT COUNT(DISTINCT fecha) as total_dias
+            FROM asistencia
+            WHERE id_alumno = :idAlumno AND estado IN ('Ausente', 'Retardo', 'Justificante')
+        ");
+        $stmt->execute([':idAlumno' => $idAlumno]);
+        $totalDias = intval($stmt->fetchColumn() ?? 0);
     }
-
-    // --- Obtener inasistencias en esta materia ---
-    $historial = obtenerHistorialInasistencias($pdo, $idAlumno, $idMateria);
-    $inasistencias = obtenerInasistenciasPorMateria($pdo, $idAlumno, $idMateria);
-    
-    // --- Obtener todos los registros (presente, ausente, retardo, etc) ---
-    $stmt = $pdo->prepare("
-        SELECT fecha, estado,
-               COUNT(*) OVER (PARTITION BY CASE WHEN estado = 'Ausente' THEN 1 ELSE 0 END) as total_ausentes,
-               COUNT(*) OVER (PARTITION BY CASE WHEN estado = 'Retardo' THEN 1 ELSE 0 END) as total_retardos,
-               COUNT(*) OVER (PARTITION BY CASE WHEN estado = 'Justificante' THEN 1 ELSE 0 END) as total_justificantes
-        FROM asistencia
-        WHERE id_alumno = :idAlumno AND id_materia = :idMateria
-        ORDER BY fecha DESC
-    ");
-    $stmt->execute([':idAlumno' => $idAlumno, ':idMateria' => $idMateria]);
-    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Contar estados
-    $estadisticas = [
-        'ausentes' => 0,
-        'retardos' => 0,
-        'justificantes' => 0,
-        'presentes' => 0,
-        'total' => 0
-    ];
-
-    foreach ($registros as $r) {
-        $estadisticas['total']++;
-        if ($r['estado'] == 'Ausente') $estadisticas['ausentes']++;
-        elseif ($r['estado'] == 'Retardo') $estadisticas['retardos']++;
-        elseif ($r['estado'] == 'Justificante') $estadisticas['justificantes']++;
-        else $estadisticas['presentes']++;
-    }
-
-    // 📊 NUEVO: Obtener resumen de inasistencias en TODAS las materias
-    $resumenTodasMaterias = obtenerResumenInasistenciasPorMateria($pdo, $idAlumno);
-
-    // 📊 NUEVO: Contar materias con inasistencias (ausencias, no retardos ni justificantes)
-    $stmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT id_materia) as total_materias
-        FROM asistencia
-        WHERE id_alumno = :idAlumno AND estado = 'Ausente'
-    ");
-    $stmt->execute([':idAlumno' => $idAlumno]);
-    $totalMaterias = intval($stmt->fetchColumn() ?? 0);
-
-    // 📊 NUEVO: Contar días únicos con inasistencias (ausencias)
-    $stmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT fecha) as total_dias
-        FROM asistencia
-        WHERE id_alumno = :idAlumno AND estado = 'Ausente'
-    ");
-    $stmt->execute([':idAlumno' => $idAlumno]);
-    $totalDias = intval($stmt->fetchColumn() ?? 0);
 
 } catch (PDOException $e) {
-    die("❌ Error al consultar la base de datos");
+    $mensajeError = "Error al consultar la base de datos";
+    error_log("Error en detalleInasistencias: " . $e->getMessage());
 }
 
 // --- Meses en español ---
@@ -134,6 +170,7 @@ function getColorEstado($estado) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detalle de Inasistencias</title>
+<?php echo estilosMensajes(); ?>
 <style>
 * {
     margin: 0;
@@ -553,6 +590,11 @@ body.dark-mode .sin-datos {
 <body>
 
 <div class="container">
+    <?php if ($mensajeError): ?>
+        <?php mostrarMensajeError("❌ " . $mensajeError, "No se puede mostrar el detalle de inasistencias. Verifique los parámetros."); ?>
+        <a href="materias.php" class="back-link">← Volver a Materias</a>
+    <?php else: ?>
+    
     <a href="javascript:history.back()" class="back-link">&#8592; Regresar</a>
 
     <h1>📊 Detalle de Inasistencias</h1>
@@ -660,6 +702,7 @@ body.dark-mode .sin-datos {
     <div class="sin-datos">
         <p>✅ No hay registros de asistencia en ninguna materia.</p>
     </div>
+    <?php endif; ?>
     <?php endif; ?>
 </div>
 

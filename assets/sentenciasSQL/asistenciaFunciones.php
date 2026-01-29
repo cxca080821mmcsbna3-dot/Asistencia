@@ -1,4 +1,10 @@
 <?php
+// CORRECCIÓN #8: Proteger acceso directo
+if (php_sapi_name() !== 'cli' && basename(__FILE__) === basename($_SERVER['PHP_SELF'] ?? '')) {
+    http_response_code(403);
+    die("❌ Acceso denegado");
+}
+
 /**
  * ARCHIVO: asistenciaFunciones.php
  * PROPÓSITO: Funciones reutilizables para cálculos de asistencias e inasistencias
@@ -59,13 +65,28 @@ function obtenerInasistenciasPorMateria($pdo, $id_alumno, $id_materia) {
 }
 
 /**
- * Obtiene un resumen completo de inasistencias por materia para un alumno
+ * CORRECCIÓN #5: Obtiene un resumen completo de inasistencias por materia para un alumno
+ * INCLUYE TODAS las materias del grupo, no solo las que tienen registros
  * @param PDO $pdo - Conexión a la base de datos
  * @param int $id_alumno - ID del alumno
  * @return array - Array con estructura: [['id_materia' => X, 'nombre' => Y, 'inasistencias' => Z], ...]
  */
 function obtenerResumenInasistenciasPorMateria($pdo, $id_alumno) {
     try {
+        // Paso 1: Obtener el grupo del alumno
+        $stmtGrupo = $pdo->prepare("
+            SELECT id_grupo FROM alumno WHERE id_alumno = :id_alumno
+        ");
+        $stmtGrupo->execute([':id_alumno' => $id_alumno]);
+        $alumnoData = $stmtGrupo->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$alumnoData) {
+            return [];
+        }
+        
+        $id_grupo = $alumnoData['id_grupo'];
+
+        // Paso 2: Obtener TODAS las materias del grupo (no solo las con registros)
         $stmt = $pdo->prepare("
             SELECT 
                 m.id_materia,
@@ -75,19 +96,22 @@ function obtenerResumenInasistenciasPorMateria($pdo, $id_alumno) {
                 COUNT(CASE WHEN a.estado = 'Justificante' THEN 1 END) as justificantes,
                 COUNT(a.id_asistencia) as total_registros
             FROM materias m
+            JOIN grupo_materia gm ON m.id_materia = gm.id_materia
             LEFT JOIN asistencia a ON m.id_materia = a.id_materia 
                                    AND a.id_alumno = :id_alumno
-            WHERE m.id_materia IN (
-                SELECT DISTINCT a2.id_materia 
-                FROM asistencia a2 
-                WHERE a2.id_alumno = :id_alumno
-            )
+            WHERE gm.id_grupo = :id_grupo
             GROUP BY m.id_materia, m.nombre
             ORDER BY m.nombre ASC
         ");
-        $stmt->execute([':id_alumno' => $id_alumno]);
+        
+        $stmt->execute([
+            ':id_alumno' => $id_alumno,
+            ':id_grupo' => $id_grupo
+        ]);
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
+        error_log("Error en obtenerResumenInasistenciasPorMateria: " . $e->getMessage());
         return [];
     }
 }

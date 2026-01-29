@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/funciones_seguridad.php";
 
 if (!isset($_SESSION['ALUMNO'])) {
     header("Location: ../index.php");
@@ -8,6 +9,18 @@ if (!isset($_SESSION['ALUMNO'])) {
 }
 
 $matricula = $_SESSION['ALUMNO']['matricula'];
+$mensajeError = null;
+$alumno = null;
+$id_alumno = null;
+$id_grupo = null;
+$materias = [];
+$asistencias = [];
+$diasMes = 0;
+$mesActual = (int) date('m');
+$anioActual = (int) date('Y');
+$id_materia = 0;
+$mes = $mesActual;
+$anio = $anioActual;
 
 /* Alumno */
 $stmt = $pdo->prepare("
@@ -19,56 +32,55 @@ $stmt = $pdo->prepare("
 $stmt->execute([':matricula' => $matricula]);
 $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$alumno) die("Alumno no encontrado.");
+if (!$alumno) {
+    $mensajeError = "Alumno no encontrado";
+} else {
+    $id_alumno = $alumno['id_alumno'];
+    $id_grupo  = $alumno['id_grupo'];
+    
+    /* Materias */
+    $stmtMat = $pdo->prepare("
+        SELECT DISTINCT m.id_materia, m.nombre
+        FROM materias m
+        JOIN grupo_materia gm ON gm.id_materia = m.id_materia
+        WHERE gm.id_grupo = :grupo
+        ORDER BY m.nombre
+    ");
+    $stmtMat->execute([':grupo' => $id_grupo]);
+    $materias = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
 
-$id_alumno = $alumno['id_alumno'];
-$id_grupo  = $alumno['id_grupo'];
+    /* Fecha */
+    $id_materia = intval($_GET['idMateria'] ?? ($materias[0]['id_materia'] ?? 0));
+    $mes  = intval($_GET['mes'] ?? $mesActual);
+    $anio = intval($_GET['anio'] ?? $anioActual);
 
-/* Materias */
-$stmtMat = $pdo->prepare("
-    SELECT DISTINCT m.id_materia, m.nombre
-    FROM materias m
-    JOIN grupo_materia gm ON gm.id_materia = m.id_materia
-    WHERE gm.id_grupo = :grupo
-    ORDER BY m.nombre
-");
-$stmtMat->execute([':grupo' => $id_grupo]);
-$materias = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
+    if ($anio > $anioActual || ($anio == $anioActual && $mes > $mesActual)) {
+        $mes = $mesActual;
+        $anio = $anioActual;
+    }
 
-/* Fecha */
-$mesActual  = (int) date('m');
-$anioActual = (int) date('Y');
+    $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
 
-$id_materia = intval($_GET['idMateria'] ?? ($materias[0]['id_materia'] ?? 0));
-$mes  = intval($_GET['mes'] ?? $mesActual);
-$anio = intval($_GET['anio'] ?? $anioActual);
+    /* Asistencias */
+    $likeMes = sprintf("%04d-%02d%%", $anio, $mes);
+    $stmtAs = $pdo->prepare("
+        SELECT fecha, estado 
+        FROM asistencia
+        WHERE id_alumno = :alumno
+          AND id_materia = :materia
+          AND fecha LIKE :mes
+    ");
+    $stmtAs->execute([
+        ':alumno'  => $id_alumno,
+        ':materia' => $id_materia,
+        ':mes'     => $likeMes
+    ]);
 
-if ($anio > $anioActual || ($anio == $anioActual && $mes > $mesActual)) {
-    $mes = $mesActual;
-    $anio = $anioActual;
-}
-
-$diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
-
-/* Asistencias */
-$likeMes = sprintf("%04d-%02d%%", $anio, $mes);
-$stmtAs = $pdo->prepare("
-    SELECT fecha, estado 
-    FROM asistencia
-    WHERE id_alumno = :alumno
-      AND id_materia = :materia
-      AND fecha LIKE :mes
-");
-$stmtAs->execute([
-    ':alumno'  => $id_alumno,
-    ':materia' => $id_materia,
-    ':mes'     => $likeMes
-]);
-
-$asistencias = [];
-foreach ($stmtAs as $r) {
-    $dia = (int) date('d', strtotime($r['fecha']));
-    $asistencias[$dia] = $r['estado'];
+    $asistencias = [];
+    foreach ($stmtAs as $r) {
+        $dia = (int) date('d', strtotime($r['fecha']));
+        $asistencias[$dia] = $r['estado'];
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -76,14 +88,18 @@ foreach ($stmtAs as $r) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="css/asistencia.css?v=2.1">
-<title>Mis asistencias</title>
-
+<title>Mi Asistencia</title>
+<?php echo estilosMensajes(); ?>
+<link rel="stylesheet" href="css/asistencia.css">
 </head>
-
 <body>
 
 <div class="wrapper">
+<?php if ($mensajeError): ?>
+    <?php mostrarMensajeError("❌ " . $mensajeError, "No se puede cargar tu información de asistencia."); ?>
+    <a href="index.php" class="back-arrow">← Volver al Menú</a>
+<?php else: ?>
+
 <a href="index.php" class="back-arrow">&#8592; Regresar</a>
 <h2>Mis asistencias</h2>
 
@@ -136,6 +152,8 @@ $color=$estado=='Ausente'?'#ff6b6b':($estado=='Retardo'?'#ffa500':($estado=='Jus
 </tr>
 </table>
 </div>
+
+<?php endif; ?>
 </div>
 
 </body>

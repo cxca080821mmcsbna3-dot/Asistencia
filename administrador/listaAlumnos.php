@@ -15,9 +15,13 @@ $_SESSION["idMateria"] = $id_materia;
 $_SESSION["idGrupo"] = $id_grupo;
 
 
-$mes  = isset($_GET['mes'])  ? intval($_GET['mes'])  : intval(date('m'));
+// CORRECCIÓN #9: Validar mes y año con rangos completos
+$mes = isset($_GET['mes']) ? intval($_GET['mes']) : intval(date('m'));
 $anio = isset($_GET['anio']) ? intval($_GET['anio']) : intval(date('Y'));
-if ($mes < 1 || $mes > 12) $mes = intval(date('m'));
+
+// Validar rangos
+$mes = max(1, min(12, $mes));
+$anio = max(2000, min(2100, $anio));
 $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $anio);
 
 // ---------- Obtener materia ----------

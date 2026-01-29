@@ -34,7 +34,7 @@ $nombreAlumno = $_SESSION['ALUMNO']['apellidos'] . ' ' . $_SESSION['ALUMNO']['no
 
       <nav class="navbar">
         <a href="asistencia.php">Asistencia</a>
-        <a href="Perfil.php">Perfil</a>
+        <a href="perfil.php">Perfil</a>
         <a href="cerrar.php">Cerrar sesión</a>
       </nav>
 

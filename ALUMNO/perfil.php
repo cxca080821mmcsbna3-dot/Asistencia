@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 require_once __DIR__ . "/../assets/sentenciasSQL/asistenciaFunciones.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/funciones_seguridad.php";
 
 // 🔐 Bloqueo: SOLO alumnos (sesión nueva)
 if (!isset($_SESSION['ALUMNO'])) {
@@ -10,6 +11,7 @@ if (!isset($_SESSION['ALUMNO'])) {
 }
 
 $idAlumno = $_SESSION['ALUMNO']['idAlumno'];
+$mensajeError = null;
 
 try {
     $stmt = $pdo->prepare("
@@ -24,19 +26,22 @@ try {
     $alumno = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$alumno) {
-        die("❌ Alumno no encontrado");
+        $mensajeError = "Alumno no encontrado";
     }
 
-    // Gravatar basado en CURP
-    $emailHash = md5(strtolower(trim($alumno['curp'])));
-    $avatarUrl = "https://www.gravatar.com/avatar/$emailHash?s=200&d=identicon";
+    if (!$mensajeError) {
+        // Gravatar basado en CURP
+        $emailHash = md5(strtolower(trim($alumno['curp'])));
+        $avatarUrl = "https://www.gravatar.com/avatar/$emailHash?s=200&d=identicon";
 
-    // 📊 NUEVO: Obtener resumen de inasistencias por materia
-    $resumenInasistencias = obtenerResumenInasistenciasPorMateria($pdo, $idAlumno);
-    $totalInasistencias = obtenerTotalInasistencias($pdo, $idAlumno);
+        // 📊 NUEVO: Obtener resumen de inasistencias por materia
+        $resumenInasistencias = obtenerResumenInasistenciasPorMateria($pdo, $idAlumno);
+        $totalInasistencias = obtenerTotalInasistencias($pdo, $idAlumno);
+    }
 
 } catch (PDOException $e) {
-    die("❌ Error al consultar la base de datos");
+    $mensajeError = "Error al consultar la base de datos";
+    error_log("Error en perfil.php: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -45,11 +50,17 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfil del Alumno</title>
+<?php echo estilosMensajes(); ?>
 <link rel="stylesheet" href="css/perfil.css?v=2.1">
 </head>
 <body>
 
 <div class="wrapper">
+<?php if ($mensajeError): ?>
+    <?php mostrarMensajeError("❌ " . $mensajeError, "No se puede cargar tu perfil en este momento."); ?>
+    <a href="index.php" class="back-arrow">← Regresar al Menú</a>
+<?php else: ?>
+
 <a href="index.php" class="back-arrow">&#8592; Regresar</a>
 
 <div class="perfil-tarjeta">
@@ -112,6 +123,7 @@ try {
         </div>
     </div>
 </div>
+<?php endif; ?>
 </div>
 
 <script>
