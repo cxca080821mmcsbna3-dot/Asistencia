@@ -77,6 +77,8 @@ $alumnosDisponibles = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 <html lang="es">
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 <link rel="stylesheet" href="css/menu.css?v=2.1">
 	<title>Alumnos del grupo: <?= htmlspecialchars($grupo['nombre']) ?></title>
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<style>
@@ -250,6 +252,166 @@ form.inline {
 strong {
   color: #5c4033;
 }
+/* ================================= */
+/* 📱 TABLA → CARDS EN CELULAR */
+/* ================================= */
+
+@media (max-width: 768px){
+
+	table.tabla-alumnos{
+		border:0;
+		min-width:100%;
+	}
+
+	table.tabla-alumnos thead{
+		display:none;
+	}
+
+	table.tabla-alumnos,
+	table.tabla-alumnos tbody,
+	table.tabla-alumnos tr,
+	table.tabla-alumnos td{
+		display:block;
+		width:100%;
+	}
+
+	table.tabla-alumnos tr{
+		background:#fff;
+		margin-bottom:15px;
+		padding:12px;
+		border-radius:12px;
+		box-shadow:0 4px 12px rgba(0,0,0,0.1);
+	}
+
+	table.tabla-alumnos td{
+		border:none;
+		text-align:left;
+		padding:6px 0;
+		position:relative;
+	}
+
+	table.tabla-alumnos td::before{
+		content: attr(data-label);
+		font-weight:bold;
+		display:block;
+		color:#8b4513;
+		margin-bottom:3px;
+		font-size:13px;
+	}
+
+	table.tabla-alumnos td:last-child{
+		text-align:right;
+		margin-top:8px;
+	}
+
+}
+/* ============================= */
+/* 🎴 CARDS DE ALUMNOS */
+/* ============================= */
+
+.cards-container{
+	display:grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap:15px;
+	margin-top:15px;
+}
+
+.alumno-card{
+	background:#fff;
+	border-radius:14px;
+	padding:15px;
+	box-shadow:0 6px 18px rgba(0,0,0,0.1);
+	transition:0.3s ease;
+	display:flex;
+	flex-direction:column;
+	justify-content:space-between;
+}
+
+.alumno-card:hover{
+	transform:translateY(-4px);
+	box-shadow:0 10px 22px rgba(0,0,0,0.15);
+}
+
+.card-header{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	margin-bottom:10px;
+}
+
+.numero{
+	background:#a0522d;
+	color:white;
+	padding:4px 10px;
+	border-radius:20px;
+	font-size:13px;
+	font-weight:bold;
+}
+
+.matricula{
+	font-size:13px;
+	color:#5c4033;
+	background:#f5deb3;
+	padding:4px 8px;
+	border-radius:6px;
+}
+
+.card-body .nombre{
+	font-size:16px;
+	font-weight:bold;
+	color:#4b3621;
+	margin-bottom:10px;
+}
+
+.card-footer{
+	text-align:right;
+}
+
+/* 📱 Ajuste móvil */
+@media(max-width:768px){
+
+	html, body{
+		display:block;
+		padding:10px;
+	}
+
+	.box{
+		padding:15px;
+	}
+
+	.cards-container{
+		grid-template-columns:1fr;
+	}
+
+}
+/* ============================= */
+/* CONTROL RESPONSIVE */
+/* ============================= */
+
+/* Por defecto (PC) */
+.cards-container{
+	display:none;
+}
+
+.tabla-container{
+	display:block;
+}
+
+/* 📱 En celular */
+@media(max-width:768px){
+
+	.tabla-container{
+		display:none;
+	}
+
+	.cards-container{
+		display:grid;
+		grid-template-columns:1fr;
+		gap:15px;
+		margin-top:15px;
+	}
+
+}
 </style>
 
 </head>
@@ -267,33 +429,62 @@ strong {
 		<?php if (empty($alumnosGrupo)): ?>
 			<p>No hay alumnos asignados a este grupo.</p>
 		<?php else: ?>
-			<table>
-	<thead>
-		<tr>
-			<th>No. Lista</th>
-			<th>Matrícula</th>
-			<th>Alumno</th>
-			<th>Acciones</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php $contador = 1; ?>
-		<?php foreach ($alumnosGrupo as $al): ?>
-			<tr>
-				<td><?= $contador ?></td>
-				<td><?= htmlspecialchars($al['matricula']) ?></td>
-				<td><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
-				<td>
-					<form class="inline" method="post" onsubmit="return confirm('¿Retirar a este alumno del grupo?');">
-						<input type="hidden" name="id_alumno" value="<?= $al['id_alumno'] ?>">
-						<button type="submit" name="remove" class="btn btn-danger">Retirar</button>
-					</form>
-				</td>
-			</tr>
-			<?php $contador++; ?>
-		<?php endforeach; ?>
-	</tbody>
+			<div class="tabla-container">
+<table class="tabla-alumnos">
+<thead>
+	<tr>
+		<th>No. Lista</th>
+		<th>Matrícula</th>
+		<th>Alumno</th>
+		<th>Acciones</th>
+	</tr>
+</thead>
+<tbody>
+<?php $contador = 1; ?>
+<?php foreach ($alumnosGrupo as $al): ?>
+<tr>
+	<td><?= $contador ?></td>
+	<td><?= htmlspecialchars($al['matricula']) ?></td>
+	<td><?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?></td>
+	<td>
+		<form method="post" onsubmit="return confirm('¿Retirar a este alumno del grupo?');">
+			<input type="hidden" name="id_alumno" value="<?= $al['id_alumno'] ?>">
+			<button type="submit" name="remove" class="btn btn-danger">Retirar</button>
+		</form>
+	</td>
+</tr>
+<?php $contador++; ?>
+<?php endforeach; ?>
+</tbody>
 </table>
+</div>
+<div class="cards-container">
+<?php $contador = 1; ?>
+<?php foreach ($alumnosGrupo as $al): ?>
+<div class="alumno-card">
+	<div class="card-header">
+		<span class="numero">#<?= $contador ?></span>
+		<span class="matricula"><?= htmlspecialchars($al['matricula']) ?></span>
+	</div>
+
+	<div class="card-body">
+		<div class="nombre">
+			<?= htmlspecialchars($al['apellidos'].' '.$al['nombre']) ?>
+		</div>
+	</div>
+
+	<div class="card-footer">
+		<form method="post" onsubmit="return confirm('¿Retirar a este alumno del grupo?');">
+			<input type="hidden" name="id_alumno" value="<?= $al['id_alumno'] ?>">
+			<button type="submit" name="remove" class="btn btn-danger">
+				Retirar
+			</button>
+		</form>
+	</div>
+</div>
+<?php $contador++; ?>
+<?php endforeach; ?>
+</div>
 
 		<?php endif; ?>
 

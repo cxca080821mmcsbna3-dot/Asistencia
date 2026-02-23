@@ -24,10 +24,10 @@ body {
 
 /* === CONTENEDOR === */
 .wrapper {
-    width: 95%;
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1450px;
     background-color: #fffef9;
-    padding: 25px 35px;
+    padding: 5px 10px;
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     margin: 40px auto 60px auto;
@@ -74,11 +74,11 @@ td {
 
 /* Filas alternadas */
 tbody tr:nth-child(even) {
-    background-color: #fdf7ef;
+    background-color: #ecd3b1;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #fffdf8;
+    background-color: #ddd1b3;
 }
 
 /* Hover */
@@ -186,5 +186,57 @@ tbody tr:hover {
     }
     caption {
         font-size: 1.4em;
+    }
+}
+/* ===========================
+   TABLA COMO TARJETAS EN MÓVIL
+=========================== */
+@media (max-width: 900px) {
+
+    table {
+        border: none;
+        box-shadow: none;
+    }
+
+    thead {
+        display: none; /* Oculta encabezado */
+    }
+
+    table, 
+    tbody, 
+    tr, 
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    tr {
+        margin-bottom: 18px;
+        background-color: #fffdf8;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 12px;
+    }
+
+    td {
+        text-align: left;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 1px solid #eee2cf;
+        position: relative;
+    }
+
+    td:last-child {
+        border-bottom: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #8b5a2b;
+        font-size: 0.85em;
+        text-transform: uppercase;
     }
 }

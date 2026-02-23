@@ -152,9 +152,10 @@ if ($editarID && $tipo) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/usuarios.css?v=3.6">
     <title>Usuarios</title>
-    
+     <link rel="stylesheet" href="css/menu.css?v=2.1">
 </head>
 <style>
     /* 🎯 Contenedor de botones */
@@ -255,15 +256,25 @@ td .btn-link.delete:hover {
             <h3>Listado de <?= ucfirst($tipo) ?>s</h3>
 
             <?php
-            switch ($tipo) {
+switch ($tipo) {
+
     case 'profesor':
-        $stmt = $pdo->query("SELECT * FROM profesor");
+        $stmt = $pdo->query("
+            SELECT 
+                profesor.id_profesor,
+                profesor.nombre,
+                 profesor.apellidos,
+                 profesor.telefono,
+                 profesor.domicilio,
+                 profesor.correo
+            FROM profesor
+        ");
         break;
 
     case 'alumno':
         $stmt = $pdo->query("
             SELECT 
-                
+                alumno.id_alumno,
                 alumno.matricula,
                 alumno.apellidos,
                 alumno.nombre,
@@ -276,45 +287,69 @@ td .btn-link.delete:hover {
         break;
 
     case 'administrador':
-        $stmt = $pdo->query("SELECT * FROM administrador");
+        $stmt = $pdo->query("
+            SELECT 
+                administrador.id_admin,
+                administrador.nombre,
+                administrador.correo
+            FROM administrador
+        ");
         break;
 }
 
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+           <?php if ($usuarios): ?>
+<div class="table-container">
+    <table>
+        <tr>
+            <?php foreach(array_keys($usuarios[0]) as $campo): ?>
+                <?php if (in_array($campo, ['password','id_profesor','id_alumno','id_admin'])) continue; ?>
+                <th><?= htmlspecialchars($campo) ?></th>
+            <?php endforeach; ?>
+            <th>Acciones</th>
+        </tr>
 
-            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        <?php foreach($usuarios as $usuario): ?>
 
-            if ($usuarios):
+            <?php
+            switch ($tipo) {
+                case 'profesor':
+                    $idCampo = 'id_profesor';
+                    break;
+                case 'alumno':
+                    $idCampo = 'id_alumno';
+                    break;
+                case 'administrador':
+                    $idCampo = 'id_admin';
+                    break;
+            }
             ?>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <?php foreach(array_keys($usuarios[0]) as $campo): ?>
-                            <?php if (($tipo === 'profesor' || $tipo === 'administrador') && $campo === 'password') continue; ?>
-                            <th><?= htmlspecialchars($campo) ?></th>
-                        <?php endforeach; ?>
-                        <th>Acciones</th>
-                    </tr>
 
-                    <?php foreach($usuarios as $usuario): ?>
-                        <tr>
-                            <?php foreach($usuario as $campo => $valor): ?>
-                                <?php if (($tipo === 'profesor' || $tipo === 'administrador') && $campo === 'password') continue; ?>
-                                <td><?= htmlspecialchars($valor) ?></td>
-                            <?php endforeach; ?>
+            <tr>
+                <?php foreach($usuario as $campo => $valor): ?>
+                    <?php if (in_array($campo, ['password','id_profesor','id_alumno','id_admin'])) continue; ?>
+                   <td data-label="<?= htmlspecialchars($campo) ?>">
+    <?= htmlspecialchars($valor) ?>
+</td>
+                <?php endforeach; ?>
 
-                            <?php $idCampo = array_keys($usuario)[0]; ?>
+                <td>
+                    <a class="btn-link" href="?editar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>">Editar</a>
 
-                            <td>
-                                <a class="btn-link" href="?editar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>">Editar</a> |
-                                <a class="btn-link delete" href="?eliminar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>" onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">Eliminar</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
-            </div>
-            <?php else: ?>
-                <p>No hay registros de este tipo.</p>
-            <?php endif; ?>
+                    <a class="btn-link delete"
+                       href="?eliminar=<?= $usuario[$idCampo] ?>&tipo=<?= $tipo ?>"
+                       onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+                       Eliminar
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
+<?php else: ?>
+    <p>No hay registros de este tipo.</p>
+<?php endif; ?>
         </div>
     <?php endif; ?>
 

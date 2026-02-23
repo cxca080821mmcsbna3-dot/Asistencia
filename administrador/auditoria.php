@@ -110,9 +110,11 @@ $registros = $stmt->fetchAll();
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auditoría del Sistema</title>
     <link rel="stylesheet" href="css/auditoria.css">
     <link rel="stylesheet" href="css/materiascrud.css">
+     <link rel="stylesheet" href="css/menu.css?v=2.1">
 </head>
 <body>
 
@@ -162,7 +164,7 @@ $registros = $stmt->fetchAll();
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+               
                 <th>Tabla</th>
                 <th>Registro</th>
                 <th>Acción</th>
@@ -178,17 +180,16 @@ $registros = $stmt->fetchAll();
                 <td colspan="8">No hay registros</td>
             </tr>
         <?php else: foreach ($registros as $r): ?>
-            <tr>
-                <td><?= $r['id_auditoria'] ?></td>
-                <td><?= $r['tabla_afectada'] ?></td>
-                <td><?= htmlspecialchars($r['registro_legible']) ?></td>
-                <td><?= $r['accion'] ?></td>
-                <td><?= nl2br(htmlspecialchars($r['datos_antes'] ?? '—')) ?></td>
-                <td><?= nl2br(htmlspecialchars($r['datos_despues'] ?? '—')) ?></td>
-                <td><?= $r['admin_nombre'] ?></td>
-                <td><?= $r['fecha'] ?></td>
-            </tr>
-        <?php endforeach; endif; ?>
+<tr>
+    <td data-label="Tabla"><?= $r['tabla_afectada'] ?></td>
+    <td data-label="Registro"><?= htmlspecialchars($r['registro_legible']) ?></td>
+    <td data-label="Acción"><?= $r['accion'] ?></td>
+    <td data-label="Antes"><?= nl2br(htmlspecialchars($r['datos_antes'] ?? '—')) ?></td>
+    <td data-label="Después"><?= nl2br(htmlspecialchars($r['datos_despues'] ?? '—')) ?></td>
+    <td data-label="Administrador"><?= $r['admin_nombre'] ?></td>
+    <td data-label="Fecha"><?= $r['fecha'] ?></td>
+</tr>
+<?php endforeach; endif; ?>
         </tbody>
     </table>
 </div>

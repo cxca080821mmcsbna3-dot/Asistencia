@@ -140,6 +140,8 @@ $meses = [
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="stylesheet" href="css/menu.css?v=2.1">
 <title>Asistencia - <?= htmlspecialchars($materia['nombre_materia']) ?></title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
@@ -148,9 +150,6 @@ html, body {
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0e8dc;
-  display: flex;
-  justify-content: center;
-  padding: 7px;
 }
 .wrapper {
   position: relative;
@@ -160,6 +159,10 @@ html, body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   overflow-x: auto;
+}
+.wrapper{
+  max-width: 1500px;
+  margin: auto;
 }
 h1 {
   font-size: 1.6rem;
@@ -265,6 +268,58 @@ th {
 .back-arrow:hover {
   background-color: #deb887;
   color: #4b2e05;
+}
+/* ================================= */
+/* 📱 RESPONSIVE ASISTENCIA */
+/* ================================= */
+
+@media (max-width: 768px){
+
+  .wrapper{
+    padding: 10px;
+  }
+
+  h1{
+    font-size: 1.2rem;
+  }
+
+  .controls{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls form{
+    flex-wrap: wrap;
+  }
+
+  .controls button,
+  .export-btn,
+  #btnEditar,
+  #btnGuardar{
+    width: 100%;
+    text-align: center;
+  }
+
+  table{
+    font-size: 12px;
+    min-width: 900px; /* permite scroll horizontal */
+  }
+
+  th, td{
+    padding: 5px;
+  }
+
+  .btn-cuadro{
+    width: 18px;
+    height: 18px;
+  }
+
+  .back-arrow{
+    position: static;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
 }
 </style>
 </head>

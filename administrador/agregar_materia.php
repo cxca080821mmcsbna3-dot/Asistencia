@@ -82,8 +82,10 @@ $listaMaterias = $materiaObj->Consultar();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Materias</title>
     <link rel="stylesheet" href="css/materiascrud.css">
+     <link rel="stylesheet" href="css/menu.css?v=2.1">
 </head>
 
 <body>
@@ -144,7 +146,7 @@ $listaMaterias = $materiaObj->Consultar();
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    
                     <th>Nombre</th>
                     <th>Semestre</th>
                     <th>Acciones</th>
@@ -154,7 +156,7 @@ $listaMaterias = $materiaObj->Consultar();
                 <?php if ($listaMaterias): ?>
                     <?php foreach ($listaMaterias as $mat): ?>
                         <tr>
-                            <td><?= htmlspecialchars($mat['id_materia']) ?></td>
+                            
                             <td><?= htmlspecialchars($mat['nombre']) ?></td>
                             <td><?= htmlspecialchars($mat['semestre']) ?></td>
                             <td style="text-align:center;">

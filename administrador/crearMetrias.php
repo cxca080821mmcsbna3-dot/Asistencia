@@ -36,8 +36,9 @@ if (isset($_POST['crear'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Materias</title>
-
+ <link rel="stylesheet" href="css/menu.css?v=2.1">
 </head>
 <style>
 input.valid, textarea.valid {

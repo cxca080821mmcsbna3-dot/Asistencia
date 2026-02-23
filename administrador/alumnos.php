@@ -44,22 +44,143 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registrar alumnos</title>
+ <link rel="stylesheet" href="css/menu.css?v=2.1">
 <link rel="stylesheet" href="/asistencia/css/menu.css">
 <style>
-body{font-family:Segoe UI;background:#f2eee6;padding:20px;display:flex;justify-content:center;padding-top: 130px;}
-.container{background:white;padding:10px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.2);max-width:1300px;width:100%;}
-h1{color:#4b3621;text-align:center;margin-bottom:20px;}
-select, input{padding:6px;border-radius:6px;border:1px solid #ccc;}
-table{width:100%;border-collapse:collapse;margin-top:15px;}
-th,td{border:1px solid #ccc;padding:6px;text-align:center;}
-th{background:#d2b48c;color:#3b2a1a;}
-button{background:#8b4513;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer;margin:5px;}
-button:hover{background:#a0522d;}
-.add-btn{background:#3c7a3c;}
-.add-btn:hover{background:#2e5c2e;}
-.back-arrow {display: inline-block;margin-bottom: 15px;color: #a0522d;text-decoration: none;font-weight: bold;}
-.back-arrow:hover {color: #deb887;}
+body{
+  font-family: 'Segoe UI', sans-serif;
+  background:#f2eee6;
+  margin:0;
+  padding:0;
+}
+
+/* Contenedor principal */
+.container{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+  max-width:1200px;
+  width:95%;
+  margin:140px auto 40px auto; /* 👈 espacio para header */
+}
+
+/* Título */
+h1{
+  color:#4b3621;
+  text-align:center;
+  margin-bottom:25px;
+}
+
+/* Inputs y selects */
+select, input{
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+/* Tabla */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:center;
+}
+
+th{
+  background:#d2b48c;
+  color:#3b2a1a;
+}
+
+/* Botones */
+button{
+  background:#8b4513;
+  color:white;
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#a0522d;
+}
+
+.add-btn{
+  background:#2e7d32;
+}
+
+.add-btn:hover{
+  background:#1b5e20;
+}
+
+/* ============================= */
+/* 📱 RESPONSIVE CELULAR */
+/* ============================= */
+@media (max-width:768px){
+
+  .container{
+    margin:160px auto 30px auto; /* más espacio header móvil */
+    padding:18px;
+  }
+
+  h1{
+    font-size:20px;
+  }
+
+  select, input, button{
+    width:100%;
+    margin-bottom:10px;
+  }
+
+  table thead{
+    display:none;
+  }
+
+  table, tbody, tr, td{
+    display:block;
+    width:100%;
+  }
+
+  tr{
+    background:#f9f6f0;
+    margin-bottom:15px;
+    padding:12px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  td{
+    border:none;
+    text-align:left;
+    padding:6px 0;
+  }
+
+  td::before{
+    font-weight:bold;
+    display:block;
+    margin-bottom:4px;
+    color:#4b3621;
+  }
+
+  td:nth-child(1)::before { content:"Matrícula"; }
+  td:nth-child(2)::before { content:"Nombre"; }
+  td:nth-child(3)::before { content:"Apellidos"; }
+  td:nth-child(4)::before { content:"Teléfono"; }
+  td:nth-child(5)::before { content:"CURP"; }
+  td:nth-child(6)::before { content:"Quitar"; }
+
+}
 </style>
 
 </head>

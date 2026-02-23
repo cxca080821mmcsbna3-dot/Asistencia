@@ -135,3 +135,72 @@ tbody tr:hover {
     width: 100%;
   }
 }
+/* =====================================
+   TABLA A TARJETAS EN CELULAR
+===================================== */
+@media (max-width: 768px) {
+
+  .table-container {
+    overflow: visible;
+  }
+
+  table {
+    border: none;
+    box-shadow: none;
+    min-width: 100%;
+  }
+
+  thead,
+  table tr:first-child {
+    display: none; /* Oculta encabezado */
+  }
+
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  tr {
+    background: #ffe7a1d7;
+    margin-bottom: 18px;
+    padding: 15px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid #f0e0c8;
+    text-align: left;
+    padding: 10px 5px;
+    white-space: normal;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+    color: #8b4513;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+  }
+
+  td[data-label="Acciones"] {
+    display: flex;
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  td[data-label="Acciones"]::before {
+    display: none;
+  }
+
+}
