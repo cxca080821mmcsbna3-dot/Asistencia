@@ -82,7 +82,7 @@ try {
         </div>
 
         <div class="perfil-seccion inasistencias-seccion">
-            <h3>📊 Resumen de Inasistencias</h3>
+            <h3>Resumen de Inasistencias</h3>
 
             <div class="inasistencias-total">
                 <div class="total-badge">
@@ -107,6 +107,8 @@ try {
             </div>
 
             <!-- DESKTOP -->
+             <center>
+
             <table class="inasistencias-tabla">
                 <thead>
                     <tr>
@@ -129,7 +131,8 @@ try {
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
+                    </center>
+                    <br>
             <script>
                 const materiasData = <?= json_encode($resumenInasistencias) ?>;
             </script>
@@ -160,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const materia = materiasData[index];
 
       detalle.innerHTML = `
+        <center>
         <div class="card-materia">
           <h4>${materia.nombre}</h4>
           <p><strong class="ausentes">Ausentes:</strong> ${materia.inasistencias}</p>
@@ -167,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong class="justificantes">Justificantes:</strong> ${materia.justificantes}</p>
           <p><strong>Total:</strong> ${materia.total_registros}</p>
         </div>
+        </center>
       `;
     }
 

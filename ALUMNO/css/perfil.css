@@ -181,8 +181,9 @@ body.dark-mode .sin-inasistencias {
 }
 
 .inasistencias-tabla {
-  width: 100%;
+  width: 95%;
   border-collapse: collapse;
+  
   margin-top: 15px;
   background: white;
   border-radius: 8px;
@@ -323,7 +324,7 @@ body.dark-mode button:hover {
 
 /* Contenedor del select */
 .inasistencias-mobile select {
-  width: 100%;
+  width: 95%;
   padding: 12px 15px;
   border-radius: 12px;
   border: 2px solid #deb887;
@@ -352,6 +353,7 @@ body.dark-mode button:hover {
 ===================================== */
 
 .card-materia {
+  width: 80%;
   margin-top: 18px;
   padding: 20px;
   border-radius: 16px;
@@ -460,6 +462,7 @@ body.dark-mode .card-materia p {
 
   .inasistencias-tabla {
     display: none;
+    
   }
 
   .inasistencias-mobile {

@@ -213,7 +213,7 @@ th {
   td:nth-child(1)::before { content: "No:"; }
   td:nth-child(2)::before { content: "Matrícula:"; }
   td:nth-child(3)::before { content: "Alumno:"; }
-  td:nth-child(4)::before { content: "Asistencia:"; }
+  td:nth-child(4)::before { content: "Inasistencia:"; }
 
   .btn-cuadro {
     width: 28px;
@@ -233,7 +233,7 @@ th {
 <div class="table-responsive">
   <table>
 
-    <thead><tr><th>No.</th><th>Matrícula</th><th>Alumno</th><th>Asistencia</th></tr></thead>
+    <thead><tr><th>No.</th><th>Matrícula</th><th>Alumno</th><th>Inasistencia</th></tr></thead>
     <tbody>
       <?php foreach($alumnos as $al): ?>
       <tr>
