@@ -312,3 +312,158 @@ body.dark-mode button:hover {
     font-size: 0.95rem;
   }
 }
+/* =====================================
+   SELECT PREMIUM MOVIL
+===================================== */
+
+.inasistencias-mobile {
+  display: none;
+  margin-top: 15px;
+}
+
+/* Contenedor del select */
+.inasistencias-mobile select {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 2px solid #deb887;
+  background: linear-gradient(135deg, #fffaf0 0%, #ffe8cc 100%);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #5c4033;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.inasistencias-mobile select:hover {
+  border-color: #a0522d;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.inasistencias-mobile select:focus {
+  border-color: #8b4513;
+  box-shadow: 0 0 0 3px rgba(160,82,45,0.2);
+}
+
+/* =====================================
+   TARJETA DE MATERIA ESTILO PREMIUM
+===================================== */
+
+.card-materia {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff 0%, #fff5e6 100%);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border: 1px solid #f0d9b5;
+  animation: fadeInCard 0.3s ease;
+}
+
+.card-materia h4 {
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  color: #8b4513;
+  border-bottom: 2px solid #deb887;
+  padding-bottom: 6px;
+}
+
+/* Filas de datos */
+.card-materia p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  margin: 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f1e2cc;
+}
+
+.card-materia p:last-child {
+  border-bottom: none;
+}
+
+/* Colores igual que tabla */
+.card-materia .ausentes {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.card-materia .retardos {
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.card-materia .justificantes {
+  color: #4da6ff;
+  font-weight: bold;
+}
+
+/* =====================================
+   MODO OSCURO PREMIUM
+===================================== */
+
+body.dark-mode .inasistencias-mobile select {
+  background: linear-gradient(135deg, #4a3a2a 0%, #3a2a1a 100%);
+  border: 2px solid #8b6914;
+  color: #f5deb3;
+}
+
+body.dark-mode .card-materia {
+  background: linear-gradient(135deg, #3a3a3a 0%, #2c2c2c 100%);
+  border: 1px solid #5c4a30;
+}
+
+body.dark-mode .card-materia h4 {
+  color: #ffdead;
+  border-bottom: 2px solid #8b6914;
+}
+
+body.dark-mode .card-materia p {
+  border-bottom: 1px solid #444;
+  color: #f0e8dc;
+}
+
+/* =====================================
+   ANIMACION SUAVE
+===================================== */
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 768px) {
+
+  .inasistencias-tabla {
+    display: none;
+  }
+
+  .inasistencias-mobile {
+    display: block;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .inasistencias-tabla {
+    display: none;
+  }
+
+  .inasistencias-mobile {
+    display: block;
+  }
+
+}
