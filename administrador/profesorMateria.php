@@ -106,9 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-
+ <a class="btn back" href="gruposCreados.php">&#8592; Volver</a>
 <div class="card">
-    <a class="btn back" href="gruposCreados.php">&#8592; Volver</a>
+   
     <h2><?= htmlspecialchars($clase['materia']) ?></h2>
     <p><strong>Grupo:</strong> <?= htmlspecialchars($clase['grupo']) ?></p>
 
