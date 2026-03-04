@@ -1,7 +1,7 @@
 <?php
 session_start();
 date_default_timezone_set('America/Mexico_City');
-require_once __DIR__ . "/assets/sentenciasSQL/conexion.php";
+require_once __DIR__ . "/../assets/sentenciasSQL/conexion.php";
 // 🔐 Validar sesión DOCENTE
 if (!isset($_SESSION['DOCENTE'])) {
     header("Location: index.php");

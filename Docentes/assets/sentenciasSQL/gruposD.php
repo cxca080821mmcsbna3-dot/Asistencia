@@ -3,7 +3,7 @@
 class Grupos {
 
     public function crearGrupo($idGrupo, $nombre, $descripcion, $tutor) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("INSERT INTO grupo (idGrupo, nombre, descripcion, tutor) 
                                VALUES (:idGrupo, :nombre, :descripcion, :tutor)");
         try {
@@ -27,7 +27,7 @@ class Grupos {
 
 
     public function leerGrupos() {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("SELECT * FROM grupo ORDER BY nombre ASC");
         $stmt->execute();
         $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +35,7 @@ class Grupos {
     }
 
     public function leerGruposPorProfesor($idProfesor) {
-    include "Conexion.php";
+    require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
     $stmt = $pdo->prepare("
         SELECT DISTINCT g.*
         FROM grupo g
@@ -50,7 +50,7 @@ class Grupos {
 
 
     public function inscribirUsuario($idGrupo, $idUsuario) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
 
         // Verificar si ya está inscrito
         $stmt = $pdo->prepare("SELECT * FROM inscripciones_grupos WHERE idGrupo = :idGrupo AND idR = :idUsuario");
@@ -69,7 +69,7 @@ class Grupos {
     }
 
     public function verInscritos($idGrupo) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("
             SELECT r.idR, r.nombre, r.apellidos, r.lada, r.telefono, r.correo, r.medioE, r.origen, r.pais
             FROM inscripciones_grupos i
@@ -81,7 +81,7 @@ class Grupos {
     }
 
     public function leerGruposUsuario($idR) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("
             SELECT g.*
             FROM grupo g
@@ -94,14 +94,14 @@ class Grupos {
     }
 
     public function leerGrupoPorId($idGrupo) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("SELECT * FROM grupo WHERE idGrupo = :idGrupo LIMIT 1");
         $stmt->execute([':idGrupo' => $idGrupo]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function actualizarGrupo($idGrupo, $nombre, $descripcion, $tutor) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("UPDATE grupo 
                                SET nombre = :nombre, 
                                    descripcion = :descripcion, 
@@ -116,14 +116,14 @@ class Grupos {
     }
 
     public function eliminarGrupo($idGrupo) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("DELETE FROM grupo WHERE idGrupo = :idGrupo");
         return $stmt->execute([':idGrupo' => $idGrupo]);
     }
 
     // Opcional: si quieres ver asistentes (por ejemplo, usuarios activos)
     public function verAsistentes($idGrupo) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("
             SELECT r.idR, r.nombre, r.apellidos, r.lada, r.telefono, r.correo, i.fecha_asistencia
             FROM inscripciones_grupos i
@@ -135,7 +135,7 @@ class Grupos {
     }
 
     public function estadisticasGrupo($idGrupo) {
-        include "Conexion.php";
+        require_once __DIR__ . "/../../../assets/sentenciasSQL/conexion.php";
         $stmt = $pdo->prepare("
             SELECT COUNT(*) AS total_inscritos, 
                    SUM(CASE WHEN asistio = 1 THEN 1 ELSE 0 END) AS total_asistentes

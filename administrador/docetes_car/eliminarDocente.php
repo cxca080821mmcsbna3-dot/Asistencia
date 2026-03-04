@@ -5,7 +5,7 @@ if (!isset($_SESSION['idAdmin']) && !isset($_SESSION['usuario'])) {
     exit;
 }
 
-require_once '../assets/sentenciasSQL/Docentes.php';
+require_once '../assets/sentenciasSQL/docentes.php';
 $docente = new Docentes();
 
 if (!isset($_GET['id'])) {

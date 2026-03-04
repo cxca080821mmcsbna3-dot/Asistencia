@@ -266,6 +266,7 @@ body.dark-mode .saludo p {
     <a href="auditoria.php" class="boton">Auditoria</a>
     <a href="asignarClase.php" class="boton">Asignar Clase</a>
     <a href="alumnos.php" class="boton">Asignacion de grupos</a>
+    <a href="registroAsistencia.php" class="boton" style="color:#ffb300;font-weight:700;">📋 Asistencia Diaria</a>
     <a href="../assets/sentenciasSQL/logout.php" class="boton">Cerrar sesión</a>
   </nav>
 
