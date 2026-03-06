@@ -1,33 +1,69 @@
 <?php
 session_start();
+date_default_timezone_set('America/Mexico_City');
 require_once __DIR__ . '/../../assets/sentenciasSQL/Conexion.php';
-
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
-    http_response_code(403);
-    echo json_encode(['ok' => false, 'msg' => 'Sin autorización']);
-    exit;
+    http_response_code(403); echo json_encode(['ok'=>false,'msg'=>'Sin autorización']); exit;
 }
 
 $data      = json_decode(file_get_contents('php://input'), true);
 $id_alumno = intval($data['id_alumno'] ?? 0);
-$estado    = $data['estado']    ?? '';
-$dispositivo = $data['dispositivo'] ?? 'Manual';
+if (!$id_alumno) { echo json_encode(['ok'=>false,'msg'=>'Alumno inválido']); exit; }
 
-// Solo los estados que acepta el ENUM de asistencia_diaria
-$estadosValidos = ['Presente', 'Tardío'];
-if (!$id_alumno || !in_array($estado, $estadosValidos)) {
-    echo json_encode(['ok' => false, 'msg' => 'Datos inválidos']);
-    exit;
+$hoy    = date('Y-m-d');
+$hora   = date('H:i:s');
+$horaHM = substr($hora, 0, 5); // "HH:MM"
+
+// ── Leer configuración de horarios ──
+$configFile = __DIR__ . '/../config/horarios.json';
+$config = file_exists($configFile)
+    ? json_decode(file_get_contents($configFile), true)
+    : null;
+
+$estado         = 'Presente';
+$turnoNombre    = 'Sin turno';
+$turnoDetectado = false;
+
+if ($config) {
+    // Construir lista de turnos activos ordenados por hora de inicio
+    $turnosActivos = [];
+    foreach (['matutino','vespertino'] as $key) {
+        $t = $config[$key] ?? null;
+        if ($t && ($t['activo'] ?? false)) {
+            $turnosActivos[$key] = $t;
+        }
+    }
+
+    $claves = array_keys($turnosActivos);
+
+    foreach ($claves as $i => $key) {
+        $t      = $turnosActivos[$key];
+        $inicio = $t['horaInicio'] ?? '00:00';
+        $limite = $t['horaLimite'] ?? '23:59';
+
+        // El techo del turno es el inicio del siguiente turno (menos 1 min),
+        // o 23:59 si es el último. Así un alumno a las 22:03 sigue dentro
+        // del vespertino en lugar de quedar sin turno y marcarse Presente.
+        $nextKey  = $claves[$i + 1] ?? null;
+        $finTurno = $nextKey
+            ? date('H:i', strtotime($turnosActivos[$nextKey]['horaInicio']) - 60)
+            : '23:59';
+
+        if ($horaHM >= $inicio && $horaHM <= $finTurno) {
+            $turnoNombre    = $t['nombre'] ?? ucfirst($key);
+            $turnoDetectado = true;
+            // Llegó a tiempo o tarde según la hora límite del turno
+            $estado = ($horaHM <= $limite) ? 'Presente' : 'Tardío';
+            break;
+        }
+    }
 }
 
-$hoy  = date('Y-m-d');
-$hora = date('H:i:s');
+$dispositivo = ($data['dispositivo'] ?? 'Manual') . ' | ' . $turnoNombre;
 
 try {
-    // ── Intentar INSERT ──
-    // UNIQUE KEY (id_alumno, fecha) en asistencia_diaria previene duplicados a nivel BD
     $stmtI = $pdo->prepare("
         INSERT INTO asistencia_diaria
             (id_alumno, fecha, hora_entrada, estado, dispositivo)
@@ -48,37 +84,26 @@ try {
 
     $accion = ($stmtI->rowCount() === 1) ? 'insertado' : 'actualizado';
 
-    // ── Registrar en logs ──
-    $stmtLog = $pdo->prepare("
+    $pdo->prepare("
         INSERT INTO asistencia_diaria_logs
             (id_alumno, fecha_intento, hora_intento, resultado, mensaje)
-        VALUES
-            (:id, :fecha, :hora, 'Éxito', :msg)
-    ");
-    $stmtLog->execute([
-        ':id'   => $id_alumno,
-        ':fecha'=> $hoy,
-        ':hora' => $hora,
-        ':msg'  => $accion . ' — estado: ' . $estado,
+        VALUES (?, ?, ?, 'Éxito', ?)
+    ")->execute([$id_alumno, $hoy, $hora,
+        "$accion | estado: $estado | turno: $turnoNombre | hora: $horaHM"
     ]);
 
     echo json_encode([
-        'ok'     => true,
-        'accion' => $accion,
-        'hora'   => $hora,
-        'estado' => $estado,
+        'ok'             => true,
+        'accion'         => $accion,
+        'hora'           => $hora,
+        'estado'         => $estado,
+        'turno'          => $turnoNombre,
+        'turnoDetectado' => $turnoDetectado,
     ]);
 
 } catch (PDOException $e) {
-    // Registrar error en logs si se puede
-    try {
-        $pdo->prepare("
-            INSERT INTO asistencia_diaria_logs
-                (id_alumno, fecha_intento, hora_intento, resultado, mensaje)
-            VALUES (?, ?, ?, 'Error', ?)
-        ")->execute([$id_alumno, $hoy, $hora, $e->getMessage()]);
-    } catch (Exception $ignored) {}
-
+    try { $pdo->prepare("INSERT INTO asistencia_diaria_logs (id_alumno,fecha_intento,hora_intento,resultado,mensaje) VALUES(?,?,?,'Error',?)")
+              ->execute([$id_alumno, $hoy, $hora, $e->getMessage()]); } catch(Exception $ig){}
     http_response_code(500);
-    echo json_encode(['ok' => false, 'msg' => 'Error al guardar: ' . $e->getMessage()]);
+    echo json_encode(['ok'=>false,'msg'=>'Error al guardar: '.$e->getMessage()]);
 }

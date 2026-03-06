@@ -631,3 +631,189 @@ body.dark-mode .ra-titulo h1,
 body.dark-mode .ra-card-title { color: #e8d5c0; }
 body.dark-mode .ra-table td,
 body.dark-mode .ra-stat-card .num { color: #e8d5c0; }
+
+/* ══════════════════════════════════════════════════
+   TABS DE LA LISTA DE HOY (Todos / Tardíos / Sin registrar)
+   ══════════════════════════════════════════════════ */
+.ra-lista-tabs {
+    display: flex;
+    gap: .3rem;
+}
+.ra-lista-tab {
+    padding: .25rem .65rem;
+    font-size: .72rem;
+    font-weight: 700;
+    border: 1.5px solid var(--borde);
+    border-radius: 20px;
+    background: var(--crema);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all .15s;
+    white-space: nowrap;
+}
+.ra-lista-tab:hover  { border-color: var(--cafe-medio); color: var(--cafe-medio); }
+.ra-lista-tab.activa { background: var(--cafe-medio); border-color: var(--cafe-medio); color: #fff; }
+
+.ra-hoy-tardio   { border-left: 3px solid var(--amarillo) !important; }
+.ra-hoy-faltante { border-left: 3px solid var(--rojo) !important; opacity: .85; }
+
+/* ══════════════════════════════════════════════════
+   MEDIA QUERIES — RESPONSIVE
+   ══════════════════════════════════════════════════ */
+
+/* ── Tablet grande: 1024px ── */
+@media (max-width: 1024px) {
+    .ra-main { padding: 1.2rem 1rem 2rem; }
+
+    .ra-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ra-titulo {
+        flex-wrap: wrap;
+        gap: .7rem;
+    }
+    .ra-titulo > div:last-child {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ra-stat-cards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .ra-toolbar {
+        flex-wrap: wrap;
+    }
+    .ra-toolbar .ra-search {
+        width: 100%;
+        flex: none;
+    }
+
+    .ra-table-wrap { overflow-x: auto; }
+}
+
+/* ── Tablet: 768px ── */
+@media (max-width: 768px) {
+    .ra-main { padding: 1rem .75rem 1.5rem; }
+
+    /* Cabecera */
+    .ra-titulo { gap: .5rem; }
+    .ra-titulo h1 { font-size: 1.15rem; }
+    .ra-titulo-icono { font-size: 1.6rem; }
+    .ra-fecha-badge { font-size: .72rem; }
+
+    /* Tabs principales */
+    .ra-tabs { gap: .4rem; }
+    .ra-tab  { padding: .5rem .8rem; font-size: .82rem; }
+
+    /* Stats */
+    .ra-stat-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: .6rem;
+    }
+    .ra-stat-card .num { font-size: 1.5rem; }
+
+    /* Grid: siempre una columna */
+    .ra-grid { grid-template-columns: 1fr !important; gap: 1rem; }
+
+    /* Toolbar */
+    .ra-toolbar { gap: .5rem; }
+    .ra-toolbar input,
+    .ra-toolbar select { min-width: 0; flex: 1 1 calc(50% - .25rem); }
+    .ra-btn-filtrar,
+    .ra-btn-exportar { flex: 1 1 calc(50% - .25rem); }
+
+    /* Tarjeta alumno */
+    .ra-alumno-top { flex-wrap: wrap; gap: .5rem; }
+    .ra-stats-mini { grid-template-columns: repeat(2, 1fr) !important; }
+
+    /* Tabla */
+    .ra-table th:nth-child(4),
+    .ra-table td:nth-child(4),
+    .ra-table th:nth-child(5),
+    .ra-table td:nth-child(5),
+    .ra-table th:nth-child(8),
+    .ra-table td:nth-child(8) { display: none; }
+
+    /* Modal configuración */
+    .ra-modal { max-width: 98vw; }
+    .ra-modal-body > div[style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Lista tabs */
+    .ra-lista-tabs { flex-wrap: wrap; }
+    .ra-lista-tab  { font-size: .68rem; padding: .22rem .55rem; }
+
+    /* Botón config */
+    .ra-btn-config span { display: none; }
+}
+
+/* ── Móvil: 480px ── */
+@media (max-width: 480px) {
+    .ra-main { padding: .75rem .5rem 1.2rem; }
+
+    .ra-titulo h1 { font-size: 1rem; }
+    .ra-titulo p  { font-size: .75rem; }
+    .ra-titulo-icono { display: none; }
+
+    /* Stats: 2 columnas compactas */
+    .ra-stat-cards { grid-template-columns: repeat(2, 1fr) !important; gap: .4rem; }
+    .ra-stat-card  { padding: .6rem .5rem; }
+    .ra-stat-card .num { font-size: 1.3rem; }
+    .ra-stat-card .lbl { font-size: .65rem; }
+
+    /* Tabs */
+    .ra-tab { padding: .45rem .6rem; font-size: .78rem; }
+
+    /* Input matrícula */
+    .ra-mat-row { flex-direction: column; gap: .4rem; }
+    .ra-btn-buscar { width: 100%; }
+
+    /* Tarjeta alumno */
+    .ra-avatar { width: 44px; height: 44px; font-size: 1rem; }
+    .ra-info h3 { font-size: 1rem; }
+    .ra-stats-mini { grid-template-columns: repeat(2, 1fr) !important; }
+    .ra-stats-mini .val { font-size: 1.2rem; }
+
+    /* Historial */
+    .ra-hist-item { flex-wrap: wrap; gap: .2rem; }
+
+    /* Lista hoy */
+    .ra-hoy-item { flex-wrap: wrap; gap: .2rem; }
+    .ra-hoy-nombre { font-size: .78rem; flex: 1 1 100%; }
+
+    /* Tabla: ocultar más columnas */
+    .ra-table th:nth-child(2),
+    .ra-table td:nth-child(2),
+    .ra-table th:nth-child(6),
+    .ra-table td:nth-child(6) { display: none; }
+
+    /* Toolbar */
+    .ra-toolbar input,
+    .ra-toolbar select,
+    .ra-btn-filtrar,
+    .ra-btn-exportar { flex: 1 1 100%; }
+
+    /* Toast */
+    .ra-toast { right: .5rem; left: .5rem; bottom: .5rem; width: auto; }
+
+    /* Modal */
+    .ra-modal-header { font-size: .85rem; padding: .8rem 1rem; }
+    .ra-modal-body   { padding: 1rem; }
+    .ra-modal-footer { flex-wrap: wrap; gap: .4rem; }
+    .ra-modal-footer button { flex: 1 1 calc(50% - .2rem); justify-content: center; }
+    .ra-btn-eliminar-rec { flex: 1 1 100% !important; }
+
+    /* Fecha badge: solo hora */
+    .ra-fecha-badge .dot { display: none; }
+}
+
+/* ── Móvil muy pequeño: 360px ── */
+@media (max-width: 360px) {
+    .ra-tab { font-size: .72rem; padding: .4rem .5rem; }
+    .ra-stat-card .num { font-size: 1.1rem; }
+    .ra-btn-config { padding: .4rem .6rem; font-size: .75rem; }
+}
