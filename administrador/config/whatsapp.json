@@ -1,0 +1,14 @@
+{
+    "activo": false,
+    "proveedor": "callmebot",
+    "callmebot_apikey": "",
+    "twilio_sid": "",
+    "twilio_token": "",
+    "twilio_from": "whatsapp:+14155238886",
+    "ultramsg_instance": "",
+    "ultramsg_token": "",
+    "dialog360_apikey": "",
+    "plantilla_falta": "Estimado padre de familia, le informamos que el alumno {nombre} no se presentó el día {fecha}. — CECYTEM",
+    "plantilla_tardanza": "Estimado padre de familia, el alumno {nombre} llegó con tardanza el día {fecha} a las {hora}. — CECYTEM",
+    "plantilla_incidencia": "Estimado padre de familia, el alumno {nombre} presentó la siguiente incidencia el {fecha}: {incidencia}. — CECYTEM"
+}

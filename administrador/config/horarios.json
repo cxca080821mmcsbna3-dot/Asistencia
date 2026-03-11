@@ -1,14 +1,1 @@
-{
-    "matutino": {
-        "activo": true,
-        "horaInicio": "07:00",
-        "horaLimite": "08:10",
-        "nombre": "Matutino"
-    },
-    "vespertino": {
-        "activo": true,
-        "horaInicio": "13:00",
-        "horaLimite": "22:42",
-        "nombre": "Vespertino"
-    }
-}
+{"matutino":{"activo":true,"horaInicio":"07:00","horaLimite":"08:10","nombre":"Matutino"},"vespertino":{"activo":true,"horaInicio":"13:00","horaLimite":"14:10","nombre":"Vespertino"}}

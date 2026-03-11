@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('America/Mexico_City');
 require_once __DIR__ . "/../assets/sentenciasSQL/Conexion.php";
 if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
     header("Location: ../index.php"); exit;
@@ -7,6 +8,27 @@ if (!isset($_SESSION['idAdmin']) || $_SESSION['rol'] !== 'admin') {
 $nombreAdmin = $_SESSION['nombre'];
 $hoy = date('d/m/Y');
 $horaActual = date('H:i:s');
+
+// ── Modo incidencia por URL ──────────────────────────────────────────────
+// Uso: registroAsistencia.php?modo=incidencia&tipo=Sin+uniforme
+// La computadora que tenga esta URL registrará esa incidencia automáticamente
+$modoIncidencia = trim($_GET['modo'] ?? '');
+$tipoIncidencia = trim($_GET['tipo'] ?? '');
+$modoActivo     = ($modoIncidencia === 'incidencia' && $tipoIncidencia !== '');
+$incidenciaActiva = $modoActivo ? $tipoIncidencia : '';
+
+// ── Cargar config WhatsApp (para pasar estado al JS) ────────────────────
+$waFile   = __DIR__ . '/config/whatsapp.json';
+$waActivo = false;
+$waConfig = [];
+if (file_exists($waFile)) {
+    $waConfig = json_decode(file_get_contents($waFile), true) ?? [];
+    $waActivo = (bool)($waConfig['activo'] ?? false);
+}
+
+// ── Cargar grupos para selector WhatsApp ────────────────────────────────
+$stmtGrupos = $pdo->query("SELECT idGrupo, nombre FROM grupo ORDER BY nombre ASC");
+$gruposWA   = $stmtGrupos->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,10 +70,26 @@ $horaActual = date('H:i:s');
     </div>
   </div>
 
+  <!-- Banner modo incidencia (solo visible si ?modo=incidencia&tipo=...) -->
+  <?php if ($modoActivo): ?>
+  <div class="ra-modo-banner" id="modo-banner">
+    <span class="ra-modo-icono">⚠️</span>
+    <div>
+      <strong>MODO INCIDENCIA ACTIVO</strong>
+      <span id="modo-banner-tipo"> — <?= htmlspecialchars($incidenciaActiva) ?></span>
+    </div>
+    <span class="ra-modo-badge"><?= htmlspecialchars($incidenciaActiva) ?></span>
+    <span style="font-size:.78rem;color:rgba(255,255,255,.75);margin-left:auto;">
+      Todos los registros desde esta computadora quedarán marcados con esta incidencia
+    </span>
+  </div>
+  <?php endif; ?>
+
   <!-- Pestañas principales -->
   <div class="ra-tabs">
     <button class="ra-tab activa" onclick="cambiarTab('registro',this)">🔍 Registro de Asistencia</button>
     <button class="ra-tab"       onclick="cambiarTab('control',this)">🗄️ Control / Base de Datos</button>
+    <button class="ra-tab"       onclick="cambiarTab('whatsapp',this)">📱 WhatsApp<?= $waActivo ? ' <span class="wa-dot-activo">●</span>' : '' ?></button>
   </div>
 
   <!-- ══════════ PANEL 1: REGISTRO ══════════ -->
@@ -178,6 +216,10 @@ $horaActual = date('H:i:s');
           <option value="Presente">✅ Presente</option>
           <option value="Tardío">⏰ Tardío</option>
         </select>
+        <select class="ra-input-filtro" id="d-incidencia">
+          <option value="">Todas las incidencias</option>
+          <option value="ninguna">Sin incidencia</option>
+        </select>
         <button class="ra-btn-filtrar" onclick="cargarDiaria()">Filtrar</button>
         <button class="ra-btn-exportar" onclick="exportarCSV()">⬇ CSV</button>
       </div>
@@ -185,16 +227,248 @@ $horaActual = date('H:i:s');
         <div class="ra-stat-card ra-sc-total"><div class="num" id="d-total" style="color:var(--cafe-medio);">—</div><div class="lbl">Total</div></div>
         <div class="ra-stat-card ra-sc-presente"><div class="num v-verde" id="d-presentes">—</div><div class="lbl">Presentes</div></div>
         <div class="ra-stat-card ra-sc-retardo"><div class="num v-amarillo" id="d-tardios">—</div><div class="lbl">Tardíos</div></div>
-        <div class="ra-stat-card"><div class="num" id="d-dispositivo" style="color:var(--cafe-medio);font-size:1rem;">—</div><div class="lbl">Dispositivo</div></div>
+        <div class="ra-stat-card" style="border-left:3px solid #e65100;">
+          <div class="num" id="d-incidencias" style="color:#e65100;">—</div>
+          <div class="lbl">Con incidencia</div>
+        </div>
       </div>
       <div class="ra-table-wrap">
         <table class="ra-table">
-          <thead><tr><th>#</th><th>Matrícula</th><th>Nombre</th><th>Grupo</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Turno</th><th>Acciones</th></tr></thead>
-          <tbody id="d-tbody"><tr><td colspan="9" class="td-placeholder">Usa los filtros y presiona <strong>Filtrar</strong></td></tr></tbody>
+          <thead><tr>
+            <th>#</th><th>Matrícula</th><th>Nombre</th><th>Grupo</th>
+            <th>Fecha</th><th>Hora</th><th>Estado</th><th>Incidencia</th><th>Turno</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="d-tbody"><tr><td colspan="10" class="td-placeholder">Usa los filtros y presiona <strong>Filtrar</strong></td></tr></tbody>
         </table>
         <div class="ra-table-footer">
           <span id="d-info">— registros</span>
           <span style="font-size:.75rem;">tabla <code>asistencia_diaria</code></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ PANEL 3: WHATSAPP ══════════ -->
+  <div id="panel-whatsapp" class="ra-panel">
+
+    <!-- Configuración API -->
+    <div class="ra-card" style="margin-bottom:1.4rem;">
+      <div class="ra-card-header">
+        <span class="ra-card-title">⚙️ Configuración de API</span>
+        <div id="wa-estado-badge" class="turno-chip" style="<?= $waActivo ? 'background:#2e7d32;color:#fff;' : 'background:#c62828;color:#fff;' ?>">
+          <?= $waActivo ? '● Activo' : '○ Inactivo' ?>
+        </div>
+      </div>
+      <div class="ra-card-body">
+
+        <div class="wa-config-row">
+          <label class="ra-label">Activar notificaciones WhatsApp</label>
+          <label class="wa-toggle">
+            <input type="checkbox" id="wa-activo" <?= $waActivo ? 'checked' : '' ?> onchange="actualizarFormWA()">
+            <span class="wa-toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="wa-config-row" style="margin-top:.8rem;">
+          <label class="ra-label">Proveedor</label>
+          <select class="ra-input-filtro" id="wa-proveedor" onchange="actualizarFormWA()" style="max-width:220px;">
+            <option value="callmebot"  <?= ($waConfig['proveedor']??'')==='callmebot'  ? 'selected':'' ?>>CallMeBot (Gratuito)</option>
+            <option value="twilio"     <?= ($waConfig['proveedor']??'')==='twilio'     ? 'selected':'' ?>>Twilio</option>
+            <option value="ultramsg"   <?= ($waConfig['proveedor']??'')==='ultramsg'   ? 'selected':'' ?>>UltraMsg</option>
+            <option value="360dialog"  <?= ($waConfig['proveedor']??'')==='360dialog'  ? 'selected':'' ?>>360dialog</option>
+            <option value="local_wa"   <?= ($waConfig['proveedor']??'')==='local_wa'   ? 'selected':'' ?>>⭐ WhatsApp Local (Gratis)</option>
+          </select>
+          <a id="wa-link-guia" href="#" target="_blank" style="font-size:.8rem;color:var(--cafe-medio);margin-left:.5rem;">📖 Guía de configuración</a>
+        </div>
+
+        <!-- CallMeBot fields -->
+        <div id="wa-fields-callmebot" class="wa-fields">
+          <div class="wa-config-row">
+            <label class="ra-label">API Key de CallMeBot</label>
+            <input type="text" id="wa-callmebot-apikey" class="ra-input-filtro" style="max-width:320px;"
+                   value="<?= htmlspecialchars($waConfig['callmebot_apikey']??'') ?>"
+                   placeholder="Tu API key (ej. 1234567)">
+          </div>
+          <p style="font-size:.78rem;color:var(--muted);margin:.3rem 0 0 0;">
+            💡 Para obtener tu API key gratuita envía "I allow callmebot to send me messages" al +34 644 28 88 83 por WhatsApp
+          </p>
+        </div>
+
+        <!-- Twilio fields -->
+        <div id="wa-fields-twilio" class="wa-fields" style="display:none;">
+          <div class="wa-config-row">
+            <label class="ra-label">Account SID</label>
+            <input type="text" id="wa-twilio-sid" class="ra-input-filtro" style="max-width:320px;"
+                   value="<?= htmlspecialchars($waConfig['twilio_sid']??'') ?>" placeholder="ACxxxxxxxxxxxxxxxx">
+          </div>
+          <div class="wa-config-row">
+            <label class="ra-label">Auth Token</label>
+            <input type="password" id="wa-twilio-token" class="ra-input-filtro" style="max-width:320px;"
+                   value="<?= htmlspecialchars($waConfig['twilio_token']??'') ?>">
+          </div>
+          <div class="wa-config-row">
+            <label class="ra-label">Número origen (WhatsApp)</label>
+            <input type="text" id="wa-twilio-from" class="ra-input-filtro" style="max-width:320px;"
+                   value="<?= htmlspecialchars($waConfig['twilio_from']??'whatsapp:+14155238886') ?>">
+          </div>
+        </div>
+
+        <!-- UltraMsg fields -->
+        <div id="wa-fields-ultramsg" class="wa-fields" style="display:none;">
+          <div class="wa-config-row">
+            <label class="ra-label">Instance ID</label>
+            <input type="text" id="wa-ultramsg-instance" class="ra-input-filtro" style="max-width:280px;"
+                   value="<?= htmlspecialchars($waConfig['ultramsg_instance']??'') ?>">
+          </div>
+          <div class="wa-config-row">
+            <label class="ra-label">Token</label>
+            <input type="password" id="wa-ultramsg-token" class="ra-input-filtro" style="max-width:280px;"
+                   value="<?= htmlspecialchars($waConfig['ultramsg_token']??'') ?>">
+          </div>
+        </div>
+
+        <!-- 360dialog fields -->
+        <div id="wa-fields-360dialog" class="wa-fields" style="display:none;">
+          <div class="wa-config-row">
+            <label class="ra-label">API Key</label>
+            <input type="password" id="wa-dialog360-apikey" class="ra-input-filtro" style="max-width:320px;"
+                   value="<?= htmlspecialchars($waConfig['dialog360_apikey']??'') ?>">
+          </div>
+        </div>
+
+        <!-- WhatsApp Local fields -->
+        <div id="wa-fields-local_wa" class="wa-fields" style="display:none;">
+          <div style="padding:.8rem 1rem;background:#e8f5e9;border-radius:8px;border:1.5px solid #a5d6a7;">
+            <strong style="color:#2e7d32;">⭐ Sin configuración requerida</strong>
+            <p style="font-size:.82rem;color:#555;margin:.4rem 0 .6rem;">
+              Solo necesitas tener Node.js instalado y el servidor corriendo.
+              No requiere API keys ni cuentas de pago.
+            </p>
+            <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
+              <div id="wa-local-status" style="font-size:.82rem;color:#888;">Verificando…</div>
+              <a href="wa-status.php" target="_blank" class="ra-btn-config" style="font-size:.8rem;">
+                📱 Ver QR / Estado de conexión
+              </a>
+            </div>
+          </div>
+          <p style="font-size:.78rem;color:var(--muted);margin:.4rem 0 0;">
+            Si es la primera vez: abre una terminal → entra a <code>wa-server/</code> → ejecuta <code>npm install</code> → <code>node server.js</code>
+          </p>
+        </div>
+
+        <button class="ra-btn-config" style="margin-top:1.2rem;" onclick="guardarConfigWA()">
+          💾 Guardar configuración
+        </button>
+      </div>
+    </div>
+
+    <!-- Plantillas de mensajes -->
+    <div class="ra-card" style="margin-bottom:1.4rem;">
+      <div class="ra-card-header">
+        <span class="ra-card-title">📝 Plantillas de Mensajes</span>
+      </div>
+      <div class="ra-card-body">
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:.8rem;">
+          Variables disponibles: <code>{nombre}</code> <code>{apellidos}</code> <code>{fecha}</code> <code>{hora}</code> <code>{incidencia}</code> <code>{grupo}</code>
+        </p>
+        <div style="display:grid;gap:.8rem;">
+          <div>
+            <label class="ra-label">⚠️ Falta / Ausencia</label>
+            <textarea id="wa-tpl-falta" class="ra-input-filtro" rows="2" style="width:100%;resize:vertical;"><?= htmlspecialchars($waConfig['plantilla_falta'] ?? 'Estimado padre de familia, le informamos que el alumno {nombre} no se presentó el día {fecha}. — CECYTEM') ?></textarea>
+          </div>
+          <div>
+            <label class="ra-label">⏰ Tardanza</label>
+            <textarea id="wa-tpl-tardanza" class="ra-input-filtro" rows="2" style="width:100%;resize:vertical;"><?= htmlspecialchars($waConfig['plantilla_tardanza'] ?? 'Estimado padre de familia, el alumno {nombre} llegó con tardanza el día {fecha} a las {hora}. — CECYTEM') ?></textarea>
+          </div>
+          <div>
+            <label class="ra-label">🚨 Incidencia</label>
+            <textarea id="wa-tpl-incidencia" class="ra-input-filtro" rows="2" style="width:100%;resize:vertical;"><?= htmlspecialchars($waConfig['plantilla_incidencia'] ?? 'Estimado padre de familia, el alumno {nombre} presentó la siguiente incidencia el {fecha}: {incidencia}. — CECYTEM') ?></textarea>
+          </div>
+        </div>
+        <button class="ra-btn-config" style="margin-top:1rem;" onclick="guardarConfigWA()">💾 Guardar plantillas</button>
+      </div>
+    </div>
+
+    <!-- Enviar notificación -->
+    <div class="ra-card">
+      <div class="ra-card-header">
+        <span class="ra-card-title">📤 Enviar Notificación</span>
+      </div>
+      <div class="ra-card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+
+          <!-- Columna izquierda: configuración del envío -->
+          <div style="display:grid;gap:.8rem;">
+            <div>
+              <label class="ra-label">Tipo de envío</label>
+              <div style="display:flex;gap:.5rem;margin-top:.3rem;">
+                <button class="ra-lista-tab activa" id="btn-envio-individual" onclick="cambiarEnvio('individual',this)">👤 Individual</button>
+                <button class="ra-lista-tab"        id="btn-envio-grupal"     onclick="cambiarEnvio('grupal',this)">👥 Grupal</button>
+                <button class="ra-lista-tab"        id="btn-envio-faltantes"  onclick="cambiarEnvio('faltantes',this)">⚠️ Sin registrar hoy</button>
+              </div>
+            </div>
+
+            <!-- Individual -->
+            <div id="wa-envio-individual">
+              <label class="ra-label">Matrícula del alumno</label>
+              <div style="display:flex;gap:.5rem;">
+                <input type="text" id="wa-buscar-alumno" class="ra-input-filtro" placeholder="Matrícula o nombre"
+                       onkeydown="if(event.key==='Enter') buscarAlumnoWA()">
+                <button class="ra-btn-filtrar" onclick="buscarAlumnoWA()">Buscar</button>
+              </div>
+              <div id="wa-alumno-resultado" style="margin-top:.5rem;font-size:.83rem;color:var(--muted);"></div>
+            </div>
+
+            <!-- Grupal -->
+            <div id="wa-envio-grupal" style="display:none;">
+              <label class="ra-label">Grupo</label>
+              <select id="wa-grupo-sel" class="ra-input-filtro">
+                <option value="">— Selecciona un grupo —</option>
+                <?php foreach ($gruposWA as $g): ?>
+                <option value="<?= $g['idGrupo'] ?>"><?= htmlspecialchars($g['nombre']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <!-- Faltantes -->
+            <div id="wa-envio-faltantes" style="display:none;">
+              <p style="font-size:.83rem;color:var(--muted);">
+                Se enviará notificación a todos los alumnos que aún <strong>no tienen registro hoy</strong> y tienen teléfono registrado.
+              </p>
+              <button class="ra-btn-filtrar" onclick="cargarFaltantesWA()" style="margin-top:.3rem;">🔄 Ver quiénes son</button>
+              <div id="wa-faltantes-lista" style="margin-top:.5rem;font-size:.8rem;max-height:120px;overflow-y:auto;"></div>
+            </div>
+
+            <div>
+              <label class="ra-label">Categoría</label>
+              <select id="wa-categoria" class="ra-input-filtro" onchange="aplicarPlantilla()">
+                <option value="falta">⚠️ Falta / Ausencia</option>
+                <option value="tardanza">⏰ Tardanza</option>
+                <option value="incidencia">🚨 Incidencia</option>
+                <option value="personalizado">✏️ Mensaje personalizado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Columna derecha: mensaje -->
+          <div style="display:grid;gap:.8rem;align-content:start;">
+            <div>
+              <label class="ra-label">Mensaje a enviar</label>
+              <textarea id="wa-mensaje" class="ra-input-filtro" rows="6" style="width:100%;resize:vertical;"
+                        placeholder="El mensaje se generará automáticamente al seleccionar la categoría…"></textarea>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted);">
+              <span id="wa-char-count">0</span>/1000 caracteres
+            </div>
+            <button class="ra-btn-registrar" id="btn-enviar-wa"
+                    onclick="enviarNotificacion()"
+                    style="background:linear-gradient(135deg,#25d366,#128c7e);width:100%;padding:.8rem;">
+              📱 Enviar por WhatsApp
+            </button>
+            <div id="wa-resultado" style="font-size:.83rem;text-align:center;min-height:1.2rem;"></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -288,6 +562,10 @@ $horaActual = date('H:i:s');
         </select>
         <label class="ra-label">Hora de entrada</label>
         <input type="time" class="ra-input-filtro" id="edit-hora" style="width:100%;margin-bottom:.9rem;">
+        <label class="ra-label">Incidencia</label>
+        <input type="text" class="ra-input-filtro" id="edit-incidencia"
+               placeholder="Ej: Sin uniforme, Olvido credencial… (vacío = sin incidencia)"
+               style="width:100%;margin-bottom:.9rem;">
         <label class="ra-label">Observaciones (opcional)</label>
         <input type="text" class="ra-input-filtro" id="edit-obs" placeholder="Ej: Error de lector, corrección manual…" style="width:100%;">
       </div>
@@ -551,6 +829,58 @@ body.dark-mode .config-preview { background:#1a1510; border-color:#3a3028; }
     .estado-preview { font-size: .78rem; }
     .ra-btn-registrar { font-size: .8rem; }
 }
+
+/* ── Modo incidencia banner ── */
+.ra-modo-banner {
+    display:flex; align-items:center; gap:.8rem;
+    padding:.85rem 1.3rem; border-radius:var(--radius-sm);
+    background: linear-gradient(135deg, #c62828, #e53935);
+    color:#fff; font-size:.9rem; margin-bottom:1rem;
+    box-shadow:0 3px 14px rgba(198,40,40,.35);
+    animation: fadeUp .3s ease;
+}
+.ra-modo-icono { font-size:1.5rem; }
+.ra-modo-badge {
+    background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.4);
+    border-radius:20px; padding:.2rem .8rem; font-size:.78rem; font-weight:700;
+    white-space:nowrap;
+}
+
+/* ── Pill incidencia ── */
+.pill-incidencia {
+    display:inline-block; padding:.15rem .6rem; border-radius:20px;
+    font-size:.72rem; font-weight:700; background:#fff3e0;
+    border:1px solid #ffb74d; color:#e65100; white-space:nowrap;
+    max-width:140px; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* ── WA dot ── */
+.wa-dot-activo { color:#25d366; font-size:.7rem; }
+
+/* ── WA toggle ── */
+.wa-toggle { position:relative; display:inline-flex; cursor:pointer; align-items:center; gap:.5rem; }
+.wa-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.wa-toggle-slider {
+    display:block; width:44px; height:24px;
+    background:#ccc; border-radius:24px; transition:background .2s; position:relative;
+}
+.wa-toggle-slider::after {
+    content:''; position:absolute; top:3px; left:3px;
+    width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s;
+}
+.wa-toggle input:checked + .wa-toggle-slider { background:#25d366; }
+.wa-toggle input:checked + .wa-toggle-slider::after { transform:translateX(20px); }
+
+/* ── WA config rows ── */
+.wa-config-row { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:.5rem; }
+.wa-config-row .ra-label { min-width:200px; margin:0; }
+.wa-fields { margin-top:.8rem; padding-top:.8rem; border-top:1px solid var(--borde); display:grid; gap:.5rem; }
+
+@media (max-width:768px) {
+    .ra-modo-banner { flex-wrap:wrap; font-size:.8rem; }
+    .wa-config-row { flex-direction:column; align-items:flex-start; gap:.3rem; }
+    .wa-config-row .ra-label { min-width:unset; }
+}
 </style>
 
 <script>
@@ -560,6 +890,14 @@ let registrosHoy  = [];
 let tablaDataD    = [];
 let configHorarios = null;
 let estadoAutoDetectado = 'Presente';
+
+// ── Modo incidencia (leído desde PHP) ──
+const INCIDENCIA_ACTIVA = <?= json_encode($incidenciaActiva) ?>;
+const WA_ACTIVO         = <?= json_encode($waActivo) ?>;
+const WA_CONFIG         = <?= json_encode($waConfig) ?>;
+// Alumnos encontrados en búsqueda WA
+let waAlumnoActual = null;
+let waFaltantesHoy = [];
 
 // ── Reloj + detección continua de turno ──
 setInterval(() => {
@@ -681,7 +1019,8 @@ function cambiarTab(panel, btn) {
     document.querySelectorAll('.ra-tab').forEach(b=>b.classList.remove('activa'));
     document.getElementById('panel-'+panel).classList.add('activo');
     btn.classList.add('activa');
-    if (panel==='control') iniciarControl();
+    if (panel==='control')   iniciarControl();
+    if (panel==='whatsapp')  iniciarWhatsApp();
 }
 function iniciarControl() {
     const hoy = new Date();
@@ -821,29 +1160,36 @@ function registrar() {
     fetch('ajax/guardarAsistenciaDiaria.php', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({id_alumno: alumnoActual.id_alumno, dispositivo:'Manual'})
+        body: JSON.stringify({
+            id_alumno:  alumnoActual.id_alumno,
+            dispositivo:'Manual',
+            incidencia: INCIDENCIA_ACTIVA || null,
+        })
     })
     .then(r=>r.json())
     .then(data=>{
         if (!data.ok) { toast('error','Error al guardar',data.msg||''); setBotones(false); return; }
 
         const yaTag = document.getElementById('ra-ya-tag');
-        yaTag.textContent = '✓ ' + data.estado + ' — ' + data.hora.substr(0,5);
+        yaTag.textContent = '✓ ' + data.estado + ' — ' + data.hora.substr(0,5)
+            + (data.incidencia ? ' ⚠️ '+data.incidencia : '');
         yaTag.classList.add('visible');
 
         registrosHoy.unshift({
-            matricula: alumnoActual.matricula,
-            nombre:    alumnoActual.apellidos+' '+alumnoActual.nombre,
-            hora:      data.hora.substr(0,5),
-            estado:    data.estado,
-            turno:     data.turno||'—',
+            matricula:  alumnoActual.matricula,
+            nombre:     alumnoActual.apellidos+' '+alumnoActual.nombre,
+            hora:       data.hora.substr(0,5),
+            estado:     data.estado,
+            turno:      data.turno||'—',
+            incidencia: data.incidencia||'',
         });
         renderHoyLista();
         actualizarStatsHoy();
 
+        const msgInc = data.incidencia ? ' | ⚠️ '+data.incidencia : '';
         toast(data.estado==='Tardío'?'warn':'ok',
             data.estado+' registrado ('+data.turno+')',
-            alumnoActual.apellidos+', '+alumnoActual.nombre+' — '+data.hora.substr(0,5));
+            alumnoActual.apellidos+', '+alumnoActual.nombre+' — '+data.hora.substr(0,5)+msgInc);
 
         setTimeout(()=>{
             document.getElementById('inp-matricula').value='';
@@ -1059,22 +1405,29 @@ function cargarGruposSelect() {
                 while(sel.options.length>1) sel.remove(1);
                 (data.grupos||[]).forEach(g=>sel.add(new Option(g.nombre,g.idGrupo)));
             });
+            // Poblar filtro de incidencias con los tipos usados en BD
+            const selInc = document.getElementById('d-incidencia');
+            while(selInc.options.length>2) selInc.remove(2); // conservar "Todas" y "Sin incidencia"
+            (data.tiposIncidencia||[]).forEach(inc=>{
+                selInc.add(new Option('⚠️ '+inc, inc));
+            });
         }).catch(()=>{});
 }
 
 function cargarDiaria() {
     const p = new URLSearchParams({
-        tipo:'diaria',
-        buscar: document.getElementById('d-buscar').value.trim(),
-        fecha:  document.getElementById('d-fecha').value,
-        grupo:  document.getElementById('d-grupo').value,
-        estado: document.getElementById('d-estado').value,
+        tipo:       'diaria',
+        buscar:     document.getElementById('d-buscar').value.trim(),
+        fecha:      document.getElementById('d-fecha').value,
+        grupo:      document.getElementById('d-grupo').value,
+        estado:     document.getElementById('d-estado').value,
+        incidencia: document.getElementById('d-incidencia').value,
     });
-    setLoading('d-tbody',9);
+    setLoading('d-tbody', 10);
     fetch('ajax/obtenerRegistros.php?'+p)
         .then(r=>r.json())
         .then(data=>{
-            if(data.error){setError('d-tbody',9,data.error);return;}
+            if(data.error){setError('d-tbody',10,data.error);return;}
             tablaDataD = data.registros||[];
             const tbody = document.getElementById('d-tbody');
             tbody.innerHTML = tablaDataD.length
@@ -1087,24 +1440,25 @@ function cargarDiaria() {
                         <td class="td-hora">${esc(r.fecha)}</td>
                         <td class="td-hora">${r.hora_entrada?esc(r.hora_entrada.substr(0,5)):'—'}</td>
                         <td>${pillD(r.estado)}</td>
+                        <td>${r.incidencia ? `<span class="pill-incidencia" title="${esc(r.incidencia)}">⚠️ ${esc(r.incidencia)}</span>` : '<span style="color:var(--muted);font-size:.74rem;">—</span>'}</td>
                         <td style="font-size:.74rem;color:var(--muted);">${esc((r.dispositivo||'').split('|').pop().trim())}</td>
                         <td>
                           <button class="btn-accion-tabla btn-editar"
-                            onclick="abrirEditar('diaria',${r.id_asistencia_diaria},'${esc(r.apellidos+' '+r.nombre)}','${r.estado}','${r.hora_entrada?.substr(0,5)||''}')">
+                            onclick="abrirEditar('diaria',${r.id_asistencia_diaria},'${esc(r.apellidos+' '+r.nombre)}','${r.estado}','${r.hora_entrada?.substr(0,5)||''}','${esc(r.incidencia||'')}')">
                             ✏️ Editar
                           </button>
                         </td>
                     </tr>`).join('')
-                : '<tr><td colspan="9" class="td-placeholder">Sin registros encontrados</td></tr>';
+                : '<tr><td colspan="10" class="td-placeholder">Sin registros encontrados</td></tr>';
 
             const s = data.stats||{};
-            document.getElementById('d-total').textContent     = s.total    ||0;
-            document.getElementById('d-presentes').textContent = s.presentes||0;
-            document.getElementById('d-tardios').textContent   = s.tardios  ||0;
-            document.getElementById('d-dispositivo').textContent = tablaDataD.length ? (tablaDataD[0].dispositivo||'').split('|')[1]?.trim()||'—' : '—';
+            document.getElementById('d-total').textContent      = s.total         ||0;
+            document.getElementById('d-presentes').textContent  = s.presentes     ||0;
+            document.getElementById('d-tardios').textContent    = s.tardios       ||0;
+            document.getElementById('d-incidencias').textContent= s.con_incidencia||0;
             document.getElementById('d-info').textContent = tablaDataD.length+' registros';
         })
-        .catch(()=>setError('d-tbody',9,'Error de conexión'));
+        .catch(()=>setError('d-tbody',10,'Error de conexión'));
 }
 
 
@@ -1119,7 +1473,7 @@ function setError(id,cols,msg) {
 // ══════════════════════════════════
 // MODAL EDITAR REGISTRO
 // ══════════════════════════════════
-function abrirEditar(tabla, id, nombre, estado, hora) {
+function abrirEditar(tabla, id, nombre, estado, hora, incidencia='') {
     document.getElementById('edit-id').value    = id;
     document.getElementById('edit-tabla').value = tabla;
     document.getElementById('modal-edit-titulo').textContent =
@@ -1131,6 +1485,7 @@ function abrirEditar(tabla, id, nombre, estado, hora) {
     if (tabla==='diaria') {
         document.getElementById('edit-estado-diaria').value = estado;
         document.getElementById('edit-hora').value          = hora || '';
+        document.getElementById('edit-incidencia').value    = incidencia || '';
         document.getElementById('edit-obs').value           = '';
     } else {
         document.getElementById('edit-estado-materia').value = estado;
@@ -1150,9 +1505,10 @@ function guardarEdicion() {
     let payload = {id: parseInt(id), tabla, accion:'editar'};
 
     if (tabla==='diaria') {
-        payload.estado       = document.getElementById('edit-estado-diaria').value;
-        payload.hora_entrada = document.getElementById('edit-hora').value;
-        payload.observaciones= document.getElementById('edit-obs').value;
+        payload.estado        = document.getElementById('edit-estado-diaria').value;
+        payload.hora_entrada  = document.getElementById('edit-hora').value;
+        payload.incidencia    = document.getElementById('edit-incidencia').value.trim();
+        payload.observaciones = document.getElementById('edit-obs').value;
     } else {
         payload.estado = document.getElementById('edit-estado-materia').value;
     }
@@ -1173,8 +1529,8 @@ function guardarEdicion() {
 }
 
 function confirmarEliminar() {
-    const id    = document.getElementById('edit-id').value;
-    const tabla = document.getElementById('edit-tabla').value;
+    const id     = document.getElementById('edit-id').value;
+    const tabla  = document.getElementById('edit-tabla').value;
     const nombre = document.getElementById('edit-info-alumno').textContent;
 
     if (!confirm(`¿Eliminar este registro?\n${nombre}\n\nEsta acción no se puede deshacer.`)) return;
@@ -1194,20 +1550,226 @@ function confirmarEliminar() {
     .catch(()=>toast('error','Error de conexión',''));
 }
 
-// ── Exportar CSV ──
+// ── Exportar CSV (incluye incidencia) ──
 function exportarCSV() {
     if (!tablaDataD.length) { toast('warn','Sin datos','Filtra primero los registros'); return; }
-    const headers=['Matrícula','Nombre','Apellidos','Grupo','Fecha','Hora','Estado','Turno'];
-    const rows=tablaDataD.map(r=>[r.matricula,r.nombre,r.apellidos,r.grupo||'',r.fecha,
-        r.hora_entrada?.substr(0,5)||'',r.estado,(r.dispositivo||'').split('|').pop().trim()]);
+    const headers = ['Matrícula','Nombre','Apellidos','Grupo','Fecha','Hora','Estado','Incidencia','Turno'];
+    const rows = tablaDataD.map(r=>[
+        r.matricula, r.nombre, r.apellidos, r.grupo||'', r.fecha,
+        r.hora_entrada?.substr(0,5)||'', r.estado,
+        r.incidencia||'',
+        (r.dispositivo||'').split('|').pop().trim()
+    ]);
     const _h=new Date();
     const _f=_h.getFullYear()+'-'+String(_h.getMonth()+1).padStart(2,'0')+'-'+String(_h.getDate()).padStart(2,'0');
-    const csv=[headers,...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+    const csv=[headers,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
     const a=document.createElement('a');
     a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
     a.download='asistencia_diaria_'+_f+'.csv';
     a.click();
     toast('ok','CSV exportado',tablaDataD.length+' registros');
+}
+
+// ══════════════════════════════════════════════════════════════
+// WHATSAPP — funciones
+// ══════════════════════════════════════════════════════════════
+const WA_GUIAS = {
+    callmebot: 'https://www.callmebot.com/blog/free-api-whatsapp-messages/',
+    twilio:    'https://www.twilio.com/docs/whatsapp/quickstart',
+    ultramsg:  'https://docs.ultramsg.com/',
+    '360dialog':'https://docs.360dialog.com/whatsapp-api/whatsapp-api/integration',
+    local_wa:  'wa-status.php',
+};
+
+function iniciarWhatsApp() {
+    actualizarFormWA();
+    aplicarPlantilla();
+    document.getElementById('wa-mensaje').addEventListener('input', ()=>{
+        document.getElementById('wa-char-count').textContent =
+            document.getElementById('wa-mensaje').value.length;
+    });
+}
+
+function actualizarFormWA() {
+    const prv = document.getElementById('wa-proveedor').value;
+    ['callmebot','twilio','ultramsg','360dialog','local_wa'].forEach(p=>{
+        const el = document.getElementById('wa-fields-'+p);
+        if (el) el.style.display = p===prv ? '' : 'none';
+    });
+    document.getElementById('wa-link-guia').href = WA_GUIAS[prv] || '#';
+    document.getElementById('wa-link-guia').style.display = prv==='local_wa' ? 'none' : '';
+
+    // Badge activo/inactivo
+    const activo = document.getElementById('wa-activo').checked;
+    const badge  = document.getElementById('wa-estado-badge');
+    badge.textContent = activo ? '● Activo' : '○ Inactivo';
+    badge.style.background = activo ? '#2e7d32' : '#c62828';
+
+    // Si es local_wa, verificar estado del servidor
+    if (prv === 'local_wa') verificarEstadoLocalWA();
+}
+
+function verificarEstadoLocalWA() {
+    const el = document.getElementById('wa-local-status');
+    if (!el) return;
+    el.textContent = '⏳ Verificando servidor…';
+    fetch('ajax/wa-proxy.php?action=status')
+        .then(r=>r.json())
+        .then(data=>{
+            if (data.estado === 'servidor_off' || !data.ok && data.estado !== 'esperando_qr') {
+                el.innerHTML = '🔴 Servidor no activo — <a href="wa-status.php" target="_blank">ver instrucciones</a>';
+            } else if (data.ok && data.estado === 'conectado') {
+                el.innerHTML = `🟢 Conectado como <strong>${data.info?.nombre||'—'}</strong> (+${data.info?.telefono||'—'})`;
+            } else {
+                el.innerHTML = '🟡 Esperando escaneo de QR — <a href="wa-status.php" target="_blank">escanear QR</a>';
+            }
+        })
+        .catch(()=>{ el.innerHTML = '🔴 Servidor no activo — <a href="wa-status.php" target="_blank">ver instrucciones</a>'; });
+}
+
+function guardarConfigWA() {
+    const payload = {
+        activo:    document.getElementById('wa-activo').checked,
+        proveedor: document.getElementById('wa-proveedor').value,
+        callmebot_apikey:  document.getElementById('wa-callmebot-apikey').value.trim(),
+        twilio_sid:        document.getElementById('wa-twilio-sid').value.trim(),
+        twilio_token:      document.getElementById('wa-twilio-token').value.trim(),
+        twilio_from:       document.getElementById('wa-twilio-from').value.trim(),
+        ultramsg_instance: document.getElementById('wa-ultramsg-instance').value.trim(),
+        ultramsg_token:    document.getElementById('wa-ultramsg-token').value.trim(),
+        dialog360_apikey:  document.getElementById('wa-dialog360-apikey').value.trim(),
+        plantilla_falta:      document.getElementById('wa-tpl-falta').value.trim(),
+        plantilla_tardanza:   document.getElementById('wa-tpl-tardanza').value.trim(),
+        plantilla_incidencia: document.getElementById('wa-tpl-incidencia').value.trim(),
+    };
+    fetch('ajax/guardarConfigWA.php', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(r=>r.json())
+    .then(data=>{
+        toast(data.ok?'ok':'error', data.msg, '');
+    })
+    .catch(()=>toast('error','Error de conexión',''));
+}
+
+function cambiarEnvio(tipo, btn) {
+    ['individual','grupal','faltantes'].forEach(t=>{
+        document.getElementById('wa-envio-'+t).style.display = t===tipo ? '' : 'none';
+    });
+    document.querySelectorAll('#panel-whatsapp .ra-lista-tab').forEach(b=>b.classList.remove('activa'));
+    btn.classList.add('activa');
+    aplicarPlantilla();
+}
+
+function aplicarPlantilla() {
+    const cat = document.getElementById('wa-categoria').value;
+    if (cat === 'personalizado') return;
+
+    const tplMap = {
+        falta:      document.getElementById('wa-tpl-falta').value,
+        tardanza:   document.getElementById('wa-tpl-tardanza').value,
+        incidencia: document.getElementById('wa-tpl-incidencia').value,
+    };
+    const hoy = new Date();
+    const fecha = hoy.toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'});
+    const hora  = hoy.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+
+    let tpl = tplMap[cat] || '';
+    // Sustituir variables de alumno si hay uno seleccionado
+    if (waAlumnoActual) {
+        tpl = tpl.replace(/{nombre}/g,    waAlumnoActual.nombre   || '')
+                 .replace(/{apellidos}/g, waAlumnoActual.apellidos|| '')
+                 .replace(/{grupo}/g,     waAlumnoActual.grupo    || '')
+                 .replace(/{incidencia}/g,waAlumnoActual.incidencia||INCIDENCIA_ACTIVA||'sin especificar');
+    }
+    tpl = tpl.replace(/{fecha}/g, fecha).replace(/{hora}/g, hora);
+
+    document.getElementById('wa-mensaje').value = tpl;
+    document.getElementById('wa-char-count').textContent = tpl.length;
+}
+
+function buscarAlumnoWA() {
+    const q = document.getElementById('wa-buscar-alumno').value.trim();
+    if (!q) return;
+    const el = document.getElementById('wa-alumno-resultado');
+    el.innerHTML = '<span style="color:var(--muted);">Buscando…</span>';
+
+    fetch('ajax/buscarAlumno.php?matricula='+encodeURIComponent(q))
+        .then(r=>r.json())
+        .then(data=>{
+            if (!data.ok || !data.alumno) {
+                el.innerHTML = '<span style="color:var(--rojo);">Alumno no encontrado</span>';
+                waAlumnoActual = null; return;
+            }
+            waAlumnoActual = data.alumno;
+            const tel = data.alumno.telefono || '(sin teléfono)';
+            el.innerHTML = `<strong>👤 ${esc(data.alumno.apellidos+' '+data.alumno.nombre)}</strong>
+                — 📱 ${esc(tel)}
+                <span class="ra-badge rb-grupo">${esc(data.alumno.nombre_grupo||'')}</span>`;
+            aplicarPlantilla();
+        })
+        .catch(()=>{ el.innerHTML='<span style="color:var(--rojo);">Error de conexión</span>'; });
+}
+
+function cargarFaltantesWA() {
+    const el = document.getElementById('wa-faltantes-lista');
+    el.innerHTML = '<span style="color:var(--muted);">Cargando…</span>';
+    fetch('ajax/obtenerFaltantes.php')
+        .then(r=>r.json())
+        .then(data=>{
+            waFaltantesHoy = data.faltantes || [];
+            const conTel = waFaltantesHoy.filter(a=>a.telefono);
+            el.innerHTML = waFaltantesHoy.length
+                ? `<strong>${waFaltantesHoy.length}</strong> sin registrar hoy — 
+                   <strong>${conTel.length}</strong> con teléfono registrado`
+                : '🎉 ¡Todos registrados hoy!';
+        })
+        .catch(()=>{ el.innerHTML='<span style="color:var(--rojo);">Error</span>'; });
+}
+
+function enviarNotificacion() {
+    const tipoEnvio = document.querySelector('#panel-whatsapp .ra-lista-tab.activa')?.id.replace('btn-envio-','') || 'individual';
+    const categoria = document.getElementById('wa-categoria').value;
+    const mensaje   = document.getElementById('wa-mensaje').value.trim();
+
+    if (!mensaje) { toast('warn','Mensaje vacío','Escribe o genera un mensaje antes de enviar'); return; }
+
+    let payload = { tipo: tipoEnvio, categoria, mensaje };
+
+    if (tipoEnvio === 'individual') {
+        if (!waAlumnoActual) { toast('warn','Sin alumno','Busca un alumno primero'); return; }
+        payload.id_alumno = waAlumnoActual.id_alumno;
+    } else if (tipoEnvio === 'grupal') {
+        const grp = document.getElementById('wa-grupo-sel').value;
+        if (!grp) { toast('warn','Sin grupo','Selecciona un grupo'); return; }
+        payload.id_grupo = parseInt(grp);
+    } else if (tipoEnvio === 'faltantes') {
+        if (!waFaltantesHoy.length) { toast('warn','Sin faltantes','Carga los faltantes primero'); return; }
+        payload.destinatarios = waFaltantesHoy.filter(a=>a.telefono).map(a=>a.telefono);
+        if (!payload.destinatarios.length) { toast('warn','Sin teléfonos','Ningún faltante tiene teléfono registrado'); return; }
+    }
+
+    const btn = document.getElementById('btn-enviar-wa');
+    btn.disabled = true; btn.textContent = '⏳ Enviando…';
+    document.getElementById('wa-resultado').textContent = '';
+
+    fetch('ajax/enviarNotificacion.php', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(r=>r.json())
+    .then(data=>{
+        btn.disabled = false; btn.textContent = '📱 Enviar por WhatsApp';
+        const el = document.getElementById('wa-resultado');
+        el.style.color = data.ok ? '#2e7d32' : '#c62828';
+        el.textContent = data.msg;
+        toast(data.ok?'ok':'error', data.msg, data.errores?.join(', ')||'');
+    })
+    .catch(()=>{
+        btn.disabled=false; btn.textContent='📱 Enviar por WhatsApp';
+        toast('error','Error de conexión','');
+    });
 }
 </script>
 </body>
